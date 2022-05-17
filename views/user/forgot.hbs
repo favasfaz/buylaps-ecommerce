@@ -1,0 +1,132 @@
+{{!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+ <div class="form-gap"></div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="text-center">
+                  <h3><i class="fa fa-lock fa-4x"></i></h3>
+                  <h2 class="text-center">Forgot Password?</h2>
+                  <p>You can reset your password here.</p>
+                  <div class="panel-body">
+    
+                    <form id="register-form" action="/users/forgot" role="form" autocomplete="off" class="form" method="post">
+    
+                      <div class="form-group">
+                        <div class="input-group">
+                          <span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>
+                          <input id="email" name="email" placeholder="{{this.user}}" class="form-control"  type="email">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <input  class="btn btn-lg btn-primary btn-block" value="send" type="submit">
+                      </div>
+                    </form>
+
+
+
+
+                    <form id="register-form" action="/users/otp/{{this.user}}" role="form" autocomplete="off" class="form" method="post">
+    
+                      <div class="form-group">
+                        <div class="input-group">
+                          <span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>
+                          <input id="email" name="otp" placeholder="enter your otp" class="form-control"  type="text">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <input  class="btn btn-lg btn-primary btn-block" value="submit" type="submit">
+                      </div>
+                    </form>
+    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+	</div>
+</div> --}}
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://cdn.lineicons.com/2.0/LineIcons.css" rel="stylesheet">
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+        </script>
+        <link rel="stylesheet" href="/stylesheets/login.css">
+
+    </head>
+    <body class="auth_class">
+
+        <div class="container login-container">
+            <img class="triangleA" src="https://res.cloudinary.com/procraftstudio/image/upload/v1613965232/triangleA_lwqhnl.png" alt='Onestop triangle'>
+          <div class="row">
+            <div class="col-md-6 welcome_auth">
+                <div class="auth_welcome">
+                    Find more happiness with FEIZY.com
+                </div>
+            </div>         
+            <div class="col-md-6 login-form">
+                <div class="login_form_in">
+                    <div class="auth_branding">
+                        <a class="auth_branding_in" href="https://procraft.studio"><img src="https://res.cloudinary.com/procraftstudio/image/upload/v1613964589/Procraft-Studio-Logo-1_tnfxuj.jpg" alt='Procraft Studio'></a>
+                    </div>
+                  <h1 class="auth_title text-left">Password Reset</h1>
+
+                  {{!-- --- --------------------------------------------------------------------}}
+
+                  <form action="/users/forgot" method="post">
+                  <div><p style="color: red;">{{err}}</p></div>
+                    <div class="alert alert-success bg-soft-primary border-0" role="alert">
+                        Enter your email address and we'll send you an email with instructions to reset your password.
+                    </div>                    
+                    <div class="form-group">
+                      <input type="email" class="form-control" name="email" placeholder="{{this.user}}">
+                      Email
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-primary btn-lg btn-block">SEND OTP</button>  
+                    </div>
+                  </form>
+
+                     {{!-- --- --------------------------------------------------------------------}}
+
+
+
+                  <form action="/users/otp/{{this.user}}" method="post">
+                     <div class="form-group">
+                      <input type="text" class="form-control" name="otp" placeholder="Enter otp" required>
+                    </div>
+                     <div class="form-group">
+                      <button type="submit" class="btn btn-primary btn-lg btn-block">submit</button>  
+                    </div>
+                                      <div><p style="color: red;">{{Err1}}</p></div>
+
+                    <div class="form-group other_auth_links">
+                        <a class="" href="/users/login">Login</a>
+                        <a class="" href="/users/register">Register</a>
+                    </div>
+                  </form>
+
+                      {{!-- --- --------------------------------------------------------------------}}
+
+
+                </div>
+            </div>       
+          </div>
+        </div>
+
+        <img class="triangleB" src="https://res.cloudinary.com/procraftstudio/image/upload/v1613965232/triangleB_isffjy.png" alt='Onestop triangle'>
+    </body>
+
+</html>

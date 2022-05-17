@@ -1,0 +1,55 @@
+  <div class="container">
+      <div class="p-4">
+        <div style="display: flex; justify-content: space-between;">          <a href="/users/logout"class="btn btn-danger ml-auto">Logout</a>
+                      <a href="/users/passwordReset"class="btn btn-danger ml-auto">reset password</a>
+</div>
+        <form>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="first-name" class="form-label">First name</label>
+              <input
+                class="form-control"
+                type="text"
+                id="first-name"
+                value="{{data.fName}}"
+              />
+            </div>
+            <div class="col">
+              <label for="last-name" class="form-label">Last name</label>
+              <input class="form-control" type="text" id="last-name" value="{{data.lName}}" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="email" class="form-label">Email</label>
+              <input class="form-control" type="email" id="email" value="{{data.email}}"  />
+            </div>
+            <div class="col">
+              <label for="phone" class="form-label">Phone</label>
+              <input class="form-control" type="tel" id="phone" />
+              <div id="phone-help" class="form-text">Optional</div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col">
+              <label for="subject" class="form-label">Subject</label>
+              <input class="form-control" type="text" id="subject" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="message" class="form-label">Message</label>
+              <textarea
+                class="form-control"
+                rows="4"
+                id="message"
+              ></textarea>
+              <div id="message-help" class="form-text">Max. 500 characters</div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
