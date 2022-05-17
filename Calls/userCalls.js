@@ -17,9 +17,7 @@ reject({status:false,msg:'password atleast 4 charchters'})
       await  reject({status:false,msg:'Email already taken'})
     }
     else{
-    data.password =await bcrypt.hash(data.password,10)
       
-    console.log(data.password);
         const newUser =await new Model({
             lName:data.lName,
             fName:data.fName,
@@ -54,6 +52,7 @@ reject({status:false,msg:'password atleast 4 charchters'})
                 })
                 let token = jwt.sign({_id:this._id},'secret',{expiresIn:300})
                 
+                
                await resolve({status:true,token})
 
             }
@@ -73,15 +72,12 @@ const userLogin = (data)=>{
     return new Promise(async(resolve,reject)=>{
         const user=await Model.findOne({email:data.email})
         if (user){
-            bcrypt.compare(user.password,data.password,async(err,data)=>{
-                if(err){
-                    reject({msg:'check your password'})
-                }else{
-                        const token=await jwt.sign({name:user.fName},"thisisscrectkey",{expiresIn:'1d'})
-                        await resolve({status:true,token})
-                          
-                }
-            })
+            if(user.password==data.password){
+                const token=await jwt.sign({id:this.id},"secret",{expiresIn:'1d'})
+                await resolve({status:true,token})
+                   }else{
+                    await reject({status:false,msg:'check your password'})
+            }
         }else{
             reject({status:false,msg:'check your mail and password'})
         }
@@ -160,7 +156,6 @@ const newPass = (data,id)=>{
            reject({msg:'password is TOOshort'})
        }
        else{
-        data.password =await bcrypt.hash(data.password,10)
         await Model.findOneAndUpdate({email:id},{$set:{password:data.password}})
         resolve({status:true})
        }
@@ -179,8 +174,6 @@ return new Promise(async(resolve,reject)=>{
                             if(data.newPassword.length<4){
                                 reject({msg:'password is tooshort'})
                             }else{
-                                data.newPassword =await bcrypt.hash(data.newPassword,10)
-
                             await Model.findOneAndUpdate({email:id},{$set:{password:data.newPassword}})
                                 resolve()
                             }

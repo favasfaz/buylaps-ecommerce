@@ -5,6 +5,7 @@ var {doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword}
 var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
 const { Router } = require('express');
+var {verifyToken,verifyUser} = require('../middlewares/auth')
 /* GET users listing. */
 
 // middlewares---------------------------------------------------------------
@@ -33,14 +34,12 @@ function authenticateToken(req, res, next) {
 
 router.get('/', function(req, res) {
    user = req.session.user
-   user2 = req.session.user2
-  console.log('lllllll');
   console.log(user);
-  console.log('oooooooo');
- res.render('user/userhome',{user,user2});
+ res.render('user/userhome',{user});
 });
 router.get('/login', function(req, res) {
-  res.render('user/login');
+  res.render('user/login',{'err':req.session.loggErr});
+  req.session.loggErr=''
 });
 router.get('/register', function(req, res) {
   res.render('user/register',{'err':req.session.loggErr});
@@ -68,7 +67,7 @@ userLogin(req.body).then(()=>{
   res.redirect('/users')
 }).catch((err)=>{
   req.session.loggErr=err.msg
-  res.render('user/login',{'err':req.session.loggErr})
+  res.redirect('/users/login')
 })
 })
 router.get('/shop',(req,res)=>{
@@ -81,7 +80,7 @@ getAccount(req.params.id).then((data)=>{
 
 })
 })
-router.get('/cart',authenticateToken,(req,res)=>{
+router.get('/cart',verifyUser,(req,res)=>{
   // res.render('user/cart')
   try {
     res.render('user/cart')
@@ -132,13 +131,11 @@ console.log(req.session.forgotErr);
   })
   
   router.post('/reset-password/:id',(req,res)=>{
-    console.log('kkk');
-  let id = req.params.id
-    console.log(id);
-    newPass(req.body,id).then(()=>{
+  // let id = req.params.id
+  let email =req.params.id
+    newPass(req.body,email).then((data)=>{
       req.session.loggedIn=true
-      req.session.user=req.params.id
-      req.body=req.session.user
+      req.session.user=data
             res.redirect('/users')
     }).catch((err)=>{
       req.session.passErr=err.msg
