@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
  var Model = require('../Model/user-schema');
-var {doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword} = require('../Calls/userCalls')
+var {doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
 var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
 const { Router } = require('express');
-var {verifyToken,verifyUser} = require('../middlewares/auth')
+var {verifyToken,verifyUser,sessionverify} = require('../middlewares/auth')
 /* GET users listing. */
 
 // middlewares---------------------------------------------------------------
@@ -37,7 +37,13 @@ router.get('/', function(req, res) {
   console.log(user);
  res.render('user/userhome',{user});
 });
-router.get('/login', function(req, res) {
+router.get('/otp',(req,res)=>{
+  user =req.session.user
+  res.render('user/otp',{user,Err:req.session.otpErr})
+  req.session.otpErr=''
+})
+router.get('/login', sessionverify, function(req, res) {
+  res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
   res.render('user/login',{'err':req.session.loggErr});
   req.session.loggErr=''
 });
@@ -50,17 +56,26 @@ router.get('/signed',(req, res)=> {
 });
 router.post('/register',(req,res)=>{
 doSignup(req.body).then((data)=>{
-  console.log(data);
   req.session.loggedIn=true
-  req.session.user=req.body
-  res.cookie('token',data.token)
-res.redirect('/users')
+ req.session.user=req.body
+  // req.session.user=data
+res.redirect('/users/otp')
 }).catch((err)=>{
 req.session.loggErr=err.msg
 res.redirect('/users/register')
 })
 })
-router.post('/login',(req,res)=>{
+router.post('/otp',(req,res)=>{
+ registeringUser(req.session.user,req.body).then((data)=>{
+  res.cookie('token',data.token,{httpOnly:true})
+  res.redirect('/users')
+ }).catch((err)=>{
+   req.session.otpErr=err.msg
+   res.redirect('/users/otp')
+ })
+})
+router.post('/login',sessionverify,(req,res)=>{
+  res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
 userLogin(req.body).then(()=>{
   req.session.loggedIn=true
   req.session.user=req.body
@@ -80,7 +95,7 @@ getAccount(req.params.id).then((data)=>{
 
 })
 })
-router.get('/cart',verifyUser,(req,res)=>{
+router.get('/cart',verifyToken,(req,res)=>{
   // res.render('user/cart')
   try {
     res.render('user/cart')
@@ -90,7 +105,7 @@ router.get('/cart',verifyUser,(req,res)=>{
 })
 router.get('/logout',(req,res)=>{
   req.session.destroy()
-  req.cookies=null
+  res.clearCookie('token')
   res.redirect('/users')
 })
 router.get('/forgot',(req,res)=>{
@@ -103,7 +118,6 @@ router.post('/forgot',(req,res)=>{
   console.log('sharmaji');
 forgotpass(req.body).then((data)=>{
   console.log(data.user.email);
-  console.log(data.user.email);
   req.session.email=data.user.email
   res.redirect('/users/forgot')
 }).catch((err)=>{
@@ -115,6 +129,7 @@ console.log(req.session.forgotErr);
 
   router.get('/reset-password',(req,res)=>{
     res.render('user/reset-password',{user:req.session.email,Err:req.session.passErr})
+    req.session.passErr=''
   })
  
   router.post('/otp/:id',(req,res)=>{
@@ -156,6 +171,17 @@ console.log(req.session.forgotErr);
       console.log('err');
       req.session.resetErr=err.msg
       res.redirect('/users/passwordReset')
+    })
+  })
+
+  router.get('/wishlist',verifyToken,(req,res)=>{
+    res.render('user/wishlist')
+  })
+  
+  router.get('/reSend/:id',(req,res)=>{
+    let id =req.params.id
+    reSend(id).then(()=>{
+      res.redirect('/users/otp')
     })
   })
 

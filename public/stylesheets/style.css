@@ -198,10 +198,10 @@ ol {
 	padding: 0;
 	margin: 0;
 }
-body {
+/* body {
 	background: #007bff;
 	background: linear-gradient(to right, #0062E6, #33AEFF);
-  }
+  } */
   
   .btn-login {
 	font-size: 0.9rem;

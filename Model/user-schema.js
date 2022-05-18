@@ -21,7 +21,7 @@ required:true,
 bcrypt:true
 },
 otpcode:{
-  type:Number,
+  type:String,
   default:0
 }
 });

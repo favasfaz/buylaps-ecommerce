@@ -5,9 +5,45 @@ var jwt = require ('jsonwebtoken')
 const res = require('express/lib/response')
 const { model } = require('mongoose')
 const bcrypt = require('bcrypt')
+const { reject } = require('bcrypt/promises')
+
+var otpCode =  Math.floor(1000 + Math.random() * 9999)
+
+
+const reSend=(data)=>{
+    console.log("llll");
+    console.log(data);
+    return new Promise(async(resolve,reject)=>{
+        let mailTransporter=nodeMailer.createTransport({
+            service:'gmail',
+            auth:{
+                user:'mohamedsabithmp@gmail.com',
+                pass:'ceuggzhsmkznyfdz'
+            }
+        });
+        let mailDetails={
+            form:'mohamedsabithmp@gmail.com',
+            to:data,
+            subject:'testing',
+            text: 'otp is'+otpCode
+        };
+        mailTransporter.sendMail(mailDetails,function(err,data){
+            if(err){
+                console.log('err');
+            }else{
+                console.log('emailsend');
+            }
+        
+        })
+        console.log(otpCode);
+        console.log('lll');
+        resolve({msg:'success' ,data:data})
+    })
+}
 
 const doSignup = (data)=>{
 return new Promise(async(resolve,reject)=>{
+    console.log(data.email);
 if(data.password==data.cpassword){
 if(data.password.length<4){
 reject({status:false,msg:'password atleast 4 charchters'})
@@ -17,46 +53,31 @@ reject({status:false,msg:'password atleast 4 charchters'})
       await  reject({status:false,msg:'Email already taken'})
     }
     else{
-      
-        const newUser =await new Model({
-            lName:data.lName,
-            fName:data.fName,
-            email:data.email,
-            password: data.password
-        })
-        await newUser.save(async(err,result)=>{
-            if(err){
-                await reject({status:false,msg:'Something went wrong try again'})
-            }else{
-
-                let mailTransporter=nodeMailer.createTransport({
-                    service:'gmail',
-                    auth:{
-                        user:'mohamedsabithmp@gmail.com',
-                        pass:'ceuggzhsmkznyfdz'
-                    }
-                });
-                let mailDetails={
-                    form:'mohamedsabithmp@gmail.com',
-                    to:data.email,
-                    subject:'testing',
-                    text:'12345'
-                };
-                mailTransporter.sendMail(mailDetails,function(err,data){
-                    if(err){
-                        console.log('err');
-                    }else{
-                        console.log('emailsend');
-                    }
-                
-                })
-                let token = jwt.sign({_id:this._id},'secret',{expiresIn:300})
-                
-                
-               await resolve({status:true,token})
-
-            }
-        })
+        let mailTransporter=nodeMailer.createTransport({
+                        service:'gmail',
+                        auth:{
+                            user:'mohamedsabithmp@gmail.com',
+                            pass:'ceuggzhsmkznyfdz'
+                        }
+                    });
+                    let mailDetails={
+                        form:'mohamedsabithmp@gmail.com',
+                        to:data.email,
+                        subject:'testing',
+                        text: 'otp is'+otpCode
+                    };
+                    mailTransporter.sendMail(mailDetails,function(err,data){
+                        if(err){
+                            console.log('err');
+                        }else{
+                            console.log('emailsend');
+                        }
+                    
+                    })
+                    console.log(otpCode);
+                    console.log('lll');
+                    resolve({msg:'success' ,data:data})
+     
     }
 } 
 }else{
@@ -65,6 +86,37 @@ reject({status:false,msg:'password atleast 4 charchters'})
   
 })
 }
+var  OTP=otpCode
+ const registeringUser =(userdata,userotp)=>{
+   return new Promise (async(resolve,reject)=>{
+       console.log('re');
+       console.log(OTP);
+
+       if(userotp.otp==OTP){
+        const newUser =await new Model({
+                lName:userdata.lName,
+                fName:userdata.fName,
+                email:userdata.email,
+                password: userdata.password
+            })  
+            await newUser.save(async(err,result)=>{
+                    if(err){
+                        reject({msg:'somthing went wrong'})
+                    }else{
+                        let token = jwt.sign({_id:this._id},'secret',{expiresIn:300})
+
+                        resolve({status:true,token})
+                    }
+
+            })
+
+        
+        }else{
+                reject({msg:'otp not match'})
+        }
+   })
+     
+ }
 // --------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -94,18 +146,11 @@ const forgotpass=(data)=>{
      console.log(data);
         const user= await Model.findOne({email:data.email})
         if(user){
-            // const secret='secret'+user.password
-            // const payload={
-            //     email:user.email
-            // }
-            // const token=jwt.sign(payload,secret,{expiresIn:'5m'})
-            // console.log(token);
-            // const link =`http://localhost:3000/reset-password/${user.id}/${token}`
+         
             // -------------------------------------------------
             const otpCode = await Math.floor(1000 + Math.random() * 9999)
-             console.log(otpCode);
            await Model.findOneAndUpdate({email:data.email},{$set:{otpcode:otpCode}})
-
+                console.log(otpCode);
             let mailTransporter=await nodeMailer.createTransport({
                 service:'gmail',
                 auth:{
@@ -188,4 +233,57 @@ return new Promise(async(resolve,reject)=>{
    }
 })
 }
-module.exports={doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword}
+module.exports={doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend}
+
+
+
+// const newUser =await new Model({
+//     lName:data.lName,
+//     fName:data.fName,
+//     email:data.email,
+//     password: data.password
+// })
+// await newUser.save(async(err,result)=>{
+//     if(err){
+//         await reject({status:false,msg:'Something went wrong try again'})
+//     }else{
+
+
+//         let mailTransporter=nodeMailer.createTransport({
+//             service:'gmail',
+//             auth:{
+//                 user:'mohamedsabithmp@gmail.com',
+//                 pass:'ceuggzhsmkznyfdz'
+//             }
+//         });
+//         let mailDetails={
+//             form:'mohamedsabithmp@gmail.com',
+//             to:data.email,
+//             subject:'testing',
+//             text:otpCode
+//         };
+//         mailTransporter.sendMail(mailDetails,function(err,data){
+//             if(err){
+//                 console.log('err');
+//             }else{
+//                 console.log('emailsend');
+//             }
+        
+//         })
+//         let token = jwt.sign({_id:this._id},'secret',{expiresIn:300})
+
+        
+//        await resolve({status:true,token})
+
+//     }
+// })
+
+
+
+   // const secret='secret'+user.password
+            // const payload={
+            //     email:user.email
+            // }
+            // const token=jwt.sign(payload,secret,{expiresIn:'5m'})
+            // console.log(token);
+            // const link =`http://localhost:3000/reset-password/${user.id}/${token}`
