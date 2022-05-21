@@ -124,11 +124,16 @@ const userLogin = (data)=>{
     return new Promise(async(resolve,reject)=>{
         const user=await Model.findOne({email:data.email})
         if (user){
+            if(user.status==false){
+                reject({msg:'admin blocked'})
+            }else{
+
             if(user.password==data.password){
                 const token=await jwt.sign({id:this.id},"secret",{expiresIn:'1d'})
                 await resolve({status:true,token})
                    }else{
                     await reject({status:false,msg:'check your password'})
+            }
             }
         }else{
             reject({status:false,msg:'check your mail and password'})

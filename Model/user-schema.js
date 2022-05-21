@@ -23,6 +23,14 @@ bcrypt:true
 otpcode:{
   type:String,
   default:0
+},
+create :{
+  type:Date,
+  default:Date.now
+},
+status:{
+  type: Boolean,
+  default:true
 }
 });
 

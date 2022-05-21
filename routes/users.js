@@ -6,6 +6,7 @@ var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
 const { Router } = require('express');
 var {verifyToken,verifyUser,sessionverify} = require('../middlewares/auth')
+
 /* GET users listing. */
 
 // middlewares---------------------------------------------------------------
@@ -37,12 +38,15 @@ router.get('/', function(req, res) {
   console.log(user);
  res.render('user/userhome',{user});
 });
-router.get('/otp',(req,res)=>{
+router.get('/otp',sessionverify,(req,res)=>{
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
   user =req.session.user
   res.render('user/otp',{user,Err:req.session.otpErr})
   req.session.otpErr=''
 })
 router.get('/login', sessionverify, function(req, res) {
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
   res.render('user/login',{'err':req.session.loggErr});
   req.session.loggErr=''
@@ -56,7 +60,7 @@ router.get('/signed',(req, res)=> {
 });
 router.post('/register',(req,res)=>{
 doSignup(req.body).then((data)=>{
-  req.session.loggedIn=true
+  // req.session.loggedIn=true
  req.session.user=req.body
   // req.session.user=data
 res.redirect('/users/otp')
@@ -65,8 +69,11 @@ req.session.loggErr=err.msg
 res.redirect('/users/register')
 })
 })
-router.post('/otp',(req,res)=>{
+router.post('/otp',sessionverify,(req,res)=>{
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
  registeringUser(req.session.user,req.body).then((data)=>{
+   req.session.loggedIn=true
   res.cookie('token',data.token,{httpOnly:true})
   res.redirect('/users')
  }).catch((err)=>{
@@ -75,6 +82,7 @@ router.post('/otp',(req,res)=>{
  })
 })
 router.post('/login',sessionverify,(req,res)=>{
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
 userLogin(req.body).then(()=>{
   req.session.loggedIn=true

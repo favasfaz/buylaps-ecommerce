@@ -1,7 +1,10 @@
-const { reject } = require('bcrypt/promises')
+const { reject, use } = require('bcrypt/promises')
 const async = require('hbs/lib/async')
 var adminModel = require('../Model/admin-schema')
+var Product = require('../Model/product-schema')
 var userModel = require('../Model/user-schema')
+var fs = require('fs')
+const { resolve } = require('path')
 
 const adminLogin =(data) =>{
     return new Promise(async(resolve,reject)=>{
@@ -19,7 +22,7 @@ const adminLogin =(data) =>{
         }
     })
 }
-const addingUser = (data) =>{
+const addingProduct = (data) =>{
     return new Promise(async(resolve,reject)=>{
         const user = await userModel.findOne({email:data.email})
         if(user){
@@ -45,7 +48,7 @@ const addingUser = (data) =>{
 }
 const allUsers=()=>{
     return new Promise(async(resolve,reject)=>{
-        const user=await userModel.find({})
+        const user=await userModel.find({}).lean()
         resolve(user)
     })
 }
@@ -67,20 +70,111 @@ const editingUser =(data,id)=>{
     return new Promise(async(resolve,reject)=>{
         const user = await userModel.findOne({email:id})
         if(user){
-            const exist= await userModel.findOne({email:data.email})
-            if(exist){
-                reject({msg:'email is already exist'})
-            }else{
-                if(data.password.length<4 || data.password!=data.cpassword){
-                    reject({msg:'password is too short OR password is mustbe atleast 4'})
-                }else{
-                    await userModel.findOneAndUpdate({email:id},{$set:{email:data.email,password:data.password,fName:data.fName,lName:data.lName}})
+            await userModel.findOneAndUpdate({email:id},{$set:{fName:data.fName,lName:data.lName}})
                     resolve()
-                }
-            }
         }
         
     })
 
 }
-module.exports={adminLogin,addingUser,allUsers,deleteUser,findingUser,editingUser}
+const blockUser =(data)=>{
+return new Promise(async(resolve,reject)=>{
+const user = await userModel.findOneAndUpdate({email:data},{$set:{status:false}})
+resolve()
+})
+}
+const unBlockUser =(data)=>{
+    console.log(data);
+    return new Promise(async(resolve,reject)=>{
+    const user = await userModel.findOneAndUpdate({email:data},{$set:{status:true}})
+    resolve()
+    })
+    }
+
+
+    const uploadFiles = (data,img1,img2)=>{
+        return new Promise(async(resolve,reject)=>{
+            if(!img2){
+                reject({msg:'Please upload files'})
+            }
+            else{
+                let newUpload =await new Product({
+                            images: {img1,img2},
+                            productName:data.productName,
+                            price:data.price,
+                            stock:data.stock,
+                            description:data.description,
+                            category:data.category,
+                            brand:data.brand,
+                            shippingCost:data.shippingCost,
+                            discount:data.discount,
+                            os:data.os,
+                            processor:data.processor,
+                            memory:data.memory,
+                            hardDrive:data.hardDrive,
+                            color:data.color
+                          })
+                        await newUpload.save((err,result)=>{
+                          if(err){
+                              console.log(err);
+                              reject({msg:'somthing went wrong'})
+                          }else{
+                    
+                              resolve({data:result,msg:'success'})
+                          }
+                    
+                    })
+                          }
+        })
+    }
+    const viewProducts= () =>{
+        return new Promise(async(resolve,reject)=>{
+            const product=await Product.find({}).lean()
+            resolve(product)
+        })
+    }
+
+    const deleteProducts=(id)=>{
+return new Promise(async(resolve,reject)=>{
+ await Product.findOneAndDelete({product:id})
+ resolve()
+})
+    }
+
+    const productDetails =(id)=>{
+        return  new Promise(async(resolve,reject)=>{
+            const product=await Product.findOne({productName:id}).lean()
+            resolve(product)
+        })
+    } 
+
+   const editedProduct =(data,img1,img2,id)=>{
+       return new Promise(async(resolve)=>{
+           const product = await Product.findOneAndUpdate({productName:id},{
+            $set:{
+            images: {img1,img2},
+            productName:data.productName,
+            price:data.price,
+            stock:data.stock,
+            description:data.description,
+            category:data.category,
+            brand:data.brand,
+            shippingCost:data.shippingCost,
+            discount:data.discount,
+            os:data.os,
+            processor:data.processor,
+            memory:data.memory,
+            hardDrive:data.hardDrive,
+            color:data.color
+            }
+           })
+           resolve()
+       })
+   }
+
+
+module.exports={adminLogin,addingProduct,allUsers,deleteUser,findingUser,editingUser,
+    blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails,editedProduct}
+
+
+
