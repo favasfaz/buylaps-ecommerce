@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
  var Model = require('../Model/user-schema');
-var {doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
+var {deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
 var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
 const { Router } = require('express');
-var {verifyToken,verifyUser,sessionverify} = require('../middlewares/auth')
+var {verifyToken,verifyUser,sessionverify,sessionverify2} = require('../middlewares/auth');
+const { productDetails } = require('../Calls/adminCalls');
+const async = require('hbs/lib/async');
 
 /* GET users listing. */
 
@@ -35,11 +37,23 @@ function authenticateToken(req, res, next) {
 
 router.get('/', function(req, res) {
    user = req.session.user
-  console.log(user);
- res.render('user/userhome',{user});
+   let count = null
+   productDetail().then(async(product)=>{
+     if(req.session.user){
+     await getCartCount(req.session.user).then((count)=>{
+        res.render('user/userhome',{user,product,count})
+      })
+     }else{
+      res.render('user/userhome',{user,product});
+     }
+    }).catch((err)=>{
+      productDetail().then(async(product)=>{
+        res.render('user/userhome',{user,product});
+      }) 
+   })
 });
 router.get('/otp',sessionverify,(req,res)=>{
-  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0,post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
   user =req.session.user
   res.render('user/otp',{user,Err:req.session.otpErr})
@@ -85,6 +99,7 @@ router.post('/login',sessionverify,(req,res)=>{
   res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
 userLogin(req.body).then(()=>{
+  console.log('opppppppppppp');
   req.session.loggedIn=true
   req.session.user=req.body
   res.redirect('/users')
@@ -103,14 +118,7 @@ getAccount(req.params.id).then((data)=>{
 
 })
 })
-router.get('/cart',verifyToken,(req,res)=>{
-  // res.render('user/cart')
-  try {
-    res.render('user/cart')
-  } catch (err) {
-    res.render('user/login')
-  }
-})
+
 router.get('/logout',(req,res)=>{
   req.session.destroy()
   res.clearCookie('token')
@@ -192,5 +200,51 @@ console.log(req.session.forgotErr);
       res.redirect('/users/otp')
     })
   })
+  // -.------------------------------------------------ewr-------------------------------
+  
+
+  router.get('/add-to-cart/:id',(req,res)=>{
+    let id = req.params.id
+    addingToCart(id,req.session.user).then(()=>{
+      getCartCount(req.session.user).then((count)=>{
+        res.json({status:true,count})
+      })
+     // res.redirect('/users')
+    })
+  })
+  router.get('/cart',sessionverify2,async(req,res)=>{
+     let data=await getCartItems(req.session.user)
+      let count = await getCartCount(req.session.user)
+        if(data && count){
+          let product=data.product 
+       res.render('user/cart',{product,count})
+        }else{
+          res.render('user/cart')
+        }
+  })
+  router.get('/productZoom/:id',(req,res)=>{
+    let id =req.params.id
+    console.log(id);
+    productDetails(id).then((data)=>{
+      res.render('user/productZoom',{data})
+   })
+  })
+  router.post('/decProduct/:id',(req,res)=>{
+    let id=req.params.id
+    console.log('llllllllllllllll');
+    console.log(id);
+    decProduct(id,req.session.user).then(()=>{
+      res.json({status:true})
+    })
+  })
+  router.get('/delete-cart/:id',(req,res)=>{
+    console.log(req.params.id);
+    deleteCart(req.params.id,req.session.user).then(()=>{
+      res.json({status:true})
+    //  res.redirect('/users/cart')
+    })
+  })
 
 module.exports = router;
+
+

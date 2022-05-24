@@ -31,6 +31,10 @@ create :{
 status:{
   type: Boolean,
   default:true
+},
+phone:{
+  type:Number,
+  required:true,
 }
 });
 

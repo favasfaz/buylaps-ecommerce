@@ -6,6 +6,10 @@ const res = require('express/lib/response')
 const { model } = require('mongoose')
 const bcrypt = require('bcrypt')
 const { reject } = require('bcrypt/promises')
+const Product =require('../Model/product-schema')
+const Cart = require('../Model/cart-schema')
+var objectId = require('objectid')
+const { adminLogin } = require('./adminCalls')
 
 var otpCode =  Math.floor(1000 + Math.random() * 9999)
 
@@ -97,7 +101,8 @@ var  OTP=otpCode
                 lName:userdata.lName,
                 fName:userdata.fName,
                 email:userdata.email,
-                password: userdata.password
+                password: userdata.password,
+                phone:userdata.phone
             })  
             await newUser.save(async(err,result)=>{
                     if(err){
@@ -142,7 +147,7 @@ const userLogin = (data)=>{
 }
 const getAccount =(data)=>{
 return new Promise(async(resolve,reject)=>{
-const product = await Model.findOne({email:data})
+const product = await Model.findOne({email:data}).lean()
 resolve(product)
 })
 }
@@ -238,7 +243,108 @@ return new Promise(async(resolve,reject)=>{
    }
 })
 }
-module.exports={doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend}
+
+ const productDetail=()=>{
+     return new Promise(async(resolve,reject)=>{
+         const product =await Product.find({}).lean()
+         resolve(product)
+     })
+ }
+ 
+const addingToCart=(id,data)=>{
+    return new Promise(async(resolve,reject)=>{
+      console.log(id);
+        let userCart= await Cart.findOne({userId:data.email})
+        let products=await Product.findOne({_id:id})
+    
+    
+    if(userCart){
+                let exist=userCart.product.findIndex(product=>product.productId==id)
+                if(exist!=-1){
+                    await Cart.updateOne({'product.productId':id},{$inc:{'product.$.quantity':1}})
+                   
+                    resolve()
+                }else{
+                await Cart.findOneAndUpdate({userId:data.email},{$push:{product:{productId:id,quantity:1,name:products.productName,price:products.price,brand:products.brand,image:products.images[0].img1}}})
+                resolve()
+            }
+        }else{
+            let newCart= new Cart({
+                userId:data.email,
+                product:{productId:id,quantity:1,name:products.productName,price:products.price,brand:products.brand,image:products.images[0].img1},
+                total:products.price
+            })
+             newCart.save(async(err,data)=>{
+                if(err){
+                    console.log(err);
+                    reject({msg:'something went wrong'})
+                }
+                else{
+                    resolve()
+                }
+            })
+        } 
+      })
+}
+
+const getCartItems=(data)=>{
+    console.log(data.email);
+    return new Promise(async(resolve,reject)=>{
+      const user= await Cart.findOne({userId:data.email}).lean()
+      resolve(user)
+    })
+}
+
+const productDetails =(id)=>{
+    return  new Promise(async(resolve,reject)=>{
+        const product=await Product.findOne({productName:id}).lean()
+        resolve(product)
+    })
+} 
+
+const getCartCount = (data)=>{
+    console.log(data);
+return new Promise(async(resolve,reject)=>{
+    const cart = await Cart.findOne({userId:data.email})
+    console.log(cart);
+    if(cart){
+         count=  cart.product.length
+          console.log(count);
+          resolve(count)
+    }
+    else{
+        let count=0
+        resolve(count)
+    }
+})
+}
+const decProduct=(id,data)=>{
+    return new Promise(async(resolve,reject)=>{
+        let userCart= await Cart.findOne({userId:data.email})
+        let products=await Product.findOne({_id:id})
+        if(userCart){
+            let exist=userCart.product.findIndex(product=>product.productId==id)
+                    if(exist!=-1){
+                        await Cart.updateOne({'product.productId':id},{$inc:{'product.$.quantity':-1}})
+                        resolve()
+                    }
+        }
+    })
+}
+const deleteCart =(id,data)=>{
+    console.log(id);
+    return new Promise(async(resolve,reject)=>{
+        let userCart= await Cart.findOne({userId:data.email})
+        
+        if(userCart){
+            // let exist= userCart.product.findIndex(product=>product.productId==id)
+            await Cart.findOneAndUpdate({userId:data.email},{$pull:{product:{productId:id }}})     
+            resolve()
+
+        }
+    })
+}
+module.exports={deleteCart,decProduct,getCartCount,productDetails,doSignup,getCartItems,addingToCart,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend,productDetail}
 
 
 

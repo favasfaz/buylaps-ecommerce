@@ -38,5 +38,14 @@ const sessionverify =(req,res,next)=>{
 
   }
 }
+const sessionverify2 =(req,res,next)=>{
+ 
+  if(req.session.loggedIn){
+    next()
+  }else{
+    res.redirect('/users/login')
 
-module.exports = {verifyToken,verifyUser,sessionverify};
+  }
+}
+
+module.exports = {verifyToken,verifyUser,sessionverify,sessionverify2};

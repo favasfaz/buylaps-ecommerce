@@ -1,19 +1,32 @@
 var express = require('express');
 var router = express.Router();
-var {adminLogin,addingProduct,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails} = require('../Calls/adminCalls')
+var {addCategory,getCategory,adminLogin,addingProduct,totalUsers,totalProducts,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails} = require('../Calls/adminCalls')
 var multer = require('multer')
 var storage = require('../uploadMiddleware/multer');
 const async = require('hbs/lib/async');
 const fs = require('fs');
 const { route } = require('../app');
+var flash =require('connect-flash');
+const session = require('express-session');
+const category = require('../Model/category-schema');
+
 
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('admin/login', {err:req.session.adminLoginErr });
+  if(req.session.loggedIn){
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
+    res.render('admin/index')
+  }else{
+    res.render('admin/login', {err:req.session.adminLoginErr });
+    req.session.adminLoginErr=''
+  }
 });
 router.post('/login',(req,res)=>{
  adminLogin(req.body).then(()=>{
+   req.session.loggedIn=true
+   req.session.admin=req.body
    res.render('admin/index')
  }).catch((err)=>{
    req.session.adminLoginErr=err.msg
@@ -22,8 +35,11 @@ router.post('/login',(req,res)=>{
 })
 router.get('/viewUser',(req,res)=>{
   allUsers().then((data)=>{
-    res.render('admin/viewUser',{'user':data,err:req.session.deleteErr})
-    req.session.deleteErr=''
+    totalUsers().then((count)=>{
+      res.render('admin/viewUser',{'user':data,err:req.session.deleteErr,count})
+      req.session.deleteErr=''
+    })
+   
   })
 })
 // router.get('/addProduct',(req,res)=>{
@@ -58,7 +74,6 @@ router.get('/deleteUser/:id',(req,res)=>{
 router.post('/adminAdded/:id',(req,res)=>{
   let id=req.params.id
 editingUser(req.body,id).then(()=>{
-  console.log('success');
 res.redirect('/viewUser')
 }).catch((err)=>{
 req.session.editErr=err.msg
@@ -79,8 +94,10 @@ router.get('/unBlockUser/:id',(req,res)=>{
 })
 router.get('/viewProducts',(req,res)=>{
   viewProducts().then((data)=>{
-    console.log(data);
-    res.render('admin/viewProducts',{data:data})
+    totalProducts().then((count)=>{
+      const alert= req.flash('msg')
+      res.render('admin/viewProducts',{data,count,alert})
+    })
   }).catch((err)=>{
 
   })
@@ -88,7 +105,12 @@ router.get('/viewProducts',(req,res)=>{
   })
 
 router.get('/addProducts',(req,res)=>{
-  res.render('admin/addProducts')
+  getCategory().then((data)=>{
+    console.log(data);
+    alert=req.flash('msg')
+    res.render('admin/addProducts',{data,alert})
+  })
+  
 })
 router.post('/addProduct',storage.fields([{name:'images',maxCount:1},{name:'images1',maxCount:1}]),async(req,res)=>{
   console.log('mmmmmmmmmmmmmm');
@@ -97,8 +119,8 @@ router.post('/addProduct',storage.fields([{name:'images',maxCount:1},{name:'imag
   console.log(img1,img2);
   const files=req.files.filename
    uploadFiles(req.body,img1,img2).then((data)=>{
+     req.flash('msg','Successfully Product Added')
 res.redirect('/addProducts')
-      console.log('sssssssssss');
   }).catch((err)=>{
     res.redirect('/addProducts')
   })
@@ -115,20 +137,43 @@ router.get('/deleteProduct/:id',(req,res)=>{
  router.get('/editProduct/:id',(req,res)=>{
   let id= req.params.id
    productDetails(id).then((data)=>{
-     console.log(data);
-     res.render('admin/editProducts',{data})
+    getCategory().then((Category)=>{
+       res.render('admin/editProducts',{data,Category})
+    })
    })
  })
  router.post('/editedProduct/:id',storage.fields([{name:'images',maxCount:1},{name:'images1',maxCount:1}]),(req,res)=>{
-  console.log('success');
-  let img1=req.files.images[0].filename
-
-  let img2 = req.files.images1[0].filename
+  let img1=req.files.images?req.files.images[0].filename:req.body.image1
+  let img2=req.files.images1?req.files.images1[0].filename:req.body.image2
   let id = req.params.id
   console.log(img1,img2);
   editedProduct(req.body,img1,img2,id).then(()=>{
+    req.flash('msg','Successfully Product Edited')
     res.redirect('/viewProducts')
   })
  })
+
+router.get('/productZoom/:id',(req,res)=>{
+  let id =req.params.id
+  productDetails(id).then((data)=>{
+    res.render('admin/productZoom',{data})
+ })
+})
+router.get('/category',(req,res)=>{
+
+  getCategory().then((data)=>{
+
+  res.render('admin/category',{data,err:session.categoryErr})
+  })
+})
+router.post('/addCategory',(req,res)=>{
+  console.log(req.body);
+  addCategory(req.body).then(()=>{
+    res.redirect('/category')
+  }).catch((err)=>{
+    req.session.categoryErr=err.msg
+    res.redirect('/category')
+  })
+})
 
 module.exports = router;

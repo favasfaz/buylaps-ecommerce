@@ -8,12 +8,14 @@ var mongodb = require('./connection/config')
 var session = require('express-session')
 var hbs = require ('express-handlebars')
 var bodyParser = require('body-parser')
+var flash =require('connect-flash')
 
 
 var adminRouter = require('./routes/admin');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(express.json())
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,8 +33,9 @@ app.use(session({
   resave:true,
   saveUninitialized: true,
   secret: 'secretkey',
-  cookie:{maxAge:60000}
+  cookie:{maxAge:600000}
 }))
+app.use(flash())
 
 app.use('/', adminRouter);
 app.use('/users', usersRouter);

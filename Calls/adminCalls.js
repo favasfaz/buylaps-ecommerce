@@ -5,6 +5,8 @@ var Product = require('../Model/product-schema')
 var userModel = require('../Model/user-schema')
 var fs = require('fs')
 const { resolve } = require('path')
+const res = require('express/lib/response')
+const category = require('../Model/category-schema')
 
 const adminLogin =(data) =>{
     return new Promise(async(resolve,reject)=>{
@@ -171,10 +173,46 @@ return new Promise(async(resolve,reject)=>{
            resolve()
        })
    }
+const totalProducts =()=>{
+    return new Promise(async(resolve,reject)=>{
+        const total = await Product.find().count()
+        resolve(total)
+    })
+}
+const totalUsers =()=>{
+    return new Promise(async(resolve,reject)=>{
+        const total = await userModel.find().count()
+        resolve(total)
+    })
+}
+const getCategory=()=>{
+    return new Promise(async(resolve,reject)=>{
+        categories=await category.find({}).lean()
+        resolve(categories)
+    })
+}
+const addCategory=(data)=>{
+    return new Promise(async(resolve,reject)=>{
+            isCategory=await category.findOne({name:data.category})
+            if(isCategory){
+                reject({status:false,msg:'added category already exist'})
+            }else{
+                const newcategory = await category({
+                    name:data.category,
+                })
+                await newcategory.save((err,data)=>{
+                    if(err){
+                        console.log(err);
+                        reject({msg:'something went wrong'})
+                    }
+                })
+                resolve()
+            }
+    })
+}
 
-
-module.exports={adminLogin,addingProduct,allUsers,deleteUser,findingUser,editingUser,
-    blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails,editedProduct}
+module.exports={addCategory,getCategory,adminLogin,addingProduct,allUsers,deleteUser,findingUser,editingUser,totalUsers,
+    blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails,editedProduct,totalProducts}
 
 
 
