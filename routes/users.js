@@ -1,13 +1,14 @@
 var express = require('express');
 var router = express.Router();
  var Model = require('../Model/user-schema');
-var {deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
+var {firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
 var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
 const { Router } = require('express');
-var {verifyToken,verifyUser,sessionverify,sessionverify2} = require('../middlewares/auth');
+var {verifyToken,sessionverify,sessionverify2} = require('../middlewares/auth');
 const { productDetails } = require('../Calls/adminCalls');
 const async = require('hbs/lib/async');
+const res = require('express/lib/response');
 
 /* GET users listing. */
 
@@ -39,16 +40,19 @@ router.get('/', function(req, res) {
    user = req.session.user
    let count = null
    productDetail().then(async(product)=>{
+    let firsttwo=await firstTwo()
+    console.log(firsttwo);
      if(req.session.user){
      await getCartCount(req.session.user).then((count)=>{
-        res.render('user/userhome',{user,product,count})
+      
+        res.render('user/userhome',{user,product,count,firsttwo})
       })
      }else{
-      res.render('user/userhome',{user,product});
+      res.render('user/userhome',{user,product,firsttwo});
      }
     }).catch((err)=>{
       productDetail().then(async(product)=>{
-        res.render('user/userhome',{user,product});
+        res.render('user/userhome',{user,product,firsttwo});
       }) 
    })
 });
@@ -74,8 +78,11 @@ router.get('/signed',(req, res)=> {
 });
 router.post('/register',(req,res)=>{
 doSignup(req.body).then((data)=>{
+  
   // req.session.loggedIn=true
+  
  req.session.user=req.body
+ req.session.otp=data.otpCode
   // req.session.user=data
 res.redirect('/users/otp')
 }).catch((err)=>{
@@ -86,7 +93,7 @@ res.redirect('/users/register')
 router.post('/otp',sessionverify,(req,res)=>{
   res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
- registeringUser(req.session.user,req.body).then((data)=>{
+ registeringUser(req.session.user,req.body,req.session.otp).then((data)=>{
    req.session.loggedIn=true
   res.cookie('token',data.token,{httpOnly:true})
   res.redirect('/users')
@@ -99,7 +106,6 @@ router.post('/login',sessionverify,(req,res)=>{
   res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
 userLogin(req.body).then(()=>{
-  console.log('opppppppppppp');
   req.session.loggedIn=true
   req.session.user=req.body
   res.redirect('/users')
@@ -196,14 +202,15 @@ console.log(req.session.forgotErr);
   
   router.get('/reSend/:id',(req,res)=>{
     let id =req.params.id
-    reSend(id).then(()=>{
+    reSend(id).then((data)=>{
+      req.session.otp=data.otpCode
       res.redirect('/users/otp')
     })
   })
   // -.------------------------------------------------ewr-------------------------------
   
 
-  router.get('/add-to-cart/:id',(req,res)=>{
+  router.get('/add-to-cart/:id',sessionverify2,(req,res)=>{
     let id = req.params.id
     addingToCart(id,req.session.user).then(()=>{
       getCartCount(req.session.user).then((count)=>{
@@ -215,9 +222,11 @@ console.log(req.session.forgotErr);
   router.get('/cart',sessionverify2,async(req,res)=>{
      let data=await getCartItems(req.session.user)
       let count = await getCartCount(req.session.user)
+      let total = await totalAmount(req.session.user)
+     
         if(data && count){
           let product=data.product 
-       res.render('user/cart',{product,count})
+       res.render('user/cart',{product,count,total})
         }else{
           res.render('user/cart')
         }
@@ -229,11 +238,11 @@ console.log(req.session.forgotErr);
       res.render('user/productZoom',{data})
    })
   })
-  router.post('/decProduct/:id',(req,res)=>{
-    let id=req.params.id
+  router.post('/decProduct',(req,res)=>{
+    
     console.log('llllllllllllllll');
-    console.log(id);
-    decProduct(id,req.session.user).then(()=>{
+   
+    decProduct(req.body,req.session.user).then(()=>{
       res.json({status:true})
     })
   })
@@ -244,6 +253,12 @@ console.log(req.session.forgotErr);
     //  res.redirect('/users/cart')
     })
   })
+  router.post('/addProductCount',(req,res)=>{
+    addProductCount(req.body,req.session.user).then(()=>{
+      res.json({status:true})
+    })
+  })
+  
 
 module.exports = router;
 

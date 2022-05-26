@@ -36,14 +36,14 @@
                       <h6 class="text-black mb-0">{{this.brand}}</h6>
                     </div>
                     <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                      <button class="btn btn-link px-2" onclick="decProduct('{{this.productId}}')">
+                      <button class="btn btn-link px-2" onclick="decProduct('{{this.productId}}','{{this.quantity}}')">
                         -
                       </button>
 
                       <input id="form1" min="1" name="quantity" value="{{this.quantity}}" type="number"
                         class="form-control form-control-sm" />
 
-                      <button class="btn btn-link px-2" onclick="addToCart('{{this.productId}}')">
+                      <button class="btn btn-link px-2" onclick="addProductCount('{{this.productId}}','{{this.quantity}}')">
                         +
                       </button>
                     </div>
@@ -64,7 +64,7 @@
 
                  
 
-                  <hr class="my-4">
+                  
 
                   <div class="pt-5">
                     <h6 class="mb-0"><a href="/users" class="text-body"><i
@@ -79,7 +79,7 @@
 
                   <div class="d-flex justify-content-between mb-4">
                     <h5 class="text-uppercase">items {{count}}</h5>
-                    <h5>€ 132.00</h5>
+                    <h5></h5>
                   </div>
 
                   <h5 class="text-uppercase mb-3">Shipping</h5>
@@ -102,11 +102,13 @@
                     </div>
                   </div>
 
-                  <hr class="my-4">
+                
 
                   <div class="d-flex justify-content-between mb-5">
                     <h5 class="text-uppercase">Total price</h5>
-                    <h5>€ 137.00</h5>
+                    {{#each total}}
+                    <h5>${{this.total}}</h5>
+                    {{/each}}
                   </div>
 
                   <button type="button" class="btn btn-dark btn-block btn-lg"

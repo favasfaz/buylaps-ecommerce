@@ -7,6 +7,9 @@ var fs = require('fs')
 const { resolve } = require('path')
 const res = require('express/lib/response')
 const category = require('../Model/category-schema')
+var jwt = require ('jsonwebtoken')
+const Brand = require('../Model/brand-schema')
+
 
 const adminLogin =(data) =>{
     return new Promise(async(resolve,reject)=>{
@@ -15,7 +18,9 @@ const adminLogin =(data) =>{
         console.log(user);
         if(user){
                 if(user.password==data.password){
-                        resolve()
+                    let token = jwt.sign({_id:this._id},'secret',{expiresIn:300})
+                    console.log(token);
+                        resolve({status:true,token})
                 }else{
                     reject({msg:'check your password'})
                 }
@@ -94,14 +99,14 @@ const unBlockUser =(data)=>{
     }
 
 
-    const uploadFiles = (data,img1,img2)=>{
+    const uploadFiles = (data,img1,img2,img3)=>{
         return new Promise(async(resolve,reject)=>{
             if(!img2){
                 reject({msg:'Please upload files'})
             }
             else{
                 let newUpload =await new Product({
-                            images: {img1,img2},
+                            images: {img1,img2,img3},
                             productName:data.productName,
                             price:data.price,
                             stock:data.stock,
@@ -150,11 +155,11 @@ return new Promise(async(resolve,reject)=>{
         })
     } 
 
-   const editedProduct =(data,img1,img2,id)=>{
+   const editedProduct =(data,img1,img2,img3,id)=>{
        return new Promise(async(resolve)=>{
            const product = await Product.findOneAndUpdate({productName:id},{
             $set:{
-            images: {img1,img2},
+            images: {img1,img2,img3},
             productName:data.productName,
             price:data.price,
             stock:data.stock,
@@ -210,8 +215,33 @@ const addCategory=(data)=>{
             }
     })
 }
+const addBrand=(data)=>{
+    return new Promise(async(resolve,reject)=>{
+        const brand= await Brand.findOne({name:data.brand})
+        if(brand){
+            reject({msg:'entered brand is already in list'})
+        }
+        else{
+            const newBrand= await Brand({
+                name:data.brand
+            })
+            await newBrand.save((err,data)=>{
+                if(err){
+                    reject({msg:'something went wrong'})
+                }
+            })
+            resolve()
+        }
+    })
+}
+const getBrand=()=>{
+    return new Promise(async(resolve,reject)=>{
+         allBrands= await Brand.find({}).lean()
+        resolve(allBrands)
+    })
+}
 
-module.exports={addCategory,getCategory,adminLogin,addingProduct,allUsers,deleteUser,findingUser,editingUser,totalUsers,
+module.exports={getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,allUsers,deleteUser,findingUser,editingUser,totalUsers,
     blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails,editedProduct,totalProducts}
 
 

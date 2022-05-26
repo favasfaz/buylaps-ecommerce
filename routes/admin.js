@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var {addCategory,getCategory,adminLogin,addingProduct,totalUsers,totalProducts,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails} = require('../Calls/adminCalls')
+var {getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,totalUsers,totalProducts,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails} = require('../Calls/adminCalls')
 var multer = require('multer')
 var storage = require('../uploadMiddleware/multer');
 const async = require('hbs/lib/async');
@@ -14,7 +14,8 @@ const category = require('../Model/category-schema');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  if(req.session.loggedIn){
+  let token = req.cookies.adminToken
+  if(token){
     res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
     res.render('admin/index')
@@ -24,7 +25,9 @@ router.get('/', function(req, res, next) {
   }
 });
 router.post('/login',(req,res)=>{
- adminLogin(req.body).then(()=>{
+ adminLogin(req.body).then((data)=>{
+   console.log(data.token);
+  res.cookie('adminToken',data.token,{httpOnly:true})
    req.session.loggedIn=true
    req.session.admin=req.body
    res.render('admin/index')
@@ -106,19 +109,23 @@ router.get('/viewProducts',(req,res)=>{
 
 router.get('/addProducts',(req,res)=>{
   getCategory().then((data)=>{
-    console.log(data);
-    alert=req.flash('msg')
-    res.render('admin/addProducts',{data,alert})
+    getBrand().then((allBrands)=>{
+      alert=req.flash('msg')
+      res.render('admin/addProducts',{data,allBrands,alert})
+    })
+   
   })
   
 })
-router.post('/addProduct',storage.fields([{name:'images',maxCount:1},{name:'images1',maxCount:1}]),async(req,res)=>{
+router.post('/addProduct',storage.fields([{name:'images',maxCount:1},{name:'images1',maxCount:1},{name:'images2',maxCount:1}]),async(req,res)=>{
   console.log('mmmmmmmmmmmmmm');
   let img1=req.files.images[0].filename
   let img2 = req.files.images1[0].filename
+  let img3 = req.files.images2[0].filename
+
   console.log(img1,img2);
   const files=req.files.filename
-   uploadFiles(req.body,img1,img2).then((data)=>{
+   uploadFiles(req.body,img1,img2,img3).then((data)=>{
      req.flash('msg','Successfully Product Added')
 res.redirect('/addProducts')
   }).catch((err)=>{
@@ -138,16 +145,21 @@ router.get('/deleteProduct/:id',(req,res)=>{
   let id= req.params.id
    productDetails(id).then((data)=>{
     getCategory().then((Category)=>{
-       res.render('admin/editProducts',{data,Category})
+      getBrand().then((allBrands)=>{
+    
+       res.render('admin/editProducts',{data,Category,allBrands})
+      })
     })
    })
  })
- router.post('/editedProduct/:id',storage.fields([{name:'images',maxCount:1},{name:'images1',maxCount:1}]),(req,res)=>{
+ router.post('/editedProduct/:id',storage.fields([{name:'images',maxCount:1},{name:'images1',maxCount:1},{name:'images2',maxCount:1}]),(req,res)=>{
   let img1=req.files.images?req.files.images[0].filename:req.body.image1
   let img2=req.files.images1?req.files.images1[0].filename:req.body.image2
+  let img3=req.files.images2?req.files.images1[0].filename:req.body.image3
+
   let id = req.params.id
   console.log(img1,img2);
-  editedProduct(req.body,img1,img2,id).then(()=>{
+  editedProduct(req.body,img1,img2,img3,id).then(()=>{
     req.flash('msg','Successfully Product Edited')
     res.redirect('/viewProducts')
   })
@@ -162,8 +174,10 @@ router.get('/productZoom/:id',(req,res)=>{
 router.get('/category',(req,res)=>{
 
   getCategory().then((data)=>{
-
-  res.render('admin/category',{data,err:session.categoryErr})
+    getBrand().then((allBrands)=>{
+      console.log(allBrands);
+  res.render('admin/category',{data,allBrands,categoryErr:req.session.categoryErr,brandErr:req.session.brandErr})
+ })
   })
 })
 router.post('/addCategory',(req,res)=>{
@@ -172,6 +186,19 @@ router.post('/addCategory',(req,res)=>{
     res.redirect('/category')
   }).catch((err)=>{
     req.session.categoryErr=err.msg
+    res.redirect('/category')
+  })
+})
+router.get('/logout',(req,res)=>{
+  req.session.destroy()
+  res.clearCookie('adminToken')
+res.redirect('/')
+})
+router.post('/addBrand',(req,res)=>{
+  addBrand(req.body).then(()=>{
+    res.redirect('/category')
+  }).catch((err)=>{
+    req.session.brandErr=err.msg
     res.redirect('/category')
   })
 })

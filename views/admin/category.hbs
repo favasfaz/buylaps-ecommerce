@@ -105,8 +105,8 @@
                 <!-- Form controls -->
 					 <div class="container">
 					 
-				     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"></span> View Users</h4>
-					 <h4>totolUsers:{{count}}</h4>
+				     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"></span> View Categories</h4>
+					 <h4>total Categories:{{count}}</h4>
 <div class="row">
 	<div class="col-lg-10">
 		<div class="main-box clearfix">
@@ -148,7 +148,9 @@
 			</ul>
 		</div>
 	</div>
+
     <div class="col-lg-2">
+      <p>{{categoryErr}}</p>
         <form action="/addCategory" method="post">
             <input type="text" name="category" placeholder="add new category">
             <input type="submit" class="btn btn-success mt-4" value="add Category">
@@ -157,6 +159,61 @@
 </div>
 </div>
 
+
+	 <div class="container">
+					 
+				     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"></span> View Brands</h4>
+					 <h4>totalBrands:{{count}}</h4>
+<div class="row">
+	<div class="col-lg-10">
+		<div class="main-box clearfix">
+			<div class="table-responsive">
+				<table class="table user-list">
+					<thead>
+						<tr>
+							<th><span>Category</span></th>
+							<th><span>Created</span></th>
+								<th><span>Status</span></th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+                        {{#each allBrands}}
+						<tr>
+							<td>
+								<a href="#" class="user-link">{{this.name}}</a>
+							</td>
+							<td>
+								{{this.create}}
+								</td>
+							<td class="text-center">
+								<span class="label label-default">{{this.status}}</span>
+							</td>
+						</tr>
+					{{/each}}
+					</tbody>
+				</table>
+			</div>
+			<ul class="pagination pull-right">
+				<li><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+				<li><a href="#">1</a></li>
+				<li><a href="#">2</a></li>
+				<li><a href="#">3</a></li>
+				<li><a href="#">4</a></li>
+				<li><a href="#">5</a></li>
+				<li><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+			</ul>
+		</div>
+	</div>
+    <div class="col-lg-2">
+      <p>{{brandErr}}</p>
+        <form action="/addBrand" method="post">
+            <input type="text" name="brand" placeholder="add new brands">
+            <input type="submit" class="btn btn-success mt-4" value="add Category">
+        </form>
+    </div>
+</div>
+</div>
 
                
                

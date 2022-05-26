@@ -11,13 +11,13 @@ const Cart = require('../Model/cart-schema')
 var objectId = require('objectid')
 const { adminLogin } = require('./adminCalls')
 
-var otpCode =  Math.floor(1000 + Math.random() * 9999)
+// var otpCode =  Math.floor(1000 + Math.random() * 9999)
 
 
 const reSend=(data)=>{
-    console.log("llll");
     console.log(data);
     return new Promise(async(resolve,reject)=>{
+        var otpCode =  Math.floor(1000 + Math.random() * 9999)
         let mailTransporter=nodeMailer.createTransport({
             service:'gmail',
             auth:{
@@ -41,7 +41,7 @@ const reSend=(data)=>{
         })
         console.log(otpCode);
         console.log('lll');
-        resolve({msg:'success' ,data:data})
+        resolve({msg:'success' ,data:data,otpCode:otpCode})
     })
 }
 
@@ -57,6 +57,7 @@ reject({status:false,msg:'password atleast 4 charchters'})
       await  reject({status:false,msg:'Email already taken'})
     }
     else{
+        var otpCode =  Math.floor(1000 + Math.random() * 9999)
         let mailTransporter=nodeMailer.createTransport({
                         service:'gmail',
                         auth:{
@@ -79,8 +80,8 @@ reject({status:false,msg:'password atleast 4 charchters'})
                     
                     })
                     console.log(otpCode);
-                    console.log('lll');
-                    resolve({msg:'success' ,data:data})
+
+                    resolve({msg:'success' ,data:data,otpCode})
      
     }
 } 
@@ -90,13 +91,13 @@ reject({status:false,msg:'password atleast 4 charchters'})
   
 })
 }
-var  OTP=otpCode
- const registeringUser =(userdata,userotp)=>{
+// var  OTP=otpCode
+ const registeringUser =(userdata,userotp,sessionotp)=>{
    return new Promise (async(resolve,reject)=>{
        console.log('re');
-       console.log(OTP);
+       
 
-       if(userotp.otp==OTP){
+       if(userotp.otp==sessionotp){
         const newUser =await new Model({
                 lName:userdata.lName,
                 fName:userdata.fName,
@@ -318,17 +319,20 @@ return new Promise(async(resolve,reject)=>{
     }
 })
 }
-const decProduct=(id,data)=>{
+const decProduct=(data,user)=>{
     return new Promise(async(resolve,reject)=>{
-        let userCart= await Cart.findOne({userId:data.email})
-        let products=await Product.findOne({_id:id})
-        if(userCart){
-            let exist=userCart.product.findIndex(product=>product.productId==id)
+        let userCart= await Cart.findOne({userId:user.email})
+        if(data.quan<=1){
+            resolve()
+        }else{
+             if(userCart){
+            let exist=userCart.product.findIndex(product=>product.productId==data.productId)
                     if(exist!=-1){
-                        await Cart.updateOne({'product.productId':id},{$inc:{'product.$.quantity':-1}})
+                        await Cart.updateOne({'product.productId':data.productId},{$inc:{'product.$.quantity':-1}})
                         resolve()
                     }
-        }
+        }}
+       
     })
 }
 const deleteCart =(id,data)=>{
@@ -344,7 +348,56 @@ const deleteCart =(id,data)=>{
         }
     })
 }
-module.exports={deleteCart,decProduct,getCartCount,productDetails,doSignup,getCartItems,addingToCart,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend,productDetail}
+const addProductCount=(data,user)=>{
+    return new Promise(async(resolve,reject)=>{
+        let userCart= await Cart.findOne({userId:user.email})
+        // let products=await Product.findOne({_id:id})
+        let count= await Cart.aggregate([{$match:{userId:user.email}},{$match:{'product.productId':data.productId}},{$project:{_id:0,quantity:1}}])
+     console.log(count);
+        if(userCart){
+            let exist=userCart.product.findIndex(product=>product.productId==data.productId)
+                    if(exist!=-1){
+                        await Cart.updateOne({'product.productId':data.productId},{$inc:{'product.$.quantity':1}});
+                       
+                        resolve()
+                    }
+        }
+    
+    })
+}
+const firstTwo=()=>{
+    return new Promise(async(resolve,reject)=>{
+       const twoProducts= await Product.find({}).sort({create:-1}).limit(4).lean()
+       resolve(twoProducts)
+})
+}
+const totalAmount=(user)=>{
+    return new Promise(async(resolve,reject)=>{
+        let total = await Cart.aggregate([{
+            $match:{userId:user.email}
+        },{
+            $unwind:'$product'
+        },{
+            $project:{
+                
+                quantity:'$product.quantity',
+                price:'$product.price'
+            }
+        },{
+            $project:{
+                name:1,quantity:1,price:1
+            }
+        },{
+            $group:{
+                _id:null,
+                total:{$sum:{$multiply:['$quantity','$price']}}
+            }
+        }
+    ])
+    resolve(total)
+    })
+}
+module.exports={totalAmount,firstTwo,addProductCount,deleteCart,decProduct,getCartCount,productDetails,doSignup,getCartItems,addingToCart,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend,productDetail}
 
 
 

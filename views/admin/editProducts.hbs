@@ -103,11 +103,13 @@
 
     <div class="col">
       <div class="form-outline">
+                                  <label for="exampleSelectGender1">Product Name</label>
         <input type="text" id="form6Example1" name="productName" value="{{data.productName}}"  class="form-control" />
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                                  <label for="exampleSelectGender1">price</label>
         <input type="text" id="form6Example2" name="price" value="{{data.price}}"  class="form-control" />
       </div>
     </div>
@@ -116,11 +118,13 @@
 
     <div class="col">
       <div class="form-outline">
+                                          <label for="exampleSelectGender1">stock</label>
         <input type="text" id="form6Example1" name="stock" value="{{data.stock}}"  class="form-control" />
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                                                  <label for="exampleSelectGender1">description</label>
         <input type="text" id="form6Example2" name="description" value="{{data.description}}"  class="form-control" />
       </div>
     </div>
@@ -129,17 +133,17 @@
 
     <div class="col">
      <div class="form-group">
-                    
+                                              <label for="exampleSelectGender1">category</label>
                         <select name="category" class="form-control" id="exampleSelectGender1" required>
                           {{#each Category}}
                           <option{{data.category}} >{{this.name}}</option>
                           {{/each}}
                         </select>
-                          <label for="exampleSelectGender1">category</label>
                       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                                  <label for="exampleSelectGender1">os</label>
         <input type="text" id="form6Example2" name="os" value="{{data.os}}"   class="form-control" />
       </div>
     </div>
@@ -147,17 +151,24 @@
     <div class="row mb-4">
 
     <div class="col">
-      <div class="form-outline">
-        <input type="text" id="form6Example1" name="brand" value="{{data.brand}}"  class="form-control" />
-      </div>
+        <div class="form-group">
+                                              <label for="exampleSelectGender1">Brand</label>
+                        <select name="brand" class="form-control" id="exampleSelectGender1" required>
+                          {{#each allBrands}}
+                          <option{{data.brand}} >{{this.name}}</option>
+                          {{/each}}
+                        </select>
+                      </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                                                      <label for="exampleSelectGender1">shippingCost</label>
         <input type="text" id="form6Example2" name="shippingCost" value="{{data.shippingCost}}"  class="form-control" />
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                                                              <label for="exampleSelectGender1">color</label>
         <input type="text" id="form6Example2" name="color" value="{{data.color}}"  class="form-control" />
       </div>
     </div>
@@ -168,18 +179,26 @@
 
     <div class="col">
       <div class="form-outline">
+                                                                      <label for="exampleSelectGender1">processor</label>
         <input type="text" id="form6Example1" name="processor" value="{{data.processor}}"  class="form-control" />
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                                   <label for="exampleSelectGender1">memory</label>
         <input type="text" id="form6Example2" name="memory" value="{{data.memory}}"  class="form-control" />
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                <label class="form-label" for="form6Example2">hardDrive</label>
         <input type="text" id="form6Example2" name="hardDrive"  value="{{data.hardDrive}}" class="form-control" />
-        <label class="form-label" for="form6Example2">hardDrive</label>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-outline">
+                <label class="form-label"  for="form6Example1">Discount</label>
+        <input type="text" id="form6Example1" name="discount" value="{{data.discount}}"  class="form-control" />
       </div>
     </div>
    
@@ -187,12 +206,7 @@
   </div>
   <div class="row mb-4">
 
-    <div class="col">
-      <div class="form-outline">
-        <input type="text" id="form6Example1" name="discount" value="{{data.discount}}"  class="form-control" />
-        <label class="form-label"  for="form6Example1">Discount</label>
-      </div>
-    </div>
+    
     <div class="col">
       <div class="form-outline">
        <input type="text" name="image1" value="{{data.images.[0].img2}}" style="display:none ;">
@@ -206,6 +220,12 @@
            <input type="text" name="image2" value="{{data.images.[0].img1}}" style="display:none ;">
          <img style="height: 70px; " src="/uploads/{{data.images.[0].img1}}" id="img2View"  alt="">
         <input type="file" id="form6Example2" name="images1" onchange="viewImage2(event)"   class="form-control" />
+        <label class="form-label" for="form6Example2">IMAGE2</label>
+      </div>
+       <div class="form-outline">
+           <input type="text" name="image3" value="{{data.images.[0].img3}}" style="display:none ;">
+         <img style="height: 70px; " src="/uploads/{{data.images.[0].img3}}" id="img3View"  alt="">
+        <input type="file" id="form6Example2" name="images2" onchange="viewImage2(event)"   class="form-control" />
         <label class="form-label" for="form6Example2">IMAGE2</label>
       </div>
     </div>
@@ -301,6 +321,9 @@
       }
        function viewImage2(event){
         document.getElementById('img2View').src=URL.createObjectURL(event.target.files[0])
+      }
+        function viewImage3(event){
+        document.getElementById('img3View').src=URL.createObjectURL(event.target.files[0])
       }
 
 

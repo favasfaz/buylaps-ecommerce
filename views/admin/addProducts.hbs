@@ -106,14 +106,14 @@
 
     <div class="col">
       <div class="form-outline">
+                <label class="form-label"  for="form6Example1">Product Name</label>
         <input type="text" id="form6Example1" name="productName"  class="form-control" />
-        <label class="form-label"  for="form6Example1">Product Name</label>
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                <label class="form-label" for="form6Example2">Price</label>
         <input type="text" id="form6Example2" name="price"  class="form-control" />
-        <label class="form-label" for="form6Example2">Price</label>
       </div>
     </div>
   </div>
@@ -121,14 +121,14 @@
 
     <div class="col">
       <div class="form-outline">
+                <label class="form-label"  for="form6Example1">Stock</label>
         <input type="text" id="form6Example1" name="stock"  class="form-control" />
-        <label class="form-label"  for="form6Example1">Stock</label>
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                <label class="form-label" for="form6Example2">Description</label>
         <input type="text" id="form6Example2" name="description"  class="form-control" />
-        <label class="form-label" for="form6Example2">Description</label>
       </div>
     </div>
   </div>
@@ -136,40 +136,43 @@
 
     <div class="col">
      <div class="form-group">
-                    
+                                              <label for="exampleSelectGender1">category</label>
                         <select name="category" class="form-control" id="exampleSelectGender1" required>
                           {{#each data}}
                           <option >{{this.name}}</option>
                           {{/each}}
                         </select>
-                          <label for="exampleSelectGender1">category</label>
                       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                <label class="form-label" for="form6Example2">OS</label>
         <input type="text" id="form6Example2" name="os"  class="form-control" />
-        <label class="form-label" for="form6Example2">OS</label>
       </div>
     </div>
   </div>
     <div class="row mb-4">
 
     <div class="col">
-      <div class="form-outline">
-        <input type="text" id="form6Example1" name="brand"  class="form-control" />
-        <label class="form-label"  for="form6Example1">Brand</label>
-      </div>
+      <div class="form-group">
+                                              <label for="exampleSelectGender1">brand</label>
+                        <select name="brand" class="form-control" id="exampleSelectGender1" required>
+                          {{#each allBrands}}
+                          <option >{{this.name}}</option>
+                          {{/each}}
+                        </select>
+                      </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                <label class="form-label" for="form6Example2">Shipping cost</label>
         <input type="text" id="form6Example2" name="shippingCost"  class="form-control" />
-        <label class="form-label" for="form6Example2">Shipping cost</label>
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                <label class="form-label" for="form6Example2">color</label>
         <input type="text" id="form6Example2" name="color"  class="form-control" />
-        <label class="form-label" for="form6Example2">color</label>
       </div>
     </div>
    
@@ -179,21 +182,18 @@
 
     <div class="col">
       <div class="form-outline">
+                <label class="form-label"  for="form6Example1">Processor</label>
         <input type="text" id="form6Example1" name="processor"  class="form-control" />
-        <label class="form-label"  for="form6Example1">Processor</label>
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                <label class="form-label" for="form6Example2">Memory</label>
         <input type="text" id="form6Example2" name="memory"  class="form-control" />
-        <label class="form-label" for="form6Example2">Memory</label>
       </div>
     </div>
     <div class="col">
-      <div class="form-outline">
-        <input type="text" id="form6Example2" name="hardDrive"  class="form-control" />
-        <label class="form-label" for="form6Example2">hardDrive</label>
-      </div>
+      
     </div>
    
    
@@ -202,20 +202,26 @@
 
     <div class="col">
       <div class="form-outline">
+                <label class="form-label"  for="form6Example1">Discount</label>
         <input type="text" id="form6Example1" name="discount"  class="form-control" />
-        <label class="form-label"  for="form6Example1">Discount</label>
       </div>
     </div>
     <div class="col">
       <div class="form-outline">
+                <label class="form-label" for="form6Example2">IMAGE1</label>
         <input type="file" id="form6Example2" name="images"  class="form-control" required multiple />
-        <label class="form-label" for="form6Example2">IMAGE</label>
       </div>
     </div>
      <div class="col">
       <div class="form-outline">
+                <label class="form-label" for="form6Example2">IMAGE2</label>
         <input type="file" id="form6Example2" name="images1"  class="form-control" required multiple />
-        <label class="form-label" for="form6Example2">IMAGE2</label>
+      </div>
+    </div>
+      <div class="col">
+      <div class="form-outline">
+                <label class="form-label" for="form6Example2">IMAGE3</label>
+        <input type="file" id="form6Example2" name="images2"  class="form-control" required multiple />
       </div>
     </div>
    
