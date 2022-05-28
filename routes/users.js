@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
  var Model = require('../Model/user-schema');
-var {firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
+var {getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
 var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
 const { Router } = require('express');
-var {verifyToken,sessionverify,sessionverify2} = require('../middlewares/auth');
+var {cartverify,verifyToken,sessionverify,sessionverify2} = require('../middlewares/auth');
 const { productDetails } = require('../Calls/adminCalls');
 const async = require('hbs/lib/async');
 const res = require('express/lib/response');
@@ -41,18 +41,18 @@ router.get('/', function(req, res) {
    let count = null
    productDetail().then(async(product)=>{
     let firsttwo=await firstTwo()
-    console.log(firsttwo);
+    let brands =await getBrand()
      if(req.session.user){
      await getCartCount(req.session.user).then((count)=>{
       
-        res.render('user/userhome',{user,product,count,firsttwo})
+        res.render('user/userhome',{user,product,count,firsttwo,brands})
       })
      }else{
-      res.render('user/userhome',{user,product,firsttwo});
+      res.render('user/userhome',{user,product,firsttwo,brands});
      }
     }).catch((err)=>{
       productDetail().then(async(product)=>{
-        res.render('user/userhome',{user,product,firsttwo});
+        res.render('user/userhome',{user,product,firsttwo,brands});
       }) 
    })
 });
@@ -106,6 +106,7 @@ router.post('/login',sessionverify,(req,res)=>{
   res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
 userLogin(req.body).then(()=>{
+  
   req.session.loggedIn=true
   req.session.user=req.body
   res.redirect('/users')
@@ -196,9 +197,7 @@ console.log(req.session.forgotErr);
     })
   })
 
-  router.get('/wishlist',verifyToken,(req,res)=>{
-    res.render('user/wishlist')
-  })
+ 
   
   router.get('/reSend/:id',(req,res)=>{
     let id =req.params.id
@@ -223,10 +222,13 @@ console.log(req.session.forgotErr);
      let data=await getCartItems(req.session.user)
       let count = await getCartCount(req.session.user)
       let total = await totalAmount(req.session.user)
+      let subtotal=await subTotal(req.session.user)
      
         if(data && count){
           let product=data.product 
-       res.render('user/cart',{product,count,total})
+
+         
+       res.render('user/cart',{product,count,total,err:req.session.redeemErr})
         }else{
           res.render('user/cart')
         }
@@ -254,12 +256,63 @@ console.log(req.session.forgotErr);
     })
   })
   router.post('/addProductCount',(req,res)=>{
+    
     addProductCount(req.body,req.session.user).then(()=>{
+    
       res.json({status:true})
     })
   })
-  
+router.get('/getbrand/:id',(req,res)=>{
+  let id=req.params.id
+  getfunction(id).then(()=>{
+    res.redirect('/users')
+  })
+})  
+router.get('/getAll/:id',(req,res)=>{
+  getfunction(req.params.id).then((product)=>{
+    console.log(product);
+    res.json({product})
+  })
+})
 
+router.post('/checkout',(req,res)=>{
+  console.log('sharmaji');
+  checkCoupon(req.body,req.session.user).then(()=>{
+    res.render('user/checkout')
+  }).catch((err)=>{
+    req.session.redeemErr=err.msg
+    res.redirect('/users/cart')
+  })
+})
+router.get('/couponOffer',(req,res)=>{
+  getCoupon().then((data)=>{
+   user=req.session.user
+    res.render('user/couponOffer',{data,user})
+  })
+})
+router.get('/addToWishlist/:id',sessionverify2,(req,res)=>{
+  addToWishList(req.params.id,req.session.user).then((response)=>{
+    getWishlistCount(req.session.user).then((count)=>{
+      console.log('count');
+      console.log(count);
+      res.json(response)
+    })  
+    
+    
+    })
+})
+router.get('/wishlist',sessionverify2,(req,res)=>{
+  getAllWishlist(req.session.user).then((data)=>{
+    if(data){
+      wishProduct=data.product
+      res.render('user/wishlist',{wishProduct})
+    }
+    else{
+      res.render('user/wishlist')
+    }
+   
+  })
+})
 module.exports = router;
 
 

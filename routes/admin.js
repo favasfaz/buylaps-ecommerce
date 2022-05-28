@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var {getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,totalUsers,totalProducts,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails} = require('../Calls/adminCalls')
+var {addCoupon,getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,totalUsers,totalProducts,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails} = require('../Calls/adminCalls')
 var multer = require('multer')
 var storage = require('../uploadMiddleware/multer');
 const async = require('hbs/lib/async');
@@ -18,7 +18,7 @@ router.get('/', function(req, res, next) {
   if(token){
     res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
-    res.render('admin/index')
+    res.render('admin/index',{admin:true})
   }else{
     res.render('admin/login', {err:req.session.adminLoginErr });
     req.session.adminLoginErr=''
@@ -111,7 +111,8 @@ router.get('/addProducts',(req,res)=>{
   getCategory().then((data)=>{
     getBrand().then((allBrands)=>{
       alert=req.flash('msg')
-      res.render('admin/addProducts',{data,allBrands,alert})
+      res.render('admin/addProducts',{data,allBrands,alert,err:req.session.addProductErr})
+      req.session.addProductErr=''
     })
    
   })
@@ -123,12 +124,13 @@ router.post('/addProduct',storage.fields([{name:'images',maxCount:1},{name:'imag
   let img2 = req.files.images1[0].filename
   let img3 = req.files.images2[0].filename
 
-  console.log(img1,img2);
+  console.log(img1,img2,img3);
   const files=req.files.filename
    uploadFiles(req.body,img1,img2,img3).then((data)=>{
      req.flash('msg','Successfully Product Added')
 res.redirect('/addProducts')
   }).catch((err)=>{
+    req.session.addProductErr=err.msg
     res.redirect('/addProducts')
   })
 
@@ -203,4 +205,20 @@ router.post('/addBrand',(req,res)=>{
   })
 })
 
+router.get('/addCoupon',(req,res)=>{
+  alert=req.flash('msg')
+  res.render('admin/coupon',{err:req.session.couponErr,alert})
+  req.session.couponErr=''
+})
+router.post('/addCoupon',(req,res)=>{
+  addCoupon(req.body).then(()=>{
+   
+    req.flash('msg','Successfully Coupon Added')
+    res.redirect('/addCoupon')
+  }).catch((err)=>{
+    req.session.couponErr=err.msg
+    console.log('lllllllllllllllllllllllll');
+    res.redirect('/addCoupon')
+  })
+})
 module.exports = router;

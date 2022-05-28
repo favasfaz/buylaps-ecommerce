@@ -9,7 +9,7 @@ const res = require('express/lib/response')
 const category = require('../Model/category-schema')
 var jwt = require ('jsonwebtoken')
 const Brand = require('../Model/brand-schema')
-
+const Coupon = require('../Model/coupon-schema')
 
 const adminLogin =(data) =>{
     return new Promise(async(resolve,reject)=>{
@@ -101,7 +101,10 @@ const unBlockUser =(data)=>{
 
     const uploadFiles = (data,img1,img2,img3)=>{
         return new Promise(async(resolve,reject)=>{
-            if(!img2){
+          if(data.discount>data.price){
+              reject({msg:'discount price is greater than original price'})
+          }else{
+            if(!img2 ||!img1||!img3){
                 reject({msg:'Please upload files'})
             }
             else{
@@ -132,6 +135,8 @@ const unBlockUser =(data)=>{
                     
                     })
                           }
+                        }
+                        
         })
     }
     const viewProducts= () =>{
@@ -240,8 +245,37 @@ const getBrand=()=>{
         resolve(allBrands)
     })
 }
+const addCoupon=(data)=>{
+    return new Promise(async(resolve,reject)=>{
+            ifExist= await Coupon.findOne({couponCode:data.couponCode})
+            if(ifExist){
+                reject({msg:'coupon code already exist'})
+            }
+            else{
+                if(data.limit<=4){
+                    reject({msg:'coupon limit must be atleast 5'})
+                }
+                else{
+                    const newCoupon= await new Coupon({
+                        couponCodeName:data.CouponName,
+                        couponCode:data.couponCode,
+                        discount:data.discount,
+                        limit:data.limit,
+                        expirationTime:data.expirationTime
+                    })
+                    await newCoupon.save((err,data)=>{
+                        if(err){
+                            reject({msg:'something went wrong'})
+                        }
+                    })
+                    resolve()
+                }
+            }
+    })
+}
 
-module.exports={getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,allUsers,deleteUser,findingUser,editingUser,totalUsers,
+
+module.exports={addCoupon,getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,allUsers,deleteUser,findingUser,editingUser,totalUsers,
     blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails,editedProduct,totalProducts}
 
 

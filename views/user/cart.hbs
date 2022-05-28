@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="/public/stylesheets/cart.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-</head>
+</head> --}}
 <body>
+  
     <section class="h-100 h-custom" style="background-color: #d2c9ff;">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -19,8 +20,9 @@
                 <div class="p-5">
                   <div class="d-flex justify-content-between align-items-center mb-5">
                     <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
-                    <h6 class="mb-0 text-muted">3 items</h6>
+                    <h6 class="mb-0 text-muted">{{count}} items</h6>
                   </div>
+                  <div><a class="btn btn-success" href="/users/couponOffer">Get free Coupon </a></div>
                   <hr class="my-4">
 
                   {{#each product}}
@@ -47,8 +49,9 @@
                         +
                       </button>
                     </div>
+                    
                     <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                      <h6 class="mb-0">{{this.price}}</h6>
+                      <h6 class="mb-0">{{this.total}}</h6>
                     </div>
                     <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                       <a href="#!" class="text-muted"><i class="fas fa-times"></i></a>
@@ -93,14 +96,7 @@
                     </select>
                   </div>
 
-                  <h5 class="text-uppercase mb-3">Give code</h5>
-
-                  <div class="mb-5">
-                    <div class="form-outline">
-                      <input type="text" id="form3Examplea2" class="form-control form-control-lg" />
-                      <label class="form-label" for="form3Examplea2">Enter your code</label>
-                    </div>
-                  </div>
+                  
 
                 
 
@@ -109,10 +105,24 @@
                     {{#each total}}
                     <h5>${{this.total}}</h5>
                     {{/each}}
+                    
                   </div>
 
-                  <button type="button" class="btn btn-dark btn-block btn-lg"
-                    data-mdb-ripple-color="dark">Register</button>
+
+                  <form action="/users/checkout" method="post">
+                      <h5 class="text-uppercase mb-3">Give code</h5>
+
+                  <div class="mb-5">
+                    <div class="form-outline">
+                      <input type="text" name="coupon" id="form3Examplea2" class="form-control form-control-lg" />
+                      <label class="form-label" for="form3Examplea2">Enter your code</label>
+                    </div>
+                  </div>
+                      <button type="submit" class="btn btn-success"
+                    data-mdb-ripple-color="dark">checkout</button>
+                  </form>
+
+                  <div><p>{{err}}</p></div>
 
                 </div>
               </div>

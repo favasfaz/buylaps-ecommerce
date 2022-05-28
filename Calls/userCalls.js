@@ -5,12 +5,14 @@ var jwt = require ('jsonwebtoken')
 const res = require('express/lib/response')
 const { model } = require('mongoose')
 const bcrypt = require('bcrypt')
-const { reject } = require('bcrypt/promises')
+const { reject, use } = require('bcrypt/promises')
 const Product =require('../Model/product-schema')
 const Cart = require('../Model/cart-schema')
 var objectId = require('objectid')
 const { adminLogin } = require('./adminCalls')
-
+const Brand = require('../Model/brand-schema')
+const Coupon = require('../Model/coupon-schema')
+const Wishlist = require('../Model/wishlist-schema')
 // var otpCode =  Math.floor(1000 + Math.random() * 9999)
 
 
@@ -98,6 +100,8 @@ reject({status:false,msg:'password atleast 4 charchters'})
        
 
        if(userotp.otp==sessionotp){
+           userdata.password=await bcrypt.hash(userdata.password,10)
+           console.log(userdata);
         const newUser =await new Model({
                 lName:userdata.lName,
                 fName:userdata.fName,
@@ -133,13 +137,15 @@ const userLogin = (data)=>{
             if(user.status==false){
                 reject({msg:'admin blocked'})
             }else{
-
-            if(user.password==data.password){
-                const token=await jwt.sign({id:this.id},"secret",{expiresIn:'1d'})
-                await resolve({status:true,token})
-                   }else{
-                    await reject({status:false,msg:'check your password'})
-            }
+                bcrypt.compare(data.password,user.password).then(async(result)=>{
+                    if(result){
+                        const token=await jwt.sign({id:this.id},"secret",{expiresIn:'1d'})
+                         resolve({status:true,token})
+                    }
+                    else{
+                         reject({status:false,msg:'check your password'})
+                }
+                })
             }
         }else{
             reject({status:false,msg:'check your mail and password'})
@@ -212,6 +218,7 @@ const newPass = (data,id)=>{
            reject({msg:'password is TOOshort'})
        }
        else{
+        data.password=await bcrypt.hash(data.password,10)
         await Model.findOneAndUpdate({email:id},{$set:{password:data.password}})
         resolve({status:true})
        }
@@ -225,20 +232,26 @@ const settingPassword =(data,id)=>{
 return new Promise(async(resolve,reject)=>{
    const user=await Model.findOne({email:id})
    if(user){
-        if(user.password==data.password){
                 if(data.newPassword==data.cPassword){
                             if(data.newPassword.length<4){
                                 reject({msg:'password is tooshort'})
                             }else{
-                            await Model.findOneAndUpdate({email:id},{$set:{password:data.newPassword}})
-                                resolve()
+                                bcrypt.compare(data.password,user.password).then(async(result)=>{
+                                    if(result){
+                                        data.newPassword=await bcrypt.hash(data.newPassword,10)
+                                        await Model.findOneAndUpdate({email:id},{$set:{password:data.newPassword}})
+                                        resolve()
+                                    }else{
+                                        reject({msg:'current password is not match'})
+                                    }
+                                })
+
+                            
                             }
                 }else{
                     reject({msg:'new password and confirm password are not match'})
                 }
-        }else{
-            reject({msg:'current password is not match'})
-        }
+       
    }else{
        reject({msg:'something went wrong'})
    }
@@ -328,7 +341,7 @@ const decProduct=(data,user)=>{
              if(userCart){
             let exist=userCart.product.findIndex(product=>product.productId==data.productId)
                     if(exist!=-1){
-                        await Cart.updateOne({'product.productId':data.productId},{$inc:{'product.$.quantity':-1}})
+                        await Cart.updateOne({userId:user.email,'product.productId':data.productId},{$inc:{'product.$.quantity':-1}})
                         resolve()
                     }
         }}
@@ -352,15 +365,14 @@ const addProductCount=(data,user)=>{
     return new Promise(async(resolve,reject)=>{
         let userCart= await Cart.findOne({userId:user.email})
         // let products=await Product.findOne({_id:id})
-        let count= await Cart.aggregate([{$match:{userId:user.email}},{$match:{'product.productId':data.productId}},{$project:{_id:0,quantity:1}}])
-     console.log(count);
+        console.log(data);
         if(userCart){
-            let exist=userCart.product.findIndex(product=>product.productId==data.productId)
-                    if(exist!=-1){
-                        await Cart.updateOne({'product.productId':data.productId},{$inc:{'product.$.quantity':1}});
-                       
+            // let exist=userCart.product.findIndex(product=>product.productId==data.productId)
+            //         if(exist!=-1){
+                        
+                        await Cart.updateOne({userId:user.email, 'product.productId':data.productId},{$inc:{'product.$.quantity':1}});
                         resolve()
-                    }
+                    // }
         }
     
     })
@@ -395,59 +407,166 @@ const totalAmount=(user)=>{
         }
     ])
     resolve(total)
+    // let grandTotal=total.pop()
+    // const ifCart=await Cart.findOne({userId:user.email})
+    // if (ifCart){
+    //     await Cart.findOneAndUpdate({userId:user.email},{$set:{total:grandTotal.total}})
+    // }
+    
     })
 }
-module.exports={totalAmount,firstTwo,addProductCount,deleteCart,decProduct,getCartCount,productDetails,doSignup,getCartItems,addingToCart,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend,productDetail}
-
-
-
-// const newUser =await new Model({
-//     lName:data.lName,
-//     fName:data.fName,
-//     email:data.email,
-//     password: data.password
-// })
-// await newUser.save(async(err,result)=>{
-//     if(err){
-//         await reject({status:false,msg:'Something went wrong try again'})
-//     }else{
-
-
-//         let mailTransporter=nodeMailer.createTransport({
-//             service:'gmail',
-//             auth:{
-//                 user:'mohamedsabithmp@gmail.com',
-//                 pass:'ceuggzhsmkznyfdz'
-//             }
-//         });
-//         let mailDetails={
-//             form:'mohamedsabithmp@gmail.com',
-//             to:data.email,
-//             subject:'testing',
-//             text:otpCode
-//         };
-//         mailTransporter.sendMail(mailDetails,function(err,data){
-//             if(err){
-//                 console.log('err');
-//             }else{
-//                 console.log('emailsend');
-//             }
+const subTotal = (user) =>{
+    return new Promise(async(resolve,reject)=>{
+      let amount = await Cart.aggregate([
+        {
+            $match: { userId:user.email }
+        },
+        {
+            $unwind: '$product'
+        },
+        {
+            $project: {
+                id:'$product.productId',
+                total: {$multiply: [ "$product.price", "$product.quantity" ] }
+            } 
+        },
+        ])
+  
+        console.log(amount);
+        const cart = await Cart.findOne({userId:user.email})
+  console.log(cart);
+        if(cart){
+         amount.forEach(async(amt)=>{
+         await Cart.updateMany({'product.productId':amt.id},{$set:{"product.$.total":amt.total}})
+        })
+        }
         
-//         })
-//         let token = jwt.sign({_id:this._id},'secret',{expiresIn:300})
+        resolve({status:true})
+    })
+  }
+  
+  const getfunction=(data)=>{
+      return new Promise(async(resolve,reject)=>{
+          const products= await Product.find({brand:data})
+          resolve(products)
+      })
+  }
 
+  const getBrand=()=>{
+    return new Promise(async(resolve,reject)=>{
+         allBrands= await Brand.find({}).lean()
+        resolve(allBrands)
+    })
+}
+const checkCoupon=(data,user)=>{
+   
+    return new Promise(async(resolve,reject)=>{
+      ifExist=await Coupon.findOne({couponCode:data.coupon})
+      if(ifExist){
+        if(ifExist.limit<=0){
+                reject({msg:'coupon expired'})
+                await Coupon.findOneAndDelete({couponCode:ifExist.couponCode})
+                console.log('limit');
+        }  else{
+               
+            ifUsed= await Coupon.findOne({couponCode:data.coupon,usedUsers:{$in:[user.email]}})
+        if(ifUsed){
+            reject({msg:'you already used this coupon'})
+            console.log('used');
+        }else{
+            if( new Date().getTime() >= new Date(ifExist.expirationTime).getTime() ){
+                await Coupon.findOneAndDelete({couponCode:ifExist.couponCode})
+                console.log('expired');
+                reject({msg:'coupon were Expired'})
+            }
+            else{
+                 ifUser= await Cart.findOne({userId:user.email})
+                 if(ifUser){
+                     
+                     const finalTotal=ifUser.total-ifExist.discount
+                     console.log(finalTotal);
+                     await Coupon.findOneAndUpdate({couponCode:data.coupon},{$set:{usedUsers:user.email}})
+                     await Coupon.findOneAndUpdate({couponCode:data.coupon},{$inc:{limit:-1}})
+                     resolve()
+
+                 } 
+            }
+        }
+        }
         
-//        await resolve({status:true,token})
+      }else{
+          reject({msg:'there is no coupon'})
+      }
+      
+    })
+}
+const getCoupon =()=>{
+    return new Promise(async(resolve,reject)=>{
+        const allCoupons= await Coupon.find({}).lean()
+        console.log(allCoupons);
+        resolve(allCoupons)
+    })
+}
+const addToWishList=(proId,user)=>{
+    console.log('op99999999999999999999999999999');
+    console.log(user);
+    console.log(proId);
+return new Promise(async(resolve,reject)=>{
+   const userWishlist= await Wishlist.findOne({userId:user.email})
+   let products=await Product.findOne({_id:proId})
+   
+   if(userWishlist){
+       const ifProduct= await Wishlist.findOne({userId:user.email,product:proId})
+       if(ifProduct){
+        //    res.status(400).json({msg:'product already in your wishlist'})
+        // reject({status:false,msg:'item already in wishlist'})
+        resolve({oldProduct:true})
+       }else{
+        await Wishlist.findOneAndUpdate({userId:user.email},{$push:{product:proId}})
+        console.log('success1');
+        resolve({newProduct:true})
+       }
+   }else{
+    let newWishlist=await new Wishlist({
+        userId:user.email,
+        product:proId,
+        
+    })
+    console.log('success2');
+    await newWishlist.save(async(err,data)=>{
+        if(err){
+            // res.status(304).json({msg:'somthing went wrong'})
+            reject({msg:'something went wrong'})
+        }
+        resolve({newProduct:true})
+    })
+}
+ 
+})
+}
+const getAllWishlist=(user)=>{
+    return new Promise(async(resolve,reject)=>{
+        const isWishlist = await Wishlist.findOne({userId:user.email}).populate('product').lean()
+         resolve(isWishlist) 
 
-//     }
-// })
+    })
+}
+const getWishlistCount = (data)=>{
+return new Promise(async(resolve,reject)=>{
+    const wishlist = await Wishlist.findOne({userId:data.email})
+    
+    if(wishlist){
+         count=  wishlist.product.length
+          resolve(count)
+    }
+    else{
+        let count=0
+        resolve(count)
+    }
+})
+}
+
+module.exports={getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,totalAmount,firstTwo,addProductCount,deleteCart,decProduct,getCartCount,productDetails,doSignup,getCartItems,addingToCart,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend,productDetail}
 
 
 
-   // const secret='secret'+user.password
-            // const payload={
-            //     email:user.email
-            // }
-            // const token=jwt.sign(payload,secret,{expiresIn:'5m'})
-            // console.log(token);
-            // const link =`http://localhost:3000/reset-password/${user.id}/${token}`

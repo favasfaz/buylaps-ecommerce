@@ -12,6 +12,7 @@ product:[{
     name:String,
     price:Number,
     brand:String,
+    total:Number,
     image:{
         type:String
     }

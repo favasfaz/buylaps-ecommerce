@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const { array } = require('../uploadMiddleware/multer');
 
 const productSchema=new mongoose.Schema({
     productName:{
         type:String,
         required:true
+
     },
     price:{
         type:Number,
@@ -30,10 +30,10 @@ const productSchema=new mongoose.Schema({
         required:true
     },
     shippingCost:{
-        type:String,
+        type:Number,
     },
     discount:{
-        type:String,
+        type:Number,
     },
     os:{
         type:String,

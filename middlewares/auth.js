@@ -44,8 +44,17 @@ const sessionverify2 =(req,res,next)=>{
     next()
   }else{
     res.redirect('/users/login')
-
   }
 }
 
-module.exports = {verifyToken,verifyUser,sessionverify,sessionverify2};
+const cartverify =(req,res,next)=>{
+ let token= jwt.decode('token')
+  if(token){
+    next()
+  }else{
+    
+    res.status({status:500})
+
+  }
+}
+module.exports = {cartverify,verifyToken,verifyUser,sessionverify,sessionverify2};
