@@ -4,12 +4,70 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="/public/stylesheets/cart.css">
+    <link rel="stylesheet" href="/stylesheets/emptyWishlist.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
 <body>
-    <section class="h-100 h-custom" style="background-color: #d2c9ff;">
-  <div class="container py-5 h-100">
+
+   <header class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-2">
+                    <div class="header__logo">
+                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7">
+                    <nav class="header__menu">
+                        <ul>
+                            <li class="active"><a href="./index.html">Home</a></li>
+                            {{!-- <li><a href="#">Women’s</a></li> --}}
+                            {{!-- <li><a href="#">Men’s</a></li> --}}
+                            <li><a href="/users/shop">Shop</a></li>
+                            <li><a href="#">Checkout</a>
+                                <ul class="dropdown">
+                                    {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
+                                    {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
+                                    <li><a href="./checkout.html"></a></li>
+                                    <li><a href="./blog-details.html"></a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">About us</a></li>
+                            <li><a href="./contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__right">
+                        <div class="header__right__auth">
+                            {{#if user}}
+                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                                {{else}}
+                            <a href="/users/login">Login</a>
+                            {{/if}}
+                        </div>
+                        <ul class="header__right__widget">
+                            <li><span class="icon_search search-switch"></span></li>
+                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                                <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
+                            </a></li>
+                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            {{!-- -- ---------------------------------------------}}
+                                <div id="cart-count" class="tip">{{count}}</div>
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="h-96 h-custom" style="">
+  <div class="container py-2 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-12">
         <div class="card card-registration card-registration-2" style="border-radius: 15px;">
@@ -22,47 +80,73 @@
                     <h6 class="mb-0 text-muted">3 items</h6>
                   </div>
                   <hr class="my-4">
+
+                  {{#if wishProduct}}
 {{#each wishProduct}}
                   <div class="row mb-4 d-flex justify-content-between align-items-center">
-                    <div class="col-md-2 col-lg-2 col-xl-2">
-                      <img
-                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img5.webp"
+                   <div class="col-md-2 col-lg-2 col-xl-2">
+                    <a href="/productZoom/{{this.productName}}">  <img
+                    src="/uploads/{{this.images.[0].img1}}"
                         class="img-fluid rounded-3" alt="Cotton T-shirt">
+                        </a>
                     </div>
                     <div class="col-md-3 col-lg-3 col-xl-3">
                       <h6 class="text-muted">{{this.productName}}</h6>
                       <h6 class="text-black mb-0">{{this.brand}}</h6>
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                      <button class="btn btn-link px-2"
-                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                        <i class="fas fa-minus"></i>
-                      </button>
-
-                      <input id="form1" min="0" name="quantity" value="1" type="number"
-                        class="form-control form-control-sm" />
-
-                      <button class="btn btn-link px-2"
-                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                        <i class="fas fa-plus"></i>
-                      </button>
-                    </div>
+                  
                     <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                       <h6 class="mb-0">€ {{this.price}}</h6>
                     </div>
+                                     <div class="col-md-2 col-lg-2 col-xl-2 text-center">
+                      {{!-- <a href="#!"  class="text-muted btn btn-success"><i style="color: white;" class="fas fa-times">To Cart</i></a> --}}
+                    <button class="btn btn-success" onclick="addToCart('{{this._id}}')">To Cart</button>
+                    </div>
+                    
                     <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                      <a href="#!" class="text-muted"><i class="fas fa-times"></i></a>
+                      {{!-- <a href="#!"  class="text-muted btn btn-danger"><i style="color: white;" class="fas fa-times">del</i></a> --}}
+                      <button class="btn btn-danger" onclick="delWishlist('{{this._id}}')">del</button>
                     </div>
                   </div>
+  
 
                  {{/each}}
-
-                
-
-                  <div class="pt-5">
-                    <h6 class="mb-0"><a href="/users" class="text-body"><i
+                   <div class="pt-5" >
+                    <h6 class="mb-0 btn btn-success" ><a href="/users"  style="color:white" class="text-body" ><i
                           class="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>
                   </div>
+{{else}}
+
+<div class="container-fluid  mt-100">
+				 <div class="row">
+				 
+					<div class="col-md-12">
+					
+							<div class="card">
+						<div class="card-header">
+					
+						</div>
+						<div class="card-body cart">
+								<div class="col-sm-12 empty-cart-cls text-center">
+									<img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3">
+									<h3><strong>Your Wishlist is Empty</strong></h3>
+									<h4>Add something to make me happy :</h4>
+									<a href="/users" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
+									
+								
+								</div>
+						</div>
+				</div>
+						
+					
+					</div>
+				 
+				 </div>
+				
+				</div>     
+                {{/if}}   
+
+                
                 </div>
               </div>
              
@@ -73,5 +157,37 @@
     </div>
   </div>
 </section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+<script type="text/javascript">
+  function delWishlist(proId){
+    $.ajax({
+        url:'/users/delete-wishlist/'+proId,
+          method:'get',
+        success:(response)=>{
+            location.reload();
+            alert('product deleted from wishhlist successfully')
+        }
+    })
+}
+function addToCart(proId){
+    $.ajax({
+        url:'/users/add-to-cart/'+proId,
+        method:'get',
+        success:(response)=>{
+            // var x = document.getElementById("form1").value;
+            if(response.status){
+                $('#cart-count').html(response.count)
+                alert('Item added to Cart')
+            }
+            else{
+                alert('please login first')
+            }
+        }, 
+        // error: function() {
+        //     alert("Please login first");
+        //   }
+    })
+}
+</script>
 </body>
 </html>

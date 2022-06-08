@@ -1,0 +1,246 @@
+	 <header class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-2">
+                    <div class="header__logo">
+                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7">
+                    <nav class="header__menu">
+                        <ul>
+                            <li class="active"><a href="./index.html">Home</a></li>
+                            {{!-- <li><a href="#">Women’s</a></li> --}}
+                            {{!-- <li><a href="#">Men’s</a></li> --}}
+                            <li><a href="/users/shop">Shop</a></li>
+                            <li><a href="#">Checkout</a>
+                                <ul class="dropdown">
+                                    {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
+                                    {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
+                                    <li><a href="./checkout.html"></a></li>
+                                    <li><a href="./blog-details.html"></a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">About us</a></li>
+                            <li><a href="./contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__right">
+                        <div class="header__right__auth">
+                            {{#if user}}
+                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                                {{else}}
+                            <a href="/users/login">Login</a>
+                            {{/if}}
+                        </div>
+                        <ul class="header__right__widget">
+                            <li><span class="icon_search search-switch"></span></li>
+                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                                <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
+                            </a></li>
+                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            {{!-- -- ---------------------------------------------}}
+                                <div id="cart-count" class="tip">{{count}}</div>
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+   
+
+    <div class="container">
+                      
+                                
+                    <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                           
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col">Manage</th>
+                                                <th scope="col">Image</th>
+                                                <th scope="col">product</th>
+                                                <th scope="col">quantity</th>
+                                                <th scope="col">price</th>
+                                                <th scope="col">address</th>
+                                                <th scope="col">order Date</th>
+                                                <th scope="col">total</th>
+
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody class="customtable">
+                                            {{#each data}}
+                                            
+                                            <tr>
+                                               {{#each this.orders}}
+                                                 <td>  <button class="btn btn-danger" onclick="cancel('{{this._id}}')">cancel Order</button></td>
+                                                <td><img style="width: 75px; ;" src="/uploads/{{this.productId.images.[0].img1}}" alt="image"></td>
+                                                <td>{{this.productId.productName}}</td>
+                                                <td>{{this.quantity}}</td>
+                                                <td>{{this.productId.price}}</td>
+                                                     {{/each}}
+                                                <td>{{this.address.state}}</td>
+                                                 <td>{{this.created}}</td>
+                                                  <td>{{this.totalAmount}}</td>
+
+                                            </tr>
+                                           
+                                           {{/each}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
+                   </div> 
+    
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+ <script src="/javascripts/addToCart.js"></script>
+    
+
+    <style>
+         @import url(http://fonts.googleapis.com/css?family=Calibri:400,300,700);
+
+ body {
+     font-family: 'Calibri', sans-serif !important
+ }
+
+.container{
+    margin-top:100px;
+}
+.card {
+       position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0px solid transparent;
+    border-radius: 0px;
+}
+}
+
+.card-body {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.card .card-title {
+    position: relative;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+
+.table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    background-color: transparent;
+}
+
+* {
+    outline: none;
+}
+
+.table th, .table thead th {
+    font-weight: 500;
+}
+
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+}
+
+
+.table th {
+    padding: 1rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+
+
+.table th, .table thead th {
+    font-weight: 500;
+}
+
+
+th {
+    text-align: inherit;
+}
+
+
+.m-b-20 {
+    margin-bottom: 20px;
+}
+
+
+.customcheckbox {
+    display: block;
+    position: relative;
+    padding-left: 24px;
+    font-weight: 100;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+.customcheckbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    position: absolute;
+    top: -3px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #CDCDCD;
+    border-radius: 6px;
+}
+
+
+.customcheckbox input:checked ~ .checkmark {
+    background-color: #2196BB;
+}
+
+
+.customcheckbox .checkmark:after {
+    left: 8px;
+    top: 4px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+    </style>

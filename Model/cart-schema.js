@@ -1,3 +1,4 @@
+const { type } = require("express/lib/response");
 const mongoose = require("mongoose");
 
 const cartSchema = new mongoose.Schema({
@@ -13,15 +14,29 @@ product:[{
     price:Number,
     brand:String,
     total:Number,
+    shippingCost:Number,
+    discount:Number,
     image:{
         type:String
-    }
+    },
+  
 }],
 total:{
     type:Number,
     required:true
-}
-
+},
+shippingCost:{
+    type:Number,
+    default:0
+},
+    discount:{
+      type:  Number,
+      default:0,
+    },
+        couponDiscount:{
+            type:Number,
+            default:0
+        }
 });
 
 const Cart = mongoose.model("cart", cartSchema);

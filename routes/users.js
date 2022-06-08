@@ -1,14 +1,18 @@
 var express = require('express');
 var router = express.Router();
+var easyinvoice = require('easyinvoice')
  var Model = require('../Model/user-schema');
-var {getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
+var {sortOrder,cancelOrder,addProfile,viewOrder,search,priceFilter,verifyPayment,generateRazor,placeOrder,findAddress,addAddress,getAddress,cartIn,findBrand,findDiscount,findCategory,getCategory,deleteWishlist,getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
 var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
-const { Router } = require('express');
 var {cartverify,verifyToken,sessionverify,sessionverify2} = require('../middlewares/auth');
 const { productDetails } = require('../Calls/adminCalls');
 const async = require('hbs/lib/async');
 const res = require('express/lib/response');
+const Address = require('../Model/address-schema');
+const Cart = require("../Model/cart-schema");
+var fs = require('fs');
+const { log } = require('console');
 
 /* GET users listing. */
 
@@ -42,17 +46,18 @@ router.get('/', function(req, res) {
    productDetail().then(async(product)=>{
     let firsttwo=await firstTwo()
     let brands =await getBrand()
+    let category = await getCategory()
      if(req.session.user){
-     await getCartCount(req.session.user).then((count)=>{
-      
-        res.render('user/userhome',{user,product,count,firsttwo,brands})
+     await getCartCount(req.session.user).then(async(count)=>{
+      let wishlistCount = await getWishlistCount(req.session.user)
+        res.render('user/userhome',{user,wishlistCount,product,count,firsttwo,brands,category})
       })
      }else{
-      res.render('user/userhome',{user,product,firsttwo,brands});
+      res.render('user/userhome',{user,product,firsttwo,brands,category});
      }
     }).catch((err)=>{
       productDetail().then(async(product)=>{
-        res.render('user/userhome',{user,product,firsttwo,brands});
+        res.render('user/userhome',{user,product,firsttwo,brands,category});
       }) 
    })
 });
@@ -118,11 +123,19 @@ userLogin(req.body).then(()=>{
 router.get('/shop',(req,res)=>{
   res.render('user/shop')
 })
-router.get('/account/:id',(req,res)=>{
-getAccount(req.params.id).then((data)=>{
-  console.log(data);
-  res.render('user/account',{data})
+router.get('/account/:id',sessionverify2, async(req,res)=>{
+ getAccount(req.params.id).then((data)=>{ 
+   if(data){
+     console.log(data,'data');
+    res.render('user/account',{data})
+   }else{
+    res.render('user/account')
 
+   } 
+
+}).catch((err)=>{
+  console.log(err,'err');
+  res.redirect('/users/account')
 })
 })
 
@@ -211,45 +224,56 @@ console.log(req.session.forgotErr);
 
   router.get('/add-to-cart/:id',sessionverify2,(req,res)=>{
     let id = req.params.id
+    console.log(id);
     addingToCart(id,req.session.user).then(()=>{
       getCartCount(req.session.user).then((count)=>{
         res.json({status:true,count})
       })
-     // res.redirect('/users')
+     // res.redirect('/usgetAddressers')
     })
   })
   router.get('/cart',sessionverify2,async(req,res)=>{
+    let user = req.session.user
      let data=await getCartItems(req.session.user)
       let count = await getCartCount(req.session.user)
       let total = await totalAmount(req.session.user)
       let subtotal=await subTotal(req.session.user)
-     
+      let dicounts=await findDiscount(req.session.user)
+      let wishlistCount=await getWishlistCount(req.session.user)
+
+    
         if(data && count){
           let product=data.product 
-
+          let grandTotal =(data.total-data.discount)+data.shippingCost
          
-       res.render('user/cart',{product,count,total,err:req.session.redeemErr})
+       res.render('user/cart',{user,wishlistCount,grandTotal,data,product,count,total,err:req.session.redeemErr})
         }else{
-          res.render('user/cart')
+          res.render('user/cart',{wishlistCount})
         }
   })
-  router.get('/productZoom/:id',(req,res)=>{
+  router.get('/productZoom/:id',async(req,res)=>{
+    if(req.session.user){
+    let count = await getCartCount(req.session.user)
+    let wishlistCount=await getWishlistCount(req.session.user)
+    let user= req.session.user
     let id =req.params.id
-    console.log(id);
+    productDetails(id).then((data)=>{
+      res.render('user/productZoom',{data,user,count,wishlistCount})
+   })
+  }else{
+    let id =req.params.id
     productDetails(id).then((data)=>{
       res.render('user/productZoom',{data})
    })
+  }
   })
   router.post('/decProduct',(req,res)=>{
-    
-    console.log('llllllllllllllll');
    
     decProduct(req.body,req.session.user).then(()=>{
       res.json({status:true})
     })
   })
   router.get('/delete-cart/:id',(req,res)=>{
-    console.log(req.params.id);
     deleteCart(req.params.id,req.session.user).then(()=>{
       res.json({status:true})
     //  res.redirect('/users/cart')
@@ -260,6 +284,8 @@ console.log(req.session.forgotErr);
     addProductCount(req.body,req.session.user).then(()=>{
     
       res.json({status:true})
+    }).catch(()=>{
+      res.json({status:false})
     })
   })
 router.get('/getbrand/:id',(req,res)=>{
@@ -269,50 +295,225 @@ router.get('/getbrand/:id',(req,res)=>{
   })
 })  
 router.get('/getAll/:id',(req,res)=>{
+  console.log(req.params.id, "id")
   getfunction(req.params.id).then((product)=>{
-    console.log(product);
-    res.json({product})
+    console.log(product,'produ');
+    return res.json({product})
   })
 })
 
-router.post('/checkout',(req,res)=>{
-  console.log('sharmaji');
-  checkCoupon(req.body,req.session.user).then(()=>{
-    res.render('user/checkout')
-  }).catch((err)=>{
-    req.session.redeemErr=err.msg
-    res.redirect('/users/cart')
+router.get('/checkout',sessionverify2,async(req,res)=>{
+  let data=await getCartItems(req.session.user)
+      let count = await getCartCount(req.session.user)
+      let total = await totalAmount(req.session.user)
+      let subtotal=await subTotal(req.session.user)
+      let dicounts=await findDiscount(req.session.user)
+      let grandTotal =(data.total-data.discount)+data.shippingCost
+      let account = await getAccount(req.session.user.email)
+  await cartIn(req.session.user).then(async()=>{   
+let address=await getAddress(req.session.user)
+console.log(address);
+if(address){
+      res.render('user/addAddress',{account,account,address,data,count,total,subtotal,grandTotal})
+}else{
+  res.render('user/addAddress',{data,count,total,subtotal,grandTotal})
+}
+
+  })    
+ .catch((err)=>{
+    console.log(err);
+    res.redirect('/users')
   })
+  
 })
-router.get('/couponOffer',(req,res)=>{
-  getCoupon().then((data)=>{
-   user=req.session.user
-    res.render('user/couponOffer',{data,user})
+router.get('/couponOffer',sessionverify2,(req,res)=>{
+  getCoupon().then(async(data)=>{
+    await res.json({data})
   })
 })
 router.get('/addToWishlist/:id',sessionverify2,(req,res)=>{
   addToWishList(req.params.id,req.session.user).then((response)=>{
-    getWishlistCount(req.session.user).then((count)=>{
-      console.log('count');
-      console.log(count);
       res.json(response)
-    })  
-    
-    
-    })
+   })
 })
 router.get('/wishlist',sessionverify2,(req,res)=>{
-  getAllWishlist(req.session.user).then((data)=>{
+  getAllWishlist(req.session.user).then(async(data)=>{
+    if(req.session.user){
+      let count = await getCartCount(req.session.user)
+      let wishlistCount=await getWishlistCount(req.session.user)
+      let user= req.session.user
+   
     if(data){
       wishProduct=data.product
-      res.render('user/wishlist',{wishProduct})
+      res.render('user/wishlist',{wishProduct,count,wishlistCount,user})
     }
     else{
       res.render('user/wishlist')
     }
+  }else{
+    res.render('user/wishlist')
+
+  }
    
   })
 })
+router.get('/delete-wishlist/:id',(req,res)=>{
+  console.log(req.params.id);
+  deleteWishlist(req.params.id,req.session.user).then(()=>{
+    res.json({status:true})
+  })
+})
+router.get('/categoryProducts/:id',async(req,res)=>{
+  if(req.session.user){
+  let count = await getCartCount(req.session.user)
+  let wishlistCount=await getWishlistCount(req.session.user)
+  let user= req.session.user
+  findCategory(req.params.id).then((data)=>{
+   res.render('user/productViewPage',{data,user,wishlistCount,count})
+  })
+}
+else{
+  findCategory(req.params.id).then((data)=>{
+    console.log(data);
+    res.render('user/productViewPage',{data})
+   })
+}
+  
+})
+router.get('/brandProduct/:id',(req,res)=>{
+  console.log(req.params.id,'brand');
+  findBrand(req.params.id).then((data)=>{
+    console.log(data);
+     res.render('user/productViewPage',{data})
+  })
+})
+
+router.get('/addAddress',sessionverify2,async(req,res)=>{
+  let address= await getAddress(req.session.user)
+  console.log(address);
+  res.render('user/addAddress',{address})
+})
+
+router.post('/addAddress',(req,res)=>{
+  console.log(req.body,'req');
+  addAddress(req.body,req.session.user).then(()=>{
+    res.redirect('/users/addAddress')
+  })
+})
+
+router.get('/toCart/:id',sessionverify2,(req,res)=>{
+  addingToCart(req.params.id,req.session.user).then(()=>{
+   res.redirect('/users')
+  }).catch((err)=>{
+    console.log(err);
+  })
+})
+router.get('/productOrderForm/:id',sessionverify2,async(req,res)=>{
+  let id=req.params.id
+  let data=await getCartItems(req.session.user)
+  let count = await getCartCount(req.session.user)
+  let total = await totalAmount(req.session.user)
+  let subtotal=await subTotal(req.session.user)
+  let dicounts=await findDiscount(req.session.user)
+  let grandTotal =(data.total-data.discount)+data.shippingCost
+ findAddress(req.params.id,req.session.user).then((address)=>{
+console.log(address,'address');
+   res.render('user/productOrderForm',{data,address,count,total,subtotal,dicounts,grandTotal,err:req.session.redeemErr})
+   req.session.redeemErr=''
+ })
+
+})
+
+
+
+router.post('/checkingCoupon/:id',(req,res)=>{
+  console.log(req.body);
+  checkCoupon(req.body,req.session.user).then(()=>{
+    res.redirect('/users/productOrderForm/'+req.params.id)
+  }).catch((err)=>{
+    console.log('err');
+    req.session.redeemErr=err.msg
+    res.redirect('/users/productOrderForm/'+req.params.id)
+
+  })
+})
+
+router.post('/placeOrder',(req,res)=>{
+  console.log(req.body.paymentMethod);
+  placeOrder(req.session.user,req.body).then(async(orderId)=>{
+    if(req.body.paymentMethod=='COD'){
+      await Cart.findOneAndDelete({userId:req.session.user.email})
+      res.json({status:true})
+    }
+    else{
+      generateRazor(orderId,req.session.user).then((response)=>{
+        console.log(response,'response');
+        res.json({response})
+      })
+    }
+  }).catch(()=>{
+
+  })
+
+})
+router.post('/verifyPayment',(req,res)=>{
+  verifyPayment(req.body,req.session.user).then(()=>{
+    console.log('successfull');
+    res.json({status:true})
+  }).catch((err)=>{
+    res.json({status:'payment failed'})
+  })
+})
+
+router.post('/filter',(req,res)=>{
+  console.log(req.body['price-max']);
+ priceFilter(req.body).then((data)=>{
+   console.log(data,'data got');
+   res.json({data})
+ })
+})
+router.post('/search',(req,res)=>{
+  console.log(req.body);
+ search(req.body).then((data)=>{
+
+ })
+})
+
+router.post('/addProfile',(req,res)=>{
+  console.log(req.body);
+  addProfile(req.body,req.session.user).then(()=>{
+    res.redirect('/users/account/'+req.session.user.email)
+  })
+})
+
+router.get('/viewOrder',sessionverify2,(req,res)=>{
+  viewOrder(req.session.user.email).then((data)=>{
+    res.render('user/viewOrders',{data})
+  })
+})
+router.get('/cancelOrder/:id',(req,res)=>{
+  console.log(req.params.id);
+  cancelOrder(req.params.id,req.session.user).then(()=>{
+   res.json({status:true})
+  })
+})
+
+router.get('/orderSuccessfull',(req,res)=>{
+  sortOrder(req.session.user.email).then((data)=>{
+    let prodOrders = data.pop()
+    res.render('user/orderSuccessfull',{prodOrders})
+  })
+ 
+})
+
+router.get('/download',(req,res)=>{
+  sortOrder(req.session.user.email).then((data)=>{
+    res.json({data})
+  })
+})
 module.exports = router;
+
+
+
 
 

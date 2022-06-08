@@ -1,3 +1,4 @@
+const { type } = require("express/lib/response");
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
@@ -35,6 +36,17 @@ status:{
 phone:{
   type:Number,
   required:true,
+},
+ 
+userAddress:{
+  type:Object,
+  address:String,
+  postCode:Number,
+  state:String,
+  education:String,
+  country:String,
+  town:String,
+  status:Boolean
 }
 });
 

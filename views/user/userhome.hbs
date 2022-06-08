@@ -20,7 +20,7 @@
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
-            {{!-- <a href="/login">Login</a> --}}
+            <a href="/users/login">Login</a>
         </div>
     </div>
    
@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="./index.html"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
@@ -42,7 +42,7 @@
                             {{!-- <li><a href="#">Women’s</a></li> --}}
                             {{!-- <li><a href="#">Men’s</a></li> --}}
                             <li><a href="/users/shop">Shop</a></li>
-                            <li><a href="#">Checkout</a>
+                            <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                     {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
                                     {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
@@ -67,7 +67,7 @@
                         <ul class="header__right__widget">
                             <li><span class="icon_search search-switch"></span></li>
                             <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
-                                <div id="wishlist-count" class="tip">{{count}}</div>
+                                <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
                             <li><a href="/users/cart"><span class="icon_bag_alt"></span>
                             {{!-- -- ---------------------------------------------}}
@@ -86,17 +86,83 @@
 
     <!-- Categories Section Begin -->
    
-   
+   <section>
+      <div class="container">
+           <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="https://static-ecapac.acer.com/media/magestore/bannerslider/images/2/2/2205_smb-bundle-banner_1920x720.jpg" class="d-block w-100" alt="">
+    </div>
+    <div class="carousel-item">
+      <img src="https://static-ecapac.acer.com/media/magestore/bannerslider/images/2/2/2205_nitro-5_estore-banner_1920x720.jpg" class="d-block w-100" alt="">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+      </div>
+   </section>
 <!-- Categories Section End -->
+<section>
+     <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+      <div class="list-group list-group-flush mx-3 mt-2">
+        <a
+          href="#"
+          class="list-group-item list-group-item-action py-2 ripple"
+          aria-current="true"
+        >
+          <h3>FEIZY.com</h3>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple active">
+          <i class="fas fa-chart-area fa-fw me-3"></i><span>Categories</span>
+        </a>
+        {{#each category}}
+        <a href="/users/categoryProducts/{{this.name}}" class="list-group-item list-group-item-action py-2 ripple"
+          ><i class="fas fa-lock fa-fw me-3"></i><span>{{this.name}}</span></a
+        >
+        {{/each}}
+        <div data-role="page">
+  
 
+  <div data-role="main" class="ui-content">
+    <form id="priceFilter">
+      <div data-role="rangeslider">
+        
+        <label for="price-max">Price:</label>
+        <input type="range" name="price-max" id="price-max" value="800" min="0" max="100000">
+      </div>
+        {{!-- <input type="submit" data-inline="true"  value="Submit"> --}}
+        <a href="#datas">
+            <input  type="submit" value="submit" data-inline="true">
+        </a>
+      </form>
+  </div>
+</div> 
+    {{!-- <input type="text" id="search-box" onkeyup="sendData(this)" name="search" placeholder="search here"> --}}
+
+      </div>
+    </div>
+  </nav>
+  <!-- Sidebar -->
+
+  <!-- Navbar -->
+
+</section>
 <!-- Product Section Begin -->
 
 <section class="product spad">
     <div class="container">
-        <div class="row">
+        <div class="row" >
             <div class="col-lg-4 col-md-4">
-                <div class="section-title">
-                    <h4>New product</h4>
+                <div class="section-title" >
+                    <h4>New Arrivals</h4>
                 </div>
             </div>
            
@@ -104,14 +170,14 @@
       
         {{!-- <div class="row property__gallery"> --}}
               
-             <div class="row property__gallery">
+             <div class="row property__gallery bg-white" >
                  {{#each firsttwo}}
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women">
+            <div class="col-lg-3 col-md-4 col-sm-6 mt-5 ml-3 ">
                 <div class="product__item">
                     <div class="product__item__pic set-bg" >
-                      <a href="/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}"></a>
+                      <a href="/users/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}"></a>
                         <div class="label new">New</div>
-                           <div class="product__item__text">
+                           <div class="product__item__text"  style="margin-left: -40px;">
                         <h6><a href="#">{{this.productName}}</a></h6>
                          <h6><a href="#">{{this.brand}}</a></h6>
                         <div class="rating">
@@ -121,7 +187,7 @@
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                         </div>
-                        <div class="product__price">${{this.price}}</div>
+                        <div class="product__price">${{this.price}} <span>${{this.discount}} Off</span></div>
                     </div>
                         <ul class="product__hover">
                             <li><a  onclick="addToWishlist('{{this._id}}')"><span class="icon_heart_alt"></span></a></li>
@@ -135,15 +201,60 @@
     {{/each}}
              </div>
 </section>
-<section> <div class="container">
+<section>
+   <div class="container">
+       
+   </div>
+</section>
+
+<section>
+
+    <div class="container">
         <div class="row">
+            <div class="col-md-3">
+               <a href="/users/brandProduct/'Hp'">  <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/acer-laptop-logo.png" alt=""></a>
+            </div>
+            <div class="col-md-3">
+               <a href="/users/brandProduct/'Hp'"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/apple-laptop-logo.jpg" alt=""></a> 
+            </div>
+            <div class="col-md-3">
+               <a href="/users/brandProduct/'Hp'"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/asus-laptop-logo.png" alt=""></a>
+            </div>
+            <div class="col-md-3">
+                <a href="/users/brandProduct/'Hp'"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/compaq-laptop-logo.png" alt=""></a>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-3">
+              <a href="/users/brandProduct/'Hp'">  <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/dell-laptop-logo.png" alt=""></a>
+            </div>
+            <div class="col-md-3">
+              <a href="/users/brandProduct/'Apple'"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/fujitsu-laptop-logo.png" alt=""></a> 
+            </div>
+            <div class="col-md-3">
+              <a href="/users/brandProduct/'Hp'"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/intel-laptop-logo.png" alt=""></a> 
+            </div>
+             <div class="col-md-3">
+               <a href="/users/brandProduct/'Hp'"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/lenovo-laptop-logo.png" alt=""></a> 
+            </div>
+        </div>
+    </div>
+</section>
+
+<section> <div class="container mt-5">
+        <div class="row" >
             <div class="col-lg-4 col-md-4 col-12">
                 <div class="section-title">
                     <h4>All  product</h4>
                 </div>
             </div>
-            <div class="col-lg-8 col-md-8">
-                <ul class="filter__controls">
+            <div class="col-lg-8 col-md-8" >
+                <ul class="filter__controls" >
                     <li class="active" data-filter="*">All</li>
                     {{#each brands}}
                 <button onclick="getAll('{{this.name}}')">{{this.name}}</button>
@@ -153,34 +264,23 @@
                 </ul>
             </div>
         </div></section>
- <section class="product spad">
-    <div class="container">
-        <div class="row">
-            {{!-- <div class="col-lg-4 col-md-4">
-                <div class="section-title">
-                    <h4>New product</h4>
-                </div>
-            </div>
-            <div class="col-lg-8 col-md-8">
-                <ul class="filter__controls">
-                    <li class="active" data-filter="*">All</li>
-                    <li data-filter=".women">Women’s</li>
-                    <li data-filter=".men">Men’s</li>
-                    <li data-filter=".kid">Kid’s</li>
-                    <li data-filter=".accessories">Accessories</li>
-                    <li data-filter=".cosmetic">Cosmetics</li>
-                </ul>
-            </div>
-        </div> --}}
+        
 
-        <div class="row property__gallery" id="luck">
+
+
+ <section class="product spad">
+    <div class="container" >
+        <div class="row"  >
+           
+
+        <div class="row property__gallery bg-white"  id="parent">
                                       {{#each product}}
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women">
-                <div class="product__item">
+            <div class="col-lg-3 col-md-4 col-sm-6 mix women" id="loop"  >
+                <div class="product__item" >
                     <div class="product__item__pic set-bg" >
-                      <a href="/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}"></a>
+                      <a href="/users/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}" class="prodImg"></a>
                         <div class="label new">New</div>
-                           <div class="product__item__text">
+                           <div class="product__item__text" style="margin-left: -40px;">
                         <h6><a href="#">{{this.productName}}</a></h6>
                          <h6><a href="#">{{this.brand}}</a></h6>
                         <div class="rating">
@@ -190,11 +290,11 @@
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                         </div>
-                        <div class="product__price">${{this.price}}</div>
+                        <div class="product__price">${{this.price}} <span>${{this.discount}} Off</span></div>
                     </div>
                         <ul class="product__hover">
-                            <li><a  onclick="addToWishlist('{{this._id}}')"><span class="icon_heart_alt"></span></a></li>
-                            <li><a  onclick="addToCart('{{this._id}}')"><span class="icon_bag_alt"></span></a></li>
+                            <li><a  onclick="addToWishlist('{{this._id}}')" ><span class="icon_heart_alt"></span></a></li>
+                            <li><a  class="tag" onclick="addToCart('{{this._id}}')"><span class="icon_bag_alt"></span></a></li>
                             {{!-- --- --------------------------------------}}
                         </ul>
                     </div>
@@ -211,6 +311,7 @@
         </div>
     </div>
 </section>
+
 
 
     {{!-- <div class="container">
@@ -265,6 +366,27 @@
             </div>
     {{/each}}  --}}
            
+
+           <div id="div-container">
+                
+
+</div>
+
+<section>
+    <div class="container">
+        <div class="row">
+             <div id="datas">
+
+    </div>
+        </div>
+    </div>
+   
+</section>
+
+
+
+
+
 
 <!-- Services Section Begin -->
 <section class="services spad">
@@ -442,5 +564,45 @@
     </div>
 </div>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
- <script src="javascripts/addToCart.js"></script>
+ <script src="/javascripts/addToCart.js"></script>
  </body>
+
+
+<style>
+    @media (min-width: 991.98px) {
+  main {
+    padding-left: 240px;
+  }
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  padding: 58px 0 0; /* Height of navbar */
+  box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+  width: 240px;
+  z-index: 600;
+}
+
+@media (max-width: 991.98px) {
+  .sidebar {
+    width: 100%;
+  }
+}
+.sidebar .active {
+  border-radius: 5px;
+  box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: 0.5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+</style>

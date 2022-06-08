@@ -1,103 +1,244 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Product Card/Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/stylesheets/productZoom.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
-  </head>
-  <body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="/stylesheets/zoom.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+<body>
+
+ <header class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-2">
+                    <div class="header__logo">
+                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7">
+                    <nav class="header__menu">
+                        <ul>
+                            <li class="active"><a href="./index.html">Home</a></li>
+                            {{!-- <li><a href="#">Women’s</a></li> --}}
+                            {{!-- <li><a href="#">Men’s</a></li> --}}
+                            <li><a href="/users/shop">Shop</a></li>
+                            <li><a href="#">Checkout</a>
+                                <ul class="dropdown">
+                                    {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
+                                    {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
+                                    <li><a href="./checkout.html"></a></li>
+                                    <li><a href="./blog-details.html"></a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">About us</a></li>
+                            <li><a href="./contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__right">
+                        <div class="header__right__auth">
+                            {{#if user}}
+                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                                {{else}}
+                            <a href="/users/login">Login</a>
+                            {{/if}}
+                        </div>
+                        <ul class="header__right__widget">
+                            <li><span class="icon_search search-switch"></span></li>
+                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                                <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
+                            </a></li>
+                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            {{!-- -- ---------------------------------------------}}
+                                <div id="cart-count" class="tip">{{count}}</div>
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+
+
+
+  <section id="services" class="services section-bg">
+   <div class="container">
     
-    <div class = "card-wrapper">
-      <div class = "card">
-        <!-- card left -->
-        <div class = "product-imgs">
-          <div class = "img-display">
-            <div class = "img-showcase">
-              <img src = "/uploads/{{data.images.[0].img1}}" alt = "image">
-              <img src = "/uploads/{{data.images.[0].img2}}" alt = "image">
-              <img src = "/uploads/{{data.images.[0].img3}}" alt = "image">
+      <div class="row row-sm">
+         <div class="col-md-6 _boxzoom">
+            <div class="zoom-thumb">
+               <ul class="piclist">
+                  <li><img src="/uploads/{{data.images.[0].img1}}" alt=""></li>
+                  <li><img src="/uploads/{{data.images.[0].img2}}" alt=""></li>
+                  <li><img src="/uploads/{{data.images.[0].img3}}" alt=""></li>
+                  <li><img src="/uploads/{{data.images.[0].img1}}" alt=""></li>
+               </ul>
             </div>
-          </div>
-          <div class = "img-select">
-            <div class = "img-item">
-              <a href = "#" data-id = "1">
-                <img src = "/uploads/{{data.images.[0].img1}}" alt = "image">
-              </a>
+            <div class="_product-images">
+               <div class="picZoomer">
+                  <img class="my_img" src="/uploads/{{data.images.[0].img1}}" alt="">
+               </div>
             </div>
-           
-            <div class = "img-item">
-              <a href = "#" data-id = "3">
-                <img src = "/uploads/{{data.images.[0].img2}}" alt = "image">
-              </a>
+         </div>
+         <div class="col-md-6">
+            <div class="_product-detail-content">
+               <p class="_p-name"> {{data.productName}} </p>
+               <div class="_p-price-box">
+                  <div class="p-list">
+                     <span> M.R.P. : <i class="fa fa-inr"></i>  {{data.price}}     </span>
+                     <span class="price">  </span>
+                  </div>
+                
+                  <div class="_p-features">
+                     <span> Description About this product:- </span>
+                    {{data.description}}                     
+                  </div>
+                  <form action="" method="post" accept-charset="utf-8">
+                     <ul class="spe_ul"></ul>
+                     <div class="_p-qty-and-cart">
+                        <div class="_p-add-cart">
+                           <button class="btn-theme btn buy-btn" tabindex="0">
+                           <i class="fa fa-shopping-cart"></i> Buy Now
+                           </button>
+                           {{!-- <button class="btn-theme btn btn-success" onclick="addToCart('{{data._id}}')">
+                           <i class="fa fa-shopping-cart"></i> Add to Cart
+                           </button> --}}
+                           <a class="btn-theme btn btn-success" href="/users/toCart/{{data._id}}">add To Cart</a>
+                           <input type="hidden" name="pid" value="18" />
+                           <input type="hidden" name="price" value="850" />
+                           <input type="hidden" name="url" value="" />    
+                        </div>
+                     </div>
+                  </form>
+               </div>
             </div>
-            <div class = "img-item">
-              <a href = "#" data-id = "4">
-                <img src = "/uploads/{{data.images.[0].img3}}" alt = "image">
-              </a>
-            </div>
-          </div>
-        </div>
-        <!-- card right -->
-        <div class = "product-content">
-          <h2 class = "product-title">{{data.productName}}</h2>
-          <a href = "#" class = "product-link">{{data.brand}}</a>
-          <div class = "product-rating">
-            <i class = "fas fa-star"></i>
-            <i class = "fas fa-star"></i>
-            <i class = "fas fa-star"></i>
-            <i class = "fas fa-star"></i>
-            <i class = "fas fa-star-half-alt"></i>
-            <span></span>
-          </div>
-
-          {{!-- <div class = "product-price">
-            <p class = "last-price">Old Price: <span>$257.00</span></p>
-            <p class = "new-price">New Price: <span>$249.00 (5%)</span></p>
-          </div> --}}
-
-          <div class = "product-detail">
-            <h2>about this item: </h2>
-            <p>{{data.description}}</p>
-            <ul>
-             <li>os: <span>{{data.os}}</span></li>
-              <li>category: <span>{{data.category}}</span></li>
-              <li>Color: <span>{{data.color}}</span></li>
-              <li>Available: <span>{{data.stock}}</span></li>
-              <li>Category: <span>{{data.category}}</span></li>
-              <li>discount: <span>{{data.discount}}</span></li>
-              <li>shippingCost: <span>{{data.shippingCost}}</span></li>
-               <li>processor: <span>{{data.processor}}</span></li>
-              <li>memory: <span>{{data.memory}}</span></li>
-            </ul>
-          </div>
-
-
-          <div class = "social-links">
-            <p>Share At: </p>
-            <a href = "#">
-              <i class = "fab fa-facebook-f"></i>
-            </a>
-            <a href = "#">
-              <i class = "fab fa-twitter"></i>
-            </a>
-            <a href = "#">
-              <i class = "fab fa-instagram"></i>
-            </a>
-            <a href = "#">
-              <i class = "fab fa-whatsapp"></i>
-            </a>
-            <a href = "#">
-              <i class = "fab fa-pinterest"></i>
-            </a>
-          </div>
-        </div>
+         </div>
       </div>
-    </div>
+   </div>
+</section>
 
-    
-    <script src="/javascripts/productZoom.js"></script>
-  </body>
+
+<script>
+
+;(function($){
+	$.fn.picZoomer = function(options){
+		var opts = $.extend({}, $.fn.picZoomer.defaults, options), 
+			$this = this,
+			$picBD = $('<div class="picZoomer-pic-wp"></div>').css({'width':opts.picWidth+'px', 'height':opts.picHeight+'px'}).appendTo($this),
+			$pic = $this.children('img').addClass('picZoomer-pic').appendTo($picBD),
+			$cursor = $('<div class="picZoomer-cursor"><i class="f-is picZoomCursor-ico"></i></div>').appendTo($picBD),
+			cursorSizeHalf = {w:$cursor.width()/2 ,h:$cursor.height()/2},
+			$zoomWP = $('<div class="picZoomer-zoom-wp"><img src="" alt="" class="picZoomer-zoom-pic"></div>').appendTo($this),
+			$zoomPic = $zoomWP.find('.picZoomer-zoom-pic'),
+			picBDOffset = {x:$picBD.offset().left,y:$picBD.offset().top};
+
+		
+		opts.zoomWidth = opts.zoomWidth||opts.picWidth;
+		opts.zoomHeight = opts.zoomHeight||opts.picHeight;
+		var zoomWPSizeHalf = {w:opts.zoomWidth/2 ,h:opts.zoomHeight/2};
+
+		//初始化zoom容器大小
+		$zoomWP.css({'width':opts.zoomWidth+'px', 'height':opts.zoomHeight+'px'});
+		$zoomWP.css(opts.zoomerPosition || {top: 0, left: opts.picWidth+30+'px'});
+		//初始化zoom图片大小
+		$zoomPic.css({'width':opts.picWidth*opts.scale+'px', 'height':opts.picHeight*opts.scale+'px'});
+
+		//初始化事件
+		$picBD.on('mouseenter',function(event){
+			$cursor.show();
+			$zoomWP.show();
+			$zoomPic.attr('src',$pic.attr('src'))
+		}).on('mouseleave',function(event){
+			$cursor.hide();
+			$zoomWP.hide();
+		}).on('mousemove', function(event){
+			var x = event.pageX-picBDOffset.x,
+				y = event.pageY-picBDOffset.y;
+
+			$cursor.css({'left':x-cursorSizeHalf.w+'px', 'top':y-cursorSizeHalf.h+'px'});
+			$zoomPic.css({'left':-(x*opts.scale-zoomWPSizeHalf.w)+'px', 'top':-(y*opts.scale-zoomWPSizeHalf.h)+'px'});
+
+		});
+		return $this;
+
+	};
+	$.fn.picZoomer.defaults = {
+        picHeight: 460,
+		scale: 2.5,
+		zoomerPosition: {top: '0', left: '380px'},
+
+		zoomWidth: 400,
+		zoomHeight: 460
+	};
+})(jQuery); 
+
+
+
+$(document).ready(function () {
+     $('.picZoomer').picZoomer();
+    $('.piclist li').on('click', function (event) {
+        var $pic = $(this).find('img');
+        $('.picZoomer-pic').attr('src', $pic.attr('src'));
+    });
+   
+  var owl = $('#recent_post');
+              owl.owlCarousel({
+                margin:20,
+                dots:false,
+                nav: true,
+                navText: [
+                  "<i class='fa fa-chevron-left'></i>",
+                  "<i class='fa fa-chevron-right'></i>"
+                ],
+                autoplay: true,
+                autoplayHoverPause: true,
+                responsive: {
+                  0: {
+                    items: 2
+                  },
+                  600: {
+                    items:3
+                  },
+                  1000: {
+                    items:5
+                  },
+                  1200: {
+                    items:4
+                  }
+                }
+  });    
+  
+        $('.decrease_').click(function () {
+            decreaseValue(this);
+        });
+        $('.increase_').click(function () {
+            increaseValue(this);
+        });
+        function increaseValue(_this) {
+            var value = parseInt($(_this).siblings('input#number').val(), 10);
+            value = isNaN(value) ? 0 : value;
+            value++;
+            $(_this).siblings('input#number').val(value);
+        }
+
+        function decreaseValue(_this) {
+            var value = parseInt($(_this).siblings('input#number').val(), 10);
+            value = isNaN(value) ? 0 : value;
+            value < 1 ? value = 1 : '';
+            value--;
+            $(_this).siblings('input#number').val(value);
+        }
+    });
+
+</script>
+</body>
 </html>

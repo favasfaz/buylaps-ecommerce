@@ -30,14 +30,14 @@ const couponCodeSchema = new mongoose.Schema({
     createdAt: {
         type: String,
         default: moment().format("DD/MM/YYYY") + ";" + moment().format("hh:mm:ss"),
-    },
+    }, 
     updatedAt: {
         type: String,
         default: moment().format("DD/MM/YYYY") + ";" + moment().format("hh:mm:ss"),
     },
+   
     expirationTime: {
         type: String,
-        default: moment().format("DD/MM/YYYY") + ";" + moment().format("hh:mm:ss"),
         required: true,
     },
     usedUsers:{

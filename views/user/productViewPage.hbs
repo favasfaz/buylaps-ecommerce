@@ -1,0 +1,115 @@
+
+ <header class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-2">
+                    <div class="header__logo">
+                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7">
+                    <nav class="header__menu">
+                        <ul>
+                            <li class="active"><a href="./index.html">Home</a></li>
+                            {{!-- <li><a href="#">Women’s</a></li> --}}
+                            {{!-- <li><a href="#">Men’s</a></li> --}}
+                            <li><a href="/users/shop">Shop</a></li>
+                            <li><a href="#">Checkout</a>
+                                <ul class="dropdown">
+                                    {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
+                                    {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
+                                    <li><a href="./checkout.html"></a></li>
+                                    <li><a href="./blog-details.html"></a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">About us</a></li>
+                            <li><a href="./contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__right">
+                        <div class="header__right__auth">
+                            {{#if user}}
+                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                                {{else}}
+                            <a href="/users/login">Login</a>
+                            {{/if}}
+                        </div>
+                        <ul class="header__right__widget">
+                            <li><span class="icon_search search-switch"></span></li>
+                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                                <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
+                            </a></li>
+                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            {{!-- -- ---------------------------------------------}}
+                                <div id="cart-count" class="tip">{{count}}</div>
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+            
+
+            {{#each data}}
+
+            <div class="container d-flex justify-content-center bg-white mt-4"><h2 style="color:#dc3545 ;">BEST PRODUCTS IN {{this.category}}</h2></div>
+{{/each}}
+
+<div class="container-fluid mt-3 mb-3">
+    <div class="row g-2">
+        {{#each data}}
+        <div class="col-md-4 d-flex justify-content-center" >
+            <div class="card" style="width: 380px ;">
+                <div class="img-container">
+                                       <div class="d-flex justify-content-center align-items-center p-2 first"> <span class="percent">-{{this.discount}}%</span>  </div> <img class="d-flex justify-content-center align-items-center " style="margin-left: 60px" src="/uploads/{{this.images.[0].img1}}" class="img-fluid">
+
+                    {{!-- <div class="d-flex justify-content-center align-items-center p-2 first"> <span class="percent">-{{this.discount}}%</span> <span class="wishlist"><i class="fa fa-heart"></i></span> </div> <img class="d-flex justify-content-center align-items-center " style="margin-left: 60px" src="/uploads/{{this.images.[0].img1}}" class="img-fluid"> --}}
+                </div>
+                <div class="product-detail-container">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">{{this.productName}}</h6> <span class="text-danger font-weight-bold">${{this.price}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div class="ratings"> <i class="fa fa-star"></i> <span>4.5</span> </div>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between"> <button class="btn btn-danger btn-block">Buy Now</button> <button class="btn btn-danger btn-block" style="margin-left: 5px" onclick="addToCart('{{this._id}}')">add To Cart</button> </div>
+                </div>
+            </div>
+        </div>
+       {{/each}}
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+
+<script>
+    function addToCart(proId){
+    $.ajax({
+        url:'/users/add-to-cart/'+proId,
+        method:'get',
+        success:(response)=>{
+            // var x = document.getElementById("form1").value;
+            if(response.status){
+                $('#cart-count').html(response.count)
+                alert('Item added to Cart')
+            }
+            else{
+                alert('please login first')
+            }
+        }, 
+        // error: function() {
+        //     alert("Please login first");
+        //   }
+    })
+}
+</script>
+
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap");body{background-color: #d6d2d2;font-family: "Poppins", sans-serif;font-weight: 300}.card{border:none;border-radius: 10px}.percent{padding: 5px;background-color: red;border-radius: 5px;color: #fff;font-size: 14px;height: 35px;width: 70px;display: flex;justify-content: center;align-items: center;cursor: pointer}.wishlist{height: 40px;width: 40px;display: flex;justify-content: center;align-items: center;border-radius: 50%;background-color: #eee;padding: 10px;cursor: pointer}.img-container{position: relative}.img-container .first{position: absolute;width: 100%}.img-container img{border-top-left-radius: 5px;border-top-right-radius: 5px}.product-detail-container{padding: 10px}.ratings i{color: #a9a6a6}.ratings span{color: #a9a6a6}label.radio{cursor: pointer}label.radio input{position: absolute;top: 0;left: 0;visibility: hidden;pointer-events: none}label.radio span{height: 25px;width: 25px;display: flex;justify-content: center;align-items: center;border: 2px solid #dc3545;color: #dc3545;font-size: 10px;border-radius: 50%;text-transform: uppercase}label.radio input:checked+span{border-color: #dc3545;background-color: #dc3545;color: #fff}
+</style>
