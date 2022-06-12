@@ -16,9 +16,14 @@ product:[{
     total:Number,
     shippingCost:Number,
     discount:Number,
+    stock:Number,
     image:{
         type:String
     },
+    stockLess:{
+        type:Boolean,
+        default:false
+    }
   
 }],
 total:{
@@ -36,7 +41,9 @@ shippingCost:{
         couponDiscount:{
             type:Number,
             default:0
-        }
+        },
+     
+    
 });
 
 const Cart = mongoose.model("cart", cartSchema);

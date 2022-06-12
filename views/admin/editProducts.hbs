@@ -135,8 +135,8 @@
      <div class="form-group">
                                               <label for="exampleSelectGender1">category</label>
                         <select name="category" class="form-control" id="exampleSelectGender1" required>
-                          {{#each Category}}
-                          <option{{data.category}} >{{this.name}}</option>
+                          {{#each Category.categories}}
+                          <option{{this.category}} >{{this.name}}</option>
                           {{/each}}
                         </select>
                       </div>
@@ -154,8 +154,8 @@
         <div class="form-group">
                                               <label for="exampleSelectGender1">Brand</label>
                         <select name="brand" class="form-control" id="exampleSelectGender1" required>
-                          {{#each allBrands}}
-                          <option{{data.brand}} >{{this.name}}</option>
+                          {{#each allBrands.allBrands}}
+                          <option{{this.brand}} >{{this.name}}</option>
                           {{/each}}
                         </select>
                       </div>

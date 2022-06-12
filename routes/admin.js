@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var {viewOrder,allOrders,totalCoupons,deleteCoupon,getAllCoupons,addCoupon,getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,totalUsers,totalProducts,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails,findCart} = require('../Calls/adminCalls')
+var {getChartData,paymentstatus,totalSales,totalOrders,changeStatus,viewOrder,allOrders,totalCoupons,deleteCoupon,getAllCoupons,addCoupon,getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,totalUsers,totalProducts,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails,findCart} = require('../Calls/adminCalls')
 var multer = require('multer')
 var storage = require('../uploadMiddleware/multer');
 const async = require('hbs/lib/async');
@@ -9,17 +9,23 @@ const { route } = require('../app');
 var flash =require('connect-flash');
 const session = require('express-session');
 const category = require('../Model/category-schema');
+const Order = require('../Model/order-schema');
 const { log } = require('console');
 
 
-
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/',async  (req, res, next)=> {
   let token = req.cookies.adminToken
   if(token){
+    let orderCount = await totalOrders() 
+    let Sales = await totalSales()
+    let successPayment = await paymentstatus()
+    let chart = await getChartData()
+    console.log(chart,'chartdata');
+    let refund = Sales - successPayment
     res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
-    res.render('admin/index',{admin:true})
+    res.render('admin/index',{admin:true,orderCount,Sales,refund,successPayment})
   }else{
     res.render('admin/login', {err:req.session.adminLoginErr });
     req.session.adminLoginErr=''
@@ -46,17 +52,7 @@ router.get('/viewUser',(req,res)=>{
    
   })
 })
-// router.get('/addProduct',(req,res)=>{
-//   res.render('admin/addProduct',{err:req.session.addingErr})
-// })
-// router.post('/addProduct',(req,res)=>{
-//   addingProduct(req.body).then(()=>{
-//     res.redirect('/addProduct')
-//   }).catch((err)=>{
-//     req.session.addingErr=err.msg
-//     res.redirect('/addProduct')
-//   })
-// })
+
 router.get('/deleteUser/:id',(req,res)=>{
   console.log(req.params.id);
   deleteUser(req.params.id).then(()=>{
@@ -141,7 +137,8 @@ router.get('/deleteProduct/:id',(req,res)=>{
    productDetails(id).then((data)=>{
     getCategory().then((Category)=>{
       getBrand().then((allBrands)=>{
-    
+    console.log(Category,'category')
+    console.log(allBrands,'brands');
        res.render('admin/editProducts',{data,Category,allBrands})
       })
     })
@@ -223,18 +220,116 @@ deleteCoupon(req.params.id).then(()=>{
 })
 router.get('/allOrders',(req,res)=>{
   allOrders().then((data)=>{
+    console.log(data,'data');
    res.render('admin/allOrders',{data})
   })
 })
-router.get('/viewDeteils/:id',(req,res)=>{
-  viewOrder(req.params.id).then((result)=>{
-    let orders = result.order.orders
-    let product = result.product.orders
-    console.log(result,'full');
-    console.log(orders,'orders');
-    console.log(product,'product');
-      res.render('admin/orderDeteils',{orders,product,result})
+router.get('/viewDeteils/:id/:id1',(req,res)=>{
+ let id = req.params.id
+ let user = req.params.id1
+  viewOrder(id,user).then((result)=>{
+      res.render('admin/orderDeteils',{result})
     })
   
 })
+router.post('/changeStatus',(req,res)=>{
+  console.log(req.body,'req.body');
+changeStatus(req.body).then(()=>{
+  res.json({status:true})
+})
+})
+
+router.get('/totalRevenue',(req,res)=>{
+ res.render('admin/totalRevenue')
+})
+
+
+// router.get('/getData',(req,res)=>{
+  
+//  getChartData().then((data)=>{
+//   res.json({data})
+//  })
+// })
+
+router.post('/getData',async(req,res)=>{
+ console.log(req.body,'req.body');
+  let {startDate,endDate} = req.body
+
+  let d1, d2, text;
+  if (!startDate || !endDate) {
+      d1 = new Date();
+      d1.setDate(d1.getDate() - 7);
+      d2 = new Date();
+      text = "For the Last 7 days";
+    } else {
+      d1 = new Date(startDate);
+      d2 = new Date(endDate);
+      text = `Between ${startDate} and ${endDate}`;
+    }
+ 
+
+// Date wise sales report
+const date = new Date(Date.now());
+const month = date.toLocaleString("default", { month: "long" });
+let salesReport = await Order.aggregate([
+{
+  $match: {
+    created: {
+      $lt: d2,
+      $gte: d1,
+    },
+  },
+},
+{
+  $group: {
+    _id: { $dayOfMonth: "$created" },
+    total: { $sum: "$totalAmount" },
+  },
+},
+]);
+
+let dateArray = [];
+let totalArray = [];
+salesReport.forEach((s) => {
+dateArray.push(`${month}-${s._id} `);
+totalArray.push(s.total);
+});
+
+let brandReport = await Order.aggregate([{
+  $unwind: "$product",
+},{
+  $project:{
+      brand: "$product.brand",
+      subTotal:"$product.subTotal"
+  }
+},{
+  $group:{
+      _id:'$brand',
+   totalAmount: { $sum: "$subTotal" },
+
+  }
+}
+
+])
+
+
+let brandArray = [];
+let sumArray = [];
+brandReport.forEach((s) => {
+brandArray.push(s._id);
+sumArray.push(s.totalAmount);
+});
+
+  res.json({dateArray,totalArray,brandArray,sumArray})
+ })
+
+
+ router.post('/getUpdate',(req,res)=>{
+  console.log(req.body,'req.body');
+  getUpdate(req.body).then((data)=>{
+    
+  })
+ })
+ 
+
 module.exports = router;

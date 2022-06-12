@@ -106,7 +106,7 @@
 					 <div class="container">
 					 
 				     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"></span> View Users</h4>
-					 <h4>totolUsers:{{count}}</h4>
+					 <h4>totol Orders:{{count}}</h4>
 <div class="row">
 	<div class="col-lg-12">
 		<div class="main-box clearfix">
@@ -114,11 +114,14 @@
 				<table class="table user-list" id="orderTable">
 					<thead>
 						<tr>
+              <th><span>Image</span></th>
 							<th><span>User</span></th>
+           <th><span>product</span></th>
 							<th><span>Created</span></th>
 							<th class="text-center"><span>status</span></th>
 							<th><span>Total</span></th>
-  							<th><span>options</span></th>
+  							<th><span>quantity</span></th>
+                	<th><span>change Status</span></th>
 
 							
 							<th>&nbsp;</th>
@@ -126,55 +129,44 @@
 					</thead>
 					<tbody>
                         {{#each data}}
+                        {{#each this.product}}
 						<tr>
-							<td>
-								<img style="width: 70px ;" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
-								<a href="#" class="user-link">{{this.userId}}</a>
+              	<td>
+								<img style="width: 75px; ;" src="/uploads/{{this.image}}" alt="image">
 								<span class="user-subhead"></span>
 							</td>
 							<td>
-								{{this.created}}
+								<a href="#" class="user-link">{{../this.userId}}</a>
+								<span class="user-subhead"></span>
+							</td>
+              	<td>
+								{{this.name}}
+								</td>
+							<td>
+								{{../this.created}}
 								</td>
 							<td class="text-center">
 								<span class="label label-default">{{this.status}}</span>
 							</td>
 							
 							<td>
-								<a href="#">{{this.totalAmount}}</a>
+								<a href="#">{{../this.totalAmount}}</a>
 							</td>
 							
-							 <td style="width: 20%;">
-								{{!-- <a href="#" class="table-link">
-									<span class="fa-stack">
-										<i class="fa fa-square fa-stack-2x"></i>
-										<i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
-									</span>
-								</a>  --}}
-								{{!-- {{#if status}}
-								<a id="unblock"  style="margin-left:10px ;" href="/blockUser/{{this.email}}" class="table-link">
-									<span class="fa-stack">
-										<i  class="fa-solid fa-block">Block</i>
-										
-									</span>
-								</a>
-								{{else}}
-								<a id="block" style="margin-left:10px ;" href="/unBlockUser/{{this.email}}" class="table-link">
-									<span class="fa-stack">
-										<i  class="fa-solid fa-block">unBlock</i>
-										
-									</span>
-								</a>
-								{{/if}} --}}
-								<a href="/viewDeteils/{{this.userId}}"  style="margin-left:20px ;"class="table-link danger btn btn-primary">
-									{{!-- <span class="fa-stack btn btn-primary">
-                     Deteils
-										<i class="fa fa-square fa-stack-2x"></i>
-										<i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-									</span> --}}
-                  details
-								</a>
+							 <td >
+							{{this.quantity}}
+             
 							</td>
+              {{!-- <td>   <select onchange="changeStatus('{{this._id}}','{{../this.userId}}','{{@../index}}')"  name="brand"class="table-link danger btn btn-primary" id="exampleSelectGender1">
+                        <option >{{this.status}}</option>
+                        <option  value="1" >Shipped</option>
+                                        <option value="2" >Delivered</option>
+              </td> --}}
+              <td><a href="/viewDeteils/{{this._id}}/{{../this.userId}}">details</a></td>
+                                
+
 						</tr>
+            {{/each}}
 					{{/each}}
 					</tbody>
 				</table>
@@ -277,6 +269,8 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
   </body>
 </html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+ <script src="/javascripts/addToCart.js"></script>
 
 
 

@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var easyinvoice = require('easyinvoice')
  var Model = require('../Model/user-schema');
-var {sortOrder,cancelOrder,addProfile,viewOrder,search,priceFilter,verifyPayment,generateRazor,placeOrder,findAddress,addAddress,getAddress,cartIn,findBrand,findDiscount,findCategory,getCategory,deleteWishlist,getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
+var {paymentFailed,deleteOrder,getSingleProduct,sortOrder,cancelOrder,addProfile,viewOrder,search,priceFilter,verifyPayment,generateRazor,placeOrder,findAddress,addAddress,getAddress,cartIn,findBrand,findDiscount,findCategory,getCategory,deleteWishlist,getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
 var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
 var {cartverify,verifyToken,sessionverify,sessionverify2} = require('../middlewares/auth');
@@ -11,8 +11,12 @@ const async = require('hbs/lib/async');
 const res = require('express/lib/response');
 const Address = require('../Model/address-schema');
 const Cart = require("../Model/cart-schema");
+const PDFDocument = require('pdfkit');
 var fs = require('fs');
+const Order = require('../Model/order-schema')
 const { log } = require('console');
+const Product = require('../Model/product-schema');
+const { route } = require('./admin');
 
 /* GET users listing. */
 
@@ -240,7 +244,7 @@ console.log(req.session.forgotErr);
       let subtotal=await subTotal(req.session.user)
       let dicounts=await findDiscount(req.session.user)
       let wishlistCount=await getWishlistCount(req.session.user)
-
+      console.log(data,'data');
     
         if(data && count){
           let product=data.product 
@@ -312,9 +316,9 @@ router.get('/checkout',sessionverify2,async(req,res)=>{
       let account = await getAccount(req.session.user.email)
   await cartIn(req.session.user).then(async()=>{   
 let address=await getAddress(req.session.user)
-console.log(address);
+let user = req.session.user
 if(address){
-      res.render('user/addAddress',{account,account,address,data,count,total,subtotal,grandTotal})
+      res.render('user/addAddress',{user,account,account,address,data,count,total,subtotal,grandTotal})
 }else{
   res.render('user/addAddress',{data,count,total,subtotal,grandTotal})
 }
@@ -390,8 +394,7 @@ router.get('/brandProduct/:id',(req,res)=>{
 
 router.get('/addAddress',sessionverify2,async(req,res)=>{
   let address= await getAddress(req.session.user)
-  console.log(address);
-  res.render('user/addAddress',{address})
+  res.render('user/addAddress',{address,user})
 })
 
 router.post('/addAddress',(req,res)=>{
@@ -415,11 +418,15 @@ router.get('/productOrderForm/:id',sessionverify2,async(req,res)=>{
   let total = await totalAmount(req.session.user)
   let subtotal=await subTotal(req.session.user)
   let dicounts=await findDiscount(req.session.user)
-  let grandTotal =(data.total-data.discount)+data.shippingCost
  findAddress(req.params.id,req.session.user).then((address)=>{
-console.log(address,'address');
-   res.render('user/productOrderForm',{data,address,count,total,subtotal,dicounts,grandTotal,err:req.session.redeemErr})
-   req.session.redeemErr=''
+  let grandTotal =(data.total-data.discount)+data.shippingCost
+   if(grandTotal!=null){
+    res.render('user/productOrderForm',{data,address,count,total,subtotal,dicounts,grandTotal,err:req.session.redeemErr})
+    req.session.redeemErr=''
+   }else{
+     res.redirect('/users')
+   }
+
  })
 
 })
@@ -439,11 +446,12 @@ router.post('/checkingCoupon/:id',(req,res)=>{
 })
 
 router.post('/placeOrder',(req,res)=>{
-  console.log(req.body.paymentMethod);
   placeOrder(req.session.user,req.body).then(async(orderId)=>{
+   
     if(req.body.paymentMethod=='COD'){
-      await Cart.findOneAndDelete({userId:req.session.user.email})
-      res.json({status:true})
+      let theOrder =  await Order.find({_id:orderId})
+     await Cart.findOneAndDelete({userId:req.session.user.email})
+     res.json({status:true})
     }
     else{
       generateRazor(orderId,req.session.user).then((response)=>{
@@ -457,6 +465,7 @@ router.post('/placeOrder',(req,res)=>{
 
 })
 router.post('/verifyPayment',(req,res)=>{
+  console.log(req.body,'req.body');
   verifyPayment(req.body,req.session.user).then(()=>{
     console.log('successfull');
     res.json({status:true})
@@ -473,9 +482,9 @@ router.post('/filter',(req,res)=>{
  })
 })
 router.post('/search',(req,res)=>{
-  console.log(req.body);
+  console.log(req.body,'users');
  search(req.body).then((data)=>{
-
+res.json({data})
  })
 })
 
@@ -492,16 +501,15 @@ router.get('/viewOrder',sessionverify2,(req,res)=>{
   })
 })
 router.get('/cancelOrder/:id',(req,res)=>{
-  console.log(req.params.id);
+  console.log(req.params.id,'userjs id');
   cancelOrder(req.params.id,req.session.user).then(()=>{
    res.json({status:true})
   })
 })
 
 router.get('/orderSuccessfull',(req,res)=>{
-  sortOrder(req.session.user.email).then((data)=>{
-    let prodOrders = data.pop()
-    res.render('user/orderSuccessfull',{prodOrders})
+  sortOrder(req.session.user.email).then((data)=>{ 
+    res.render('user/orderSuccessfull',{data})
   })
  
 })
@@ -510,6 +518,47 @@ router.get('/download',(req,res)=>{
   sortOrder(req.session.user.email).then((data)=>{
     res.json({data})
   })
+})
+
+router.get('/sendInvoice',(req,res)=>{
+  sortOrder(req.session.user.email).then((data)=>{
+    const doc = new PDFDocument();
+
+    doc.pipe(fs.createWriteStream('output.pdf'));
+
+    // Embed a font, set the font size, and render some text
+    doc
+      .fontSize(25)
+      .text('kkkkkkkkkkk', 100, 100);
+    
+    // Add an image, constrain it to a given size, and center it vertically and horizontally
+   
+    doc.end();
+  })
+})
+
+router.get('/singleOrderView/:id',sessionverify2,(req,res)=>{
+  console.log(req.params.id,'id');
+getSingleProduct(req.params.id,req.session.user).then((data)=>{
+console.log('singleProduct',data,'data');
+data.product.forEach((prdt)=>{
+  res.render('user/singleOrderView',{Data:prdt})
+})
+
+})
+})
+
+router.get('/deleteOrder/:id',(req,res)=>{
+  console.log(req.params.id,'id');
+  deleteOrder(req.params.id,req.session.user).then(()=>{
+    res.json({status:true})
+  })
+})
+router.post('/paymentFailed',(req,res)=>{
+  console.log('req.body');
+paymentFailed(req.body).then(()=>{
+  res.json({status:true})
+})
 })
 module.exports = router;
 

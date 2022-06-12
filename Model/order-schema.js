@@ -1,53 +1,76 @@
-const mongoose = require("mongoose");
+const Mongoose = require("mongoose");
 
-const orderSchema = new mongoose.Schema({
+const orderSchema = new Mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
+  product: [
+    {
+      productId: Mongoose.Schema.Types.ObjectId,
+      name: String,
+      price: Number,
+      brand: String,
+      image: String,
+      quantity: Number,
+      subTotal: Number,
+      paid: {
+        type: String,
+        default: "Not Paid",
+      },
+      status: {
+        type: String,
+        default: "Ordered",
+      },
+    
+      deliverDate: {
+        type: String,
+        default: null,
+      },
+      paymentType: {
+        type: String,
+        required: true,
+      },
+      active:{
+        type:Boolean,
+        default:true
+      }
+    },
+  ],
+  address:{
+      type:Object,
+      fName:String,
+      state:String,
+        streetAddress:String,
+      town:String,
+      postCode:Number
+  },
+  totalAmount: {
+    type: Number,
+    default: 0,
+  },
+  shippingCost: {
+    type: Number,
+    default: 0,
+  },
+  discount: {
+    type: Number,
+    default: 0,
+  },
+  couponDiscount: {
+    type: Number,
+    default: 0,
+  },
+  count: {
+    type: Number,
+  },
+  created: {
+    type:Date,
+    default:Date.now()
+  }
  
-    userId:{
-        type:String,
-        required:true
-    },
-
-    cart:{
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'Cart'
-    },
-    orders:[{
-        
-        productId:{type:mongoose.Schema.Types.ObjectId,
-            ref:'Product'},
-        quantity:Number,
-        total:Number,
-        shippingCost:Number,
-        discount:Number,
-       
-    }],
-    address:{
-        type: Object,
-            fName:String,
-            state:String,
-            streetAddress:String,
-            town:String,
-            postCode:Number,
-            paymentMethod:String
-    },
-   
-    totalAmount:{
-        type:Number,   
-    },
-    created:{
-        type:Date,
-        default:Date.now()
-        },
-        status:{
-            type:String,
-            default:'pending'
-        },
-         shippingCost:Number,
-        discount:Number,
-        couponDiscount:Number
-  
 });
 
-const order = mongoose.model("order", orderSchema);
+const orderModel = Mongoose.model("Orders", orderSchema);
 
-module.exports = order;
+module.exports = orderModel;

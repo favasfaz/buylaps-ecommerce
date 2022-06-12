@@ -1,5 +1,6 @@
 
 
+
 function getAll(proId){
     let parent = document.getElementById("parent");
     console.log(parent, "parent")
@@ -145,6 +146,7 @@ function getCoupons(){
             method:'post',
             data:$('#checkout-form').serialize(),
             success:(response)=>{
+                console.log('success');
               if(response.status){
                 window.location.href= "/users/orderSuccessfull"
               }else{
@@ -184,6 +186,9 @@ function razorpayPayment(order){
         }
     };
     var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+       paymentFailed(order)
+});
     rzp1.open();
 
 }
@@ -199,13 +204,15 @@ function verifyPayment(payment,order){
         method:'post',
         success:(response)=>{
             window.location.href= "/users/orderSuccessfull"
-        }
+        },
+      
     })
 }
 
 $("#priceFilter").submit((e)=>{
     let datas = document.getElementById("datas");
     console.log('success');
+    datas.innerHTML='';
     e.preventDefault()
     $.ajax({
         url:'/users/filter',
@@ -226,6 +233,8 @@ $("#priceFilter").submit((e)=>{
               prodImg.alt=p.brand;
               proName=p.productName
               parentDiv.append(prodImg);
+              var lineBreak = document.createElement("br");
+              parentDiv.append(lineBreak)
               parentDiv.append(proName);
               datas.append(parentDiv);    
             });
@@ -240,6 +249,7 @@ $("#priceFilter").submit((e)=>{
         }
 
         function canceling(id){
+            console.log(id,'id ');
             $.ajax({
                 url:'/users/cancelOrder/'+id,
                 method:'get',
@@ -255,114 +265,235 @@ $("#priceFilter").submit((e)=>{
                 url:'/users/download',
                 method:"get",
                 success:(response)=>{
-                    let products = []
-                    response.data.forEach((e)=>{
-                        products.push=(e.orders)
-                    })
-                    let prod = products.pop()
-                    console.log(prod);
-                  let datas = response.data
-                  datas.forEach((p,i)=>{
-                    var data = {
-                        // Customize enables you to provide your own templates
-                        // Please review the documentation for instructions and examples
-                        "customize": {
-                            //  "template": fs.readFileSync('template.html', 'base64') // Must be base64 encoded html 
-                        },
-                        "images": {
-                            // The logo on top of your invoice
-                            "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
-                            // The invoice background
-                            "background": "https://public.easyinvoice.cloud/img/watermark-draft.jpg"
-                        },
-                        // Your own data
-                        "sender": {
-                            "company": "FEIZY.COM",
-                            "address": "Sample Street 123",
-                            "zip": "1234 AB",
-                            "city": "Sampletown",
-                            "country": "Samplecountry"
-                            //"custom1": "custom value 1",
-                            //"custom2": "custom value 2",
-                            //"custom3": "custom value 3"
-                        },
-                        // Your recipient
-                        "client": {
-                            "company": p.userId,
-                            "address": p.address.town,
-                            "zip": p.address.postCode,
-                            "city": p.address.state,
-                            "country": p.address.country
-                            // "custom1": "custom value 1",
-                            // "custom2": "custom value 2",
-                            // "custom3": "custom value 3"
-                        },
-                        "information": {
-                            // Invoice number
-                            "number": "2021.0001",
-                            // Invoice data
-                            "date": "12-12-2021",
-                            // Invoice due date
-                            "due-date": "31-12-2021"
-                        },
-                        // The products you would like to see on your invoice
-                        // Total values are being calculated automatically
-                        "products": prod,
-                        // The message you would like to display on the bottom of your invoice
-                        "bottom-notice": "Kindly pay your invoice within 15 days.",
-                        // Settings to customize your invoice
-                        "settings": {
-                            "currency": "USD", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
-                            // "locale": "nl-NL", // Defaults to en-US, used for number formatting (See documentation 'Locales and Currency')
-                            // "tax-notation": "gst", // Defaults to 'vat'
-                            // "margin-top": 25, // Defaults to '25'
-                            // "margin-right": 25, // Defaults to '25'
-                            // "margin-left": 25, // Defaults to '25'
-                            // "margin-bottom": 25, // Defaults to '25'
-                            // "format": "A4", // Defaults to A4, options: A3, A4, A5, Legal, Letter, Tabloid
-                            // "height": "1000px", // allowed units: mm, cm, in, px
-                            // "width": "500px", // allowed units: mm, cm, in, px
-                            // "orientation": "landscape", // portrait or landscape, defaults to portrait
-                        },
-                        // Translate your invoice to your preferred language
-                        "translate": {
-                            // "invoice": "FACTUUR",  // Default to 'INVOICE'
-                            // "number": "Nummer", // Defaults to 'Number'
-                            // "date": "Datum", // Default to 'Date'
-                            // "due-date": "Verloopdatum", // Defaults to 'Due Date'
-                            // "subtotal": "Subtotaal", // Defaults to 'Subtotal'
-                            // "products": "Producten", // Defaults to 'Products'
-                            // "quantity": "Aantal", // Default to 'Quantity'
-                            // "price": "Prijs", // Defaults to 'Price'
-                            // "product-total": "Totaal", // Defaults to 'Total'
-                            // "total": "Totaal" // Defaults to 'Total'
-                        },
-                    };
-                    
-                    //Create your invoice! Easy!
-                    easyinvoice.createInvoice(data, function (result) {
-                        //The response will contain a base64 encoded PDF file
-                        console.log('PDF base64 string: ', result.pdf);
-                        easyinvoice.download('invoice')
-                    });
-                  })
-                       
-                      
+                   console.log('success');
                 }
             })
         }
 
+        $("body").on("keyup", "#search-box" ,function(event) {
+            var element = event.target;
+            searchFunction(element.value);
+        });
 
-       function sendData(e){
-         $.ajax({
-             url:'/users/search',
-             method:'post',
-             data:{
-                 id:e
-             }
-         })
-       }
+       function searchFunction(search){
+       $.ajax({
+        url:'/users/search',
+        method:'post',
+        data:{
+            search
+        },
+        success:(response)=>{
+               console.log(response);
+        }
+       })
+        }
+
      
-       $(document).ready( function () {
-        $('#orderTable').DataTable();
-    } );
+function changeStatus(id,user){
+
+    let data = document.getElementById('exampleSelectGender1').value
+  
+    console.log(data,'data');
+    console.log(id);
+    console.log(user,'user');
+   
+   $.ajax({
+       url:'/changeStatus',
+       data:{
+           id,
+           user,
+           data
+       },
+       method:'post',
+       success:(response)=>{
+           location.reload()
+        console.log('success');
+       }
+   })
+}
+
+function deleteOrder(id){
+    $.ajax({
+        url:'/users/deleteOrder/'+id,
+        method:'get',
+        success:(response)=>{
+                window.location.href='/users/viewOrder'
+        }
+
+    })
+}
+
+function paymentFailed(order){
+    $.ajax({
+        url:'/users/paymentFailed',
+        method:'post',
+        data:{
+          
+            order
+        },
+        success:(response)=>{
+
+        }
+    })
+}
+
+
+async function allData(){
+    console.log('success1');
+    const totalAmount = []
+    $.ajax({
+        url:'/getData',
+        method:'get',
+        success:(response)=>{
+            response.data.map((e)=>{
+                totalAmount.push(e.totalAmount)
+              })
+        }})
+
+console.log(totalAmount,'toatalAmout');
+  var ctx = document.getElementById('chart').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'bar',
+
+    // The data for our dataset
+    data: {
+        labels: ["Monday", "Tuesday", "Wednsday", "Thursday", "Friday", "Saturday", "Sunday"],
+        datasets: [{
+            label: "My First dataset",
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data:totalAmount,
+        }]
+    },
+
+    // Configuration options go here
+    options: {
+      tooltips:{
+        mode:'index'
+      }
+    }
+});
+}
+
+allData()
+
+// function getData(){
+//     console.log('successss2');
+//     $.ajax({
+//         url:'/getData',
+//         method:'get',
+//         success:(response)=>{
+//             let total = []
+//             response.data.map((e)=>{
+//               total.push(e.totalAmount)
+//             })
+           
+//             console.log(total,'total');
+           
+//             totalAmount = total
+//         }
+//     })
+// }
+
+
+ 
+
+async function forHome(){
+    console.log('success1');
+    const totalAmount = []
+    const totalDate = []
+   await $.ajax({
+        url:'/getData',
+        method:'post',
+        success:(response)=>{
+            console.log(response,'reponse');
+            var ctx = document.getElementById('rice').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'bar',
+            
+                // The data for our dataset
+                data: {
+                    labels:response.dateArray,
+                    datasets: [{
+                        label: "last week dataset",
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data:response.totalArray,
+                    }]
+                },
+            
+                // Configuration options go here
+                options: {
+                  tooltips:{
+                    mode:'index'
+                  }
+                }
+            });
+            var ctx = document.getElementById('brand').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'bar',
+            
+                // The data for our dataset
+                data: {
+                    labels:response.brandArray,
+                    datasets: [{
+                        label: "brand base dataset",
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data:response.sumArray,
+                    }]
+                },
+            
+                // Configuration options go here
+                options: {
+                  tooltips:{
+                    mode:'index'
+                  }
+                }
+            });
+        }})
+console.log(totalAmount,'toatalAmout');
+ 
+}
+
+forHome()
+
+$(".getUpdate").submit(()=>{
+    console.log('success3');
+    $.ajax({
+        url:'/getUpdate',
+        data:$('.getUpdate').serialize(),
+        method:'post',
+        success:(response)=>{
+            console.log(response,'updatereponse');
+            var ctx = document.getElementById('chart').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'bar',
+            
+                // The data for our dataset
+                data: {
+                    labels:response.dateArray,
+                    datasets: [{
+                        label: "last week dataset",
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data:response.totalArray,
+                    }]
+                },
+            
+                // Configuration options go here
+                options: {
+                  tooltips:{
+                    mode:'index'
+                  }
+                }
+            });
+            window.location.href="/totalRevenue"
+        }
+    })
+})
+

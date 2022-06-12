@@ -126,9 +126,11 @@ table.shoping-cart-table tr td:last-child {
 
 html,
 body {
+	background: #F4F7FD !important;
 	height: 100%;
 	font-family: "Montserrat", sans-serif;
 	-webkit-font-smoothing: antialiased;
+
 }
 
 h1,

@@ -11,7 +11,7 @@ const productSchema=new mongoose.Schema({
         required:true,
     },
     stock:{
-      type:String,
+      type:Number,
       required:true,
       
     },
@@ -61,11 +61,15 @@ const productSchema=new mongoose.Schema({
      create :{
   type:Date,
   default:Date.now
+},
+stockLess:{
+    type:Boolean,
+    default:false
 }
     
 })
 
-
+productSchema.index({productName:'text'})
 
 const Product = mongoose.model("Product", productSchema);
 module.exports=Product

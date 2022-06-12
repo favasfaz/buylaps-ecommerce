@@ -20,7 +20,8 @@ const Order = require('../Model/order-schema')
 const Razorpay = require('razorpay');
 var easyinvoice = require('easyinvoice');
 const { log } = require("console");
-
+const moment =  require('moment');
+const { resolve } = require("path");
 var instance = new Razorpay({
   key_id: 'rzp_test_BGehHwSUiY0EOA',
   key_secret: 'Zl8W6dg3CLH5AAW5D44rHrvs',
@@ -298,6 +299,8 @@ const addingToCart = (id, data) => {
                 image: products.images[0].img1,
                 shippingCost: products.shippingCost,
                 discount: products.discount,
+                stock:products.stock,
+                stockLess:products.stockLess
               },
             },
           }
@@ -313,9 +316,11 @@ const addingToCart = (id, data) => {
           name: products.productName,
           price: products.price,
           brand: products.brand,
+          stock:products.stock,
           image: products.images[0].img1,
           shippingCost: products.shippingCost,
           discount: products.discount,
+          stockLess:products.stockLess
         },
         total: products.price,
       });
@@ -548,7 +553,6 @@ const checkCoupon = (data, user) => {
             ifUser = await Cart.findOne({ userId: user.email });
             if (ifUser) {
               let finalTotal = ifUser.total - ifExist.discount;
-              console.log(finalTotal,'finaltptao');
               await Coupon.findOneAndUpdate(
                 { couponCode: data.coupon },
                 { $set: { usedUsers: user.email } }
@@ -789,31 +793,28 @@ const findAddress=(id,user)=>{
 
 const placeOrder=(user,data)=>{
   return new Promise(async(resolve,reject)=>{
- let isCart= await Cart.find({userId:user.email})
- let isOrder = await Order.findOne({userId:user.email})
- let orderProducts = [];
- isCart.forEach((c,i)=> {
-  orderProducts.push(c.product);
- })  
- let prod= orderProducts.pop()
+ let isCart= await Cart.findOne({userId:user.email})
 
-    cartProducts = isCart.pop()
+
+const proDetails=[]
+
+isCart.product.forEach((pro)=>{
+     proDetails.push({productId:pro.productId,name:pro.name,price:pro.price,brand:pro.brand,image:pro.image,quantity:pro.quantity,subTotal:pro.total,paymentType:data.paymentMethod})
+})
    let newOrder = await new Order({
      userId:user.email,
-     cart:cartProducts._id,
+     product:proDetails,
      address:{
        fName:data.fName,
        state:data.fName,
        streetAddress:data.streetAddress,
        town:data.town,
        postCode:data.postCode,
-       paymentMethod:data.paymentMethod,
      },
-     orders:prod,
-     totalAmount:cartProducts.total,
-     shippingCost:cartProducts.shippingCost,
-     discount:cartProducts.discount,
-     couponDiscount:cartProducts.couponDiscount
+     totalAmount:isCart.total,
+     shippingCost:isCart.shippingCost,
+     discount:isCart.discount,
+     couponDiscount:isCart.couponDiscount
       })
       await newOrder.save(async(err,done)=>{
         if(err){
@@ -821,7 +822,14 @@ const placeOrder=(user,data)=>{
           reject({msg:'something went wrong'})
         }
         else{
-          let userOrder = await Order.findOne({userId:user.email})
+          console.log(done,'orderProduct');
+          let userOrder = await Order.findOne({userId:user.email,_id:done._id})
+          userOrder.product.forEach(async(e,i)=>{
+     let product =  await Product.findOneAndUpdate({_id:e.productId},{ $inc: { stock: -e.quantity }})
+        if(product.stock<5){
+            await Product.findOneAndUpdate({_id:e.productId},{$set:{stockLess:true}})
+        }
+          })
      resolve(userOrder._id)
         }
       })
@@ -892,6 +900,7 @@ const generateRazor=(orderid,user)=>{
   })
 }
 const verifyPayment=(data,user)=>{
+  console.log(data,'data');
   return new Promise(async(resolve,reject)=>{
     const crypto = require('crypto')
     let hmac = crypto.createHmac('sha256','Zl8W6dg3CLH5AAW5D44rHrvs')
@@ -899,7 +908,7 @@ const verifyPayment=(data,user)=>{
 hmac=hmac.digest("hex")
 if(hmac==data.payment.razorpay_signature){
  await Cart.findOneAndDelete({userId:user.email})
- await Order.findOneAndUpdate({userId:user.email},{$set:{status:'payment completed'}})
+ await Order.findOneAndUpdate({_id:data.order.response.receipt},{$set:{'product.$[].paid':'payment completed'}})
   resolve()
 }else{
   reject()
@@ -916,8 +925,9 @@ const priceFilter=(data)=>{
 const search=(data)=>{
   return new Promise(async(resolve,reject)=>{
     let search=data.search
-    let products= await Product.find({productName:{$regex:/search/}})
-    console.log(products);
+    console.log(search,'userCalls');
+    let products= await Product.find({'$or':[{productName:{$regex:search,$options:'i'}}]})
+      resolve(products)
   })
 }
 
@@ -990,21 +1000,55 @@ if (isUser){
 const viewOrder=(id)=>{
   return new Promise(async(resolve,reject)=>{
       // let orderDeteils= await Order.find({userId:id}).lean()
-      let products = await Order.find({userId:id}).populate("orders.productId").lean()
+      let products = await Order.find({userId:id}).lean()
+      console.log(products);
      resolve(products)
   })
 }
 const cancelOrder= (id,user)=>{
   return new Promise(async(resolve,reject)=>{
-let ifOrders = await Order.findOne({userId:user.email}, { orders: { $elemMatch: { _id:id } } })
- console.log(ifOrders,'ifOrders');
+// let ifOrders = await Order.findOne({userId:user.email}, { product: { $elemMatch: { _id:id } } })
+  //   await Order.update(
+  //     { userId: user.email },
+  //     { $pull: { product: { _id: id } } }
+  //   );
+  // if(!ifOrders.product.length){
+  //   console.log('success');
+  //   await Order.deleteOne({_id : ifOrders._id})
+  //   resolve()
+  // }else{
+  //   console.log('error');
+  //   resolve()
+  // }
+  await Order.findOneAndUpdate({userId:user.email,'product._id':id},{$set:{'product.$.status':'order canceled'}})
+  await Order.findOneAndUpdate({userId:user.email,'product._id':id},{$set:{'product.$.active':'false'}})
+  resolve()
+  })
+}
+const sortOrder=(id)=>{
+  return new Promise(async(resolve,reject)=>{
+      let orderDeteils= await Order.find({userId:id}).sort({created:-1}).limit(1).lean()
+     resolve(orderDeteils)
+  })
+}
+
+const getSingleProduct=(id,user)=>{
+  return new Promise(async(resolve,reject)=>{
+    let singleProduct = await Order.findOne({userId:user.email, "product._id": id }).lean()
+    resolve(singleProduct)
+  })
+}
+
+const deleteOrder=(id,user)=>{
+  return new Promise(async(resolve,reject)=>{
+    let ifOrders = await Order.findOne({userId:user.email}, { product: { $elemMatch: { _id:id } } })
     await Order.update(
       { userId: user.email },
-      { $pull: { orders: { _id: id } } }
+      { $pull: { product: { _id: id } } }
     );
-  if(!ifOrders.orders.length){
+  if(!ifOrders.product.length){
     console.log('success');
-    await Order.deleteOne({_id : ifOrders._id})
+    await Order.removeOne({_id : ifOrders._id})
     resolve()
   }else{
     console.log('error');
@@ -1012,16 +1056,24 @@ let ifOrders = await Order.findOne({userId:user.email}, { orders: { $elemMatch: 
   }
   })
 }
-const sortOrder=(id)=>{
+
+const paymentFailed = (data)=>{
+  console.log('function');
+  console.log(data.order.response.receipt,'data reciept');
   return new Promise(async(resolve,reject)=>{
-      // let orderDeteils= await Order.find({userId:id}).lean()
-      let products = await Order.find({userId:id}).populate("orders.productId").sort({ created: -1 }).limit(1).lean()
-      console.log(products);
-     resolve(products)
+    await Order.findOneAndUpdate({_id:data.order.response.receipt},{$set:{'product.$[].paid':'payment failed'}})
+    await Order.findOneAndUpdate({_id:data.order.response.receipt},{$set:{'product.$[].status':'payment failed'}})
+    resolve()
   })
+
 }
 
+
+
 module.exports = {
+  paymentFailed,
+  deleteOrder,
+  getSingleProduct,
   sortOrder,
   cancelOrder,
   viewOrder,

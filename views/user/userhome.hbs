@@ -87,8 +87,8 @@
     <!-- Categories Section Begin -->
    
    <section>
-      <div class="container">
-           <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+      <div class="container-fluid ">
+           <div  id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active">
       <img src="https://static-ecapac.acer.com/media/magestore/bannerslider/images/2/2/2205_smb-bundle-banner_1920x720.jpg" class="d-block w-100" alt="">
@@ -109,7 +109,7 @@
       </div>
    </section>
 <!-- Categories Section End -->
-<section>
+{{!-- <section>
      <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
     <div class="position-sticky">
       <div class="list-group list-group-flush mx-3 mt-2">
@@ -145,7 +145,7 @@
       </form>
   </div>
 </div> 
-    {{!-- <input type="text" id="search-box" onkeyup="sendData(this)" name="search" placeholder="search here"> --}}
+    <input type="text" id="search-box"  name="search" placeholder="search here">
 
       </div>
     </div>
@@ -154,7 +154,7 @@
 
   <!-- Navbar -->
 
-</section>
+</section> --}}
 <!-- Product Section Begin -->
 
 <section class="product spad">
@@ -314,40 +314,23 @@
 
 
 
-    {{!-- <div class="container">
-        <div class="row">
-            <div class="col-lg-4 col-md-4">
-                <div class="section-title">
-                    <h4>All  product</h4>
-                </div>
-            </div>
-            <div class="col-lg-8 col-md-8">
-                <ul class="filter__controls">
-                    <li class="active" data-filter="*">All</li>
-                   <a style="padding-left:5px ;" href="/users/Samsung"> <li data-filter=".women">Samsung</li></a>
-                   <a style="padding-left:5px ;" href="/users/Dell"> <li data-filter=".men">Dell</li></a>
-                   <a style="padding-left:5px ;" href="/users/Asus"> <li data-filter=".kid">Asus</li></a>
-                   <a style="padding-left:5px ;" href="/users/Hp"> <li data-filter=".accessories">Hp</li></a>
-                    <a style="padding-left:5px ;" href="/users/Apple"><li data-filter=".cosmetic">Apple</li></a>
-                </ul>
-            </div>
-        </div> --}}
-      
-        {{!-- <div class="row property__gallery">
-              {{#each product}}
-            <div class="col-lg-3 col-md-4 col-sm-6 ">
-                <div class="product__item">
-                    
-                       
-                       
-                          <div class="card " style="height:600px " >
-  <a href="/productZoom/{{this.productName}} " ><img src="/uploads/{{this.images.[0].img1}}" class="card-img-top" alt="image"></a>
-  <div class="card-body">
-    
-<h5 class="card-title">{{this.brand}}</h5>
-    <p class="card-text">{{this.description}}</p>
-      <div class="product__item__text">
+  
+
+<section class="product spad">
+    <div class="container" >
+        <div class="row"  >
+           
+
+        <div class="row property__gallery bg-white"  id="datas">
+                                      {{#each product}}
+            <div class="col-lg-3 col-md-4 col-sm-6 mix women" id="loop"  >
+                <div class="product__item" >
+                    <div class="product__item__pic set-bg" >
+                      <a href="/users/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}" class="prodImg"></a>
+                        <div class="label new">New</div>
+                           <div class="product__item__text" style="margin-left: -40px;">
                         <h6><a href="#">{{this.productName}}</a></h6>
+                         <h6><a href="#">{{this.brand}}</a></h6>
                         <div class="rating">
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
@@ -355,24 +338,34 @@
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                         </div>
-                        <div class="product__price">${{this.price}}</div>
+                        <div class="product__price">${{this.price}} <span>${{this.discount}} Off</span></div>
                     </div>
-    {{!-- <a href="/users/add-to-cart/{{this._id}}" class="btn btn-primary">Add to cart</a> --}}
-  {{!-- <button style="margin-left: 56px;" onclick="addToCart('{{this._id}}')" class="btn btn-primary mb-0 align-items-center">Add to cart</button>
-  </div>
-</div>
+                        <ul class="product__hover">
+                            <li><a  onclick="addToWishlist('{{this._id}}')" ><span class="icon_heart_alt"></span></a></li>
+                            <li><a  class="tag" onclick="addToCart('{{this._id}}')"><span class="icon_bag_alt"></span></a></li>
+                            {{!-- --- --------------------------------------}}
+                        </ul>
                     </div>
+                   
                 </div>
             </div>
-    {{/each}}  --}}
+            
            
+          
+            {{/each}}
+           
+          
+          
+        </div>
+    </div>
+</section>
 
            <div id="div-container">
                 
 
 </div>
 
-<section>
+{{!-- <section>
     <div class="container">
         <div class="row">
              <div id="datas">
@@ -381,7 +374,7 @@
         </div>
     </div>
    
-</section>
+</section> --}}
 
 
 

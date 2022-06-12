@@ -143,6 +143,9 @@
 							
 							<td  >
 								<a href="#">{{this.stock}}</a>
+                {{#if this.stockLess}}--
+                <span style="color:brown">stock going out</span>
+                {{/if}}
 							</td>
 							<td >
 								<a href="#">{{this.brand}}</a>

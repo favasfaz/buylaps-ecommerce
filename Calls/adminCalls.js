@@ -12,6 +12,8 @@ const Brand = require('../Model/brand-schema')
 const Coupon = require('../Model/coupon-schema')
 const Order = require('../Model/order-schema')
 const Cart = require('../Model/cart-schema')
+const { log } = require('console')
+const { router } = require('../app')
 const adminLogin = (data) => {
     return new Promise(async (resolve, reject) => {
 
@@ -312,11 +314,13 @@ const allOrders=()=>{
        }
     })
 }
-const viewOrder=(id)=>{
+const viewOrder=(id,user)=>{
+    console.log(id,'id');
+    console.log(user,'id');
     return new Promise(async(resolve,reject)=>{
-        let orderDeteils= await Order.findOne({userId:id}).lean()
-        let products = await Order.findOne({userId:id}).populate("orders.productId").lean()
-       resolve({order:orderDeteils,product:products})
+        let orderDeteils= await Order.findOne({userId:user,'product._id':id}).lean()
+        console.log(orderDeteils,'orderDeteils');
+       resolve(orderDeteils)
     })
 }
 
@@ -327,10 +331,127 @@ const findCart=(data)=>{
     })
 }
 
+const changeStatus=(data)=>{
+    return new Promise(async(resolve,reject)=>{
+        if(data.data==1){
+            await Order.findOneAndUpdate({userId:data.user, "product._id": data.id },{$set:{'product.$.status':'Shipped'}})
+            resolve()
+        }else{
+            await Order.findOneAndUpdate({userId:data.user, "product._id": data.id },{$set:{'product.$.status':'Delivered'}})
+            resolve()
+            }
+    
+    })
+}
+
+const totalOrders=()=>{
+    return new Promise(async(resolve,reject)=>{
+        let count =await Order.find({}).count().lean()
+        resolve(count)
+    })
+}
+
+
+const totalSales = ()=>{
+    return new Promise(async(resolve,reject)=>{
+        let orders = await Order.find({})
+        console.log(orders,'orders');
+        let totalSales = 0;
+       orders.map((e)=>{
+          totalSales += e.totalAmount
+        })
+        console.log(totalSales,'totalSales');
+        resolve(totalSales)
+    })
+}
+
+const paymentstatus = ()=>{
+    return new Promise(async(resolve,reject)=>{
+        let orders = await Order.find({})
+        let success = 0;    
+        orders.map((e)=>{
+            e.product.map((p)=>{
+                    if(p.paid == 'payment completed'){
+                        success +=e.totalAmount
+                    }
+            })
+        })
+        console.log(success,'success payment');
+        resolve(success)
+    })
+}
+
+const getChartData=(data)=>{
+    return new Promise(async(resolve,reject)=>{
+       
+     let    d1 = new Date();
+        d1.setDate(d1.getDate() - 7);
+     let   d2 = new Date();
+     let   text = "For the Last 7 days";
+
+      // Date wise sales report
+    const date = new Date(Date.now());
+    const month = date.toLocaleString("default", { month: "long" });
+    let salesReport = await Order.aggregate([
+      {
+        $match: {
+          created: {
+            $lt: d2,
+            $gte: d1,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $dayOfMonth: "$created" },
+          total: { $sum: "$totalAmount" },
+        },
+      },
+    ]);
+    console.log(salesReport, "sales ");
+
+    let dateArray = [];
+    let totalArray = [];
+    salesReport.forEach((s) => {
+      dateArray.push(`${month}-${s._id} `);
+      totalArray.push(s.total);
+    });
+
+    let brandReport = await Order.aggregate([{
+        $unwind: "$product",
+    },{
+        $project:{
+            brand: "$product.brand",
+            subTotal:"$product.subTotal"
+        }
+    },{
+        $group:{
+            _id:'$brand',
+         totalAmount: { $sum: "$subTotal" },
+
+        }
+    }
+   
+])
+
+
+let brandArray = [];
+let sumArray = [];
+brandReport.forEach((s) => {
+  brandArray.push(s._id);
+  sumArray.push(s.totalAmount);
+});
+
+console.log(brandReport,'brandreport');
+
+   resolve({dateArray,totalArray,brandArray,sumArray})
+    })
+}
+
 
 
 module.exports = {
-    totalCoupons,allOrders,viewOrder,findCart,
+    totalCoupons,allOrders,viewOrder,findCart,changeStatus,totalOrders,totalSales,paymentstatus,getChartData,
     deleteCoupon, getAllCoupons, addCoupon, getBrand, addBrand, addCategory, getCategory, adminLogin, addingProduct, allUsers, deleteUser, findingUser, editingUser, totalUsers,
     blockUser, unBlockUser, uploadFiles, viewProducts, deleteProducts, productDetails, editedProduct, totalProducts
 }

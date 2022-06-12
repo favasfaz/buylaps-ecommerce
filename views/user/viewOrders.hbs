@@ -13,7 +13,7 @@
                             {{!-- <li><a href="#">Women’s</a></li> --}}
                             {{!-- <li><a href="#">Men’s</a></li> --}}
                             <li><a href="/users/shop">Shop</a></li>
-                            <li><a href="#">Checkout</a>
+                            <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                     {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
                                     {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
@@ -66,35 +66,36 @@
                                     <table class="table">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th scope="col">Manage</th>
+                                                
                                                 <th scope="col">Image</th>
                                                 <th scope="col">product</th>
                                                 <th scope="col">quantity</th>
                                                 <th scope="col">price</th>
-                                                <th scope="col">address</th>
+                                                <th scope="col">status</th>
                                                 <th scope="col">order Date</th>
                                                 <th scope="col">total</th>
+                                                <th scope="col">Manage</th>
 
                                                 
                                             </tr>
                                         </thead>
                                         <tbody class="customtable">
                                             {{#each data}}
-                                            
+                                            {{#each this.product}}
                                             <tr>
-                                               {{#each this.orders}}
-                                                 <td>  <button class="btn btn-danger" onclick="cancel('{{this._id}}')">cancel Order</button></td>
-                                                <td><img style="width: 75px; ;" src="/uploads/{{this.productId.images.[0].img1}}" alt="image"></td>
-                                                <td>{{this.productId.productName}}</td>
+                                            
+                                                <td><img style="width: 75px; ;" src="/uploads/{{this.image}}" alt="image"></td>
+                                                <td>{{this.name}}</td>
                                                 <td>{{this.quantity}}</td>
-                                                <td>{{this.productId.price}}</td>
-                                                     {{/each}}
-                                                <td>{{this.address.state}}</td>
-                                                 <td>{{this.created}}</td>
-                                                  <td>{{this.totalAmount}}</td>
-
+                                                <td>{{this.price}}</td>
+                                                <td>{{this.status}}</td>
+                                                 <td>{{../this.created}}</td>
+                                                  <td>{{this.subTotal}}</td>
+                                            {{!-- <td>  <button class="btn btn-danger" onclick="cancel('{{this._id}}')">View Product</button></td> --}}
+                                                    <td><a href="/users/singleOrderView/{{this._id}}">view Order</a></td>
+                                                 
                                             </tr>
-                                           
+                                           {{/each}}
                                            {{/each}}
                                         </tbody>
                                     </table>
@@ -105,9 +106,7 @@
 
                    </div> 
     
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
- <script src="/javascripts/addToCart.js"></script>
-    
+
 
     <style>
          @import url(http://fonts.googleapis.com/css?family=Calibri:400,300,700);

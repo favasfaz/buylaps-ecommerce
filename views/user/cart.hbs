@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head> --}}
-<body>
+<body style="background: #F4F7FD !important;" >
 
   <header class="header">
         <div class="container-fluid">
@@ -24,7 +24,7 @@
                             {{!-- <li><a href="#">Women’s</a></li> --}}
                             {{!-- <li><a href="#">Men’s</a></li> --}}
                             <li><a href="/users/shop">Shop</a></li>
-                            <li><a href="#">Checkout</a>
+                            <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                     {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
                                     {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
@@ -123,6 +123,12 @@
                       <button class="btn btn-danger" onclick="delProduct('{{this.productId}}')">del</button>
                       {{!-- <a href="/users/delete-cart/{{this.productId}}" class="text-muted">del<i class="fas fa-times"></i></a> --}}
                     </div>
+                     <div class="col-md-6 col-lg-6 col-xl-6 text-end">
+                                          {{#if this.stockLess}}
+                      <p style="color:red ;">only {{this.stock}} product available</p>
+                         {{/if}}
+                    </div>
+                 
                   </div>
 
                   <hr class="my-4">
