@@ -10,6 +10,31 @@
 </head>
 <body>
 
+   <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__close">+</div>
+        <ul class="offcanvas__widget">
+            <li><span class="icon_search search-switch"></span></li>
+            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                <div class="tip">{{wishlistCount}}</div>
+            </a></li>
+            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                <div class="tip">{{count}}</div>
+            </a></li>
+        </ul>
+        <div class="offcanvas__logo">
+            <a href="./index.html"><images src="images/logo.png" alt=""></a>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__auth">
+                        {{#if user}}
+                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                                {{else}}
+                            <a href="/users/login">Login</a>
+                            {{/if}}        </div>
+    </div>
+   
+
    <header class="header">
         <div class="container-fluid">
             <div class="row">
@@ -22,13 +47,11 @@
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="./index.html">Home</a></li>
-                            {{!-- <li><a href="#">Women’s</a></li> --}}
-                            {{!-- <li><a href="#">Men’s</a></li> --}}
-                            <li><a href="/users/shop">Shop</a></li>
+                           
+                            <li><a href="/users">Shop</a></li>
                             <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
-                                    {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
-                                    {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
+                                    
                                     <li><a href="./checkout.html"></a></li>
                                     <li><a href="./blog-details.html"></a></li>
                                 </ul>
@@ -174,7 +197,6 @@ function addToCart(proId){
         url:'/users/add-to-cart/'+proId,
         method:'get',
         success:(response)=>{
-            // var x = document.getElementById("form1").value;
             if(response.status){
                 $('#cart-count').html(response.count)
                 alert('Item added to Cart')
@@ -183,9 +205,7 @@ function addToCart(proId){
                 alert('please login first')
             }
         }, 
-        // error: function() {
-        //     alert("Please login first");
-        //   }
+      
     })
 }
 </script>

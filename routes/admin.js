@@ -23,9 +23,10 @@ router.get('/',async  (req, res, next)=> {
     let chart = await getChartData()
     console.log(chart,'chartdata');
     let refund = Sales - successPayment
+
     res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
-    res.render('admin/index',{admin:true,orderCount,Sales,refund,successPayment})
+    res.render('admin/index',{admin:true,orderCount,Sales,refund,successPayment,})
   }else{
     res.render('admin/login', {err:req.session.adminLoginErr });
     req.session.adminLoginErr=''
@@ -244,12 +245,6 @@ router.get('/totalRevenue',(req,res)=>{
 })
 
 
-// router.get('/getData',(req,res)=>{
-  
-//  getChartData().then((data)=>{
-//   res.json({data})
-//  })
-// })
 
 router.post('/getData',async(req,res)=>{
  console.log(req.body,'req.body');
@@ -287,6 +282,7 @@ let salesReport = await Order.aggregate([
   },
 },
 ]);
+console.log(salesReport,'salesReport');
 
 let dateArray = [];
 let totalArray = [];
@@ -312,6 +308,23 @@ let brandReport = await Order.aggregate([{
 
 ])
 
+let orderCount = await Order.find({created:{$gt : d1, $lt : d2}}).count()
+console.log (orderCount,'orderCount');
+
+let Sales = 0;
+
+salesReport.map((t) => {
+  Sales += t.total
+})
+
+console.log (Sales,'Sales');
+
+let success  = await Order.find({'product.paid':'payment completed'})
+let successPayment = 0;
+
+success.map((e)=>{
+  successPayment += e.totalAmount
+})
 
 let brandArray = [];
 let sumArray = [];
@@ -320,16 +333,15 @@ brandArray.push(s._id);
 sumArray.push(s.totalAmount);
 });
 
-  res.json({dateArray,totalArray,brandArray,sumArray})
+// let orderCount = await totalOrders() 
+// let Sales = await totalSales()
+// let successPayment = await paymentstatus()
+// let refund = Sales - successPayment
+
+  res.json({dateArray,totalArray,brandArray,sumArray,orderCount,Sales,successPayment})
  })
 
 
- router.post('/getUpdate',(req,res)=>{
-  console.log(req.body,'req.body');
-  getUpdate(req.body).then((data)=>{
-    
-  })
- })
- 
+
 
 module.exports = router;

@@ -37,7 +37,7 @@
                             <li class="active"><a href="./index.html">Home</a></li>
                             {{!-- <li><a href="#">Women’s</a></li> --}}
                             {{!-- <li><a href="#">Men’s</a></li> --}}
-                            <li><a href="/users/shop">Shop</a></li>
+                            <li><a href="/users">Shop</a></li>
                             <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                     {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
@@ -47,7 +47,12 @@
                                 </ul>
                             </li>
                             <li><a href="./blog.html">About us</a></li>
-                            <li><a href="./contact.html">Contact</a></li>
+                              {{!-- <li>
+                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+            <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-unique btn-rounded btn-sm my-0" type="submit">Search</button>
+                               </form>
+                        </li> --}}
                         </ul>
                     </nav>
                 </div>
@@ -61,7 +66,6 @@
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
-                            <li><span class="icon_search search-switch"></span></li>
                             <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
@@ -81,16 +85,7 @@
 
 <div class="container mt-4">
   <div class="row">
- {{!-- {{#each address}}
-  <div class="col-sm-3">
-    <div class="card card-block">
-      <h3 class="card-title">{{this.fName}}</h3>
-      <p class="card-text">{{this.country}}</p>
-            <p class="card-text">{{this.state}}</p>
-      <a href="/users/productOrderForm/{{this._id}}" class="btn btn-primary">Active</a>
-    </div>
-  </div>
-{{/each}} --}}
+
 
 {{#each address}}
 

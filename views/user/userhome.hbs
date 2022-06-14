@@ -1,4 +1,6 @@
-<body>
+
+
+<body style="margin-top:0 ;">
     <!-- Page Preloder -->
 
 
@@ -8,11 +10,11 @@
         <div class="offcanvas__close">+</div>
         <ul class="offcanvas__widget">
             <li><span class="icon_search search-switch"></span></li>
-            <li><a href="#"><span class="icon_heart_alt"></span>
-                <div class="tip">7</div>
+            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                <div class="tip">{{wishlistCount}}</div>
             </a></li>
-            <li><a href="#"><span class="icon_bag_alt"></span>
-                <div class="tip">{{count.count}}</div>
+            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                <div class="tip">{{count}}</div>
             </a></li>
         </ul>
         <div class="offcanvas__logo">
@@ -20,16 +22,19 @@
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
-            <a href="/users/login">Login</a>
-        </div>
+                        {{#if user}}
+                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                                {{else}}
+                            <a href="/users/login">Login</a>
+                            {{/if}}        </div>
     </div>
    
     <!-- Offcanvas Menu End -->
 
     <!-- Header Section Begin -->
-    <header class="header">
-        <div class="container-fluid">
-            <div class="row">
+    <header class="header " >
+        <div class="container-fluid ">
+            <div class="row " >
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
                         <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
@@ -41,7 +46,7 @@
                             <li class="active"><a href="./index.html">Home</a></li>
                             {{!-- <li><a href="#">Women’s</a></li> --}}
                             {{!-- <li><a href="#">Men’s</a></li> --}}
-                            <li><a href="/users/shop">Shop</a></li>
+                            <li><a href="/users">Shop</a></li>
                             <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                     {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
@@ -52,6 +57,14 @@
                             </li>
                             <li><a href="./blog.html">About us</a></li>
                             <li><a href="./contact.html">Contact</a></li>
+                            
+                            <li>
+                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+            <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-primary btn-rounded btn-sm my-0" type="submit">Search</button>
+                               </form>
+                        </li>
+                        </ul>
                         </ul>
                     </nav>
                 </div>
@@ -87,14 +100,14 @@
     <!-- Categories Section Begin -->
    
    <section>
-      <div class="container-fluid ">
+      <div class="container-fluid">
            <div  id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img src="https://static-ecapac.acer.com/media/magestore/bannerslider/images/2/2/2205_smb-bundle-banner_1920x720.jpg" class="d-block w-100" alt="">
+      <img   src="https://static-ecapac.acer.com/media/magestore/bannerslider/images/2/2/2205_smb-bundle-banner_1920x720.jpg" class="d-block w-100 img-responsive" alt="">
     </div>
     <div class="carousel-item">
-      <img src="https://static-ecapac.acer.com/media/magestore/bannerslider/images/2/2/2205_nitro-5_estore-banner_1920x720.jpg" class="d-block w-100" alt="">
+      <img  src="https://static-ecapac.acer.com/media/magestore/bannerslider/images/2/2/2205_nitro-5_estore-banner_1920x720.jpg" class="d-block w-100" alt="">
     </div>
   </div>
   <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
@@ -108,61 +121,28 @@
 </div>
       </div>
    </section>
-<!-- Categories Section End -->
-{{!-- <section>
-     <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
-    <div class="position-sticky">
-      <div class="list-group list-group-flush mx-3 mt-2">
-        <a
-          href="#"
-          class="list-group-item list-group-item-action py-2 ripple"
-          aria-current="true"
-        >
-          <h3>FEIZY.com</h3>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action py-2 ripple active">
-          <i class="fas fa-chart-area fa-fw me-3"></i><span>Categories</span>
-        </a>
-        {{#each category}}
-        <a href="/users/categoryProducts/{{this.name}}" class="list-group-item list-group-item-action py-2 ripple"
-          ><i class="fas fa-lock fa-fw me-3"></i><span>{{this.name}}</span></a
-        >
-        {{/each}}
-        <div data-role="page">
+
+   
+    <section class="mt-4 overflow-auto"  style="text-decoration:none ; background: #1c153f; position: relative; width:100%;">
+        <div class="d-flex flex-row bd-highlight mt-5 mb-3 justify-content-center overflow-auto align-items-sm-center" >
+   {{#each category}}
+     <div class="bd-highlight" style="height:4rem;">
+      <a  style="color:white;  font-family: Arial, Helvetica, sans-serif; font-weight: 900; text-transform: capitalize;" class="fs-6 ps-5" href="/users/categoryProducts/{{this.name}}">{{this.name}}</a>
+    </div>
+    {{/each}}
+   </div>
+    </section>
+     
   
 
-  <div data-role="main" class="ui-content">
-    <form id="priceFilter">
-      <div data-role="rangeslider">
-        
-        <label for="price-max">Price:</label>
-        <input type="range" name="price-max" id="price-max" value="800" min="0" max="100000">
-      </div>
-        {{!-- <input type="submit" data-inline="true"  value="Submit"> --}}
-        <a href="#datas">
-            <input  type="submit" value="submit" data-inline="true">
-        </a>
-      </form>
-  </div>
-</div> 
-    <input type="text" id="search-box"  name="search" placeholder="search here">
-
-      </div>
-    </div>
-  </nav>
-  <!-- Sidebar -->
-
-  <!-- Navbar -->
-
-</section> --}}
 <!-- Product Section Begin -->
 
-<section class="product spad">
+<section class="product spad" >
     <div class="container">
         <div class="row" >
             <div class="col-lg-4 col-md-4">
                 <div class="section-title" >
-                    <h4>New Arrivals</h4>
+                    <h4 style="color:#1c153f;">New Arrivals</h4>
                 </div>
             </div>
            
@@ -172,10 +152,10 @@
               
              <div class="row property__gallery bg-white" >
                  {{#each firsttwo}}
-            <div class="col-lg-3 col-md-4 col-sm-6 mt-5 ml-3 ">
+            <div class="col-lg-3 col-md-4 col-sm-6 mt-5 ">
                 <div class="product__item">
                     <div class="product__item__pic set-bg" >
-                      <a href="/users/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}"></a>
+                      <a href="/users/productZoom/{{this.productName}}">  <img class="img-responsive" src="/uploads/{{this.images.[0].img1}}"></a>
                         <div class="label new">New</div>
                            <div class="product__item__text"  style="margin-left: -40px;">
                         <h6><a href="#">{{this.productName}}</a></h6>
@@ -207,7 +187,7 @@
    </div>
 </section>
 
-<section>
+<section >
 
     <div class="container">
         <div class="row">
@@ -246,7 +226,7 @@
     </div>
 </section>
 
-<section> <div class="container mt-5">
+<section id="all"> <div class="container mt-5">
         <div class="row" >
             <div class="col-lg-4 col-md-4 col-12">
                 <div class="section-title">
@@ -257,8 +237,8 @@
                 <ul class="filter__controls" >
                     <li class="active" data-filter="*">All</li>
                     {{#each brands}}
-                <button onclick="getAll('{{this.name}}')">{{this.name}}</button>
-                   {{!-- <a style="padding-left:5px ;" onclick="getAll('{{this.name}}')" > <li data-filter=".women">{{this.name}}</li></a> --}}
+                <button style="background: #1c153f; color: white; border-radius: 13px; width: 55px;border: none;font-weight: 500;" onclick="getAll('{{this.name}}')">{{this.name}}</button>
+
                    {{/each}}
                  
                 </ul>
@@ -275,11 +255,10 @@
 
         <div class="row property__gallery bg-white"  id="parent">
                                       {{#each product}}
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women" id="loop"  >
+            <div class="col-lg-3 col-md-4 col-sm-6 mix women mt-3" id="loop"  >
                 <div class="product__item" >
                     <div class="product__item__pic set-bg" >
                       <a href="/users/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}" class="prodImg"></a>
-                        <div class="label new">New</div>
                            <div class="product__item__text" style="margin-left: -40px;">
                         <h6><a href="#">{{this.productName}}</a></h6>
                          <h6><a href="#">{{this.brand}}</a></h6>
@@ -316,65 +295,14 @@
 
   
 
-<section class="product spad">
-    <div class="container" >
-        <div class="row"  >
-           
 
-        <div class="row property__gallery bg-white"  id="datas">
-                                      {{#each product}}
-            <div class="col-lg-3 col-md-4 col-sm-6 mix women" id="loop"  >
-                <div class="product__item" >
-                    <div class="product__item__pic set-bg" >
-                      <a href="/users/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}" class="prodImg"></a>
-                        <div class="label new">New</div>
-                           <div class="product__item__text" style="margin-left: -40px;">
-                        <h6><a href="#">{{this.productName}}</a></h6>
-                         <h6><a href="#">{{this.brand}}</a></h6>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                        </div>
-                        <div class="product__price">${{this.price}} <span>${{this.discount}} Off</span></div>
-                    </div>
-                        <ul class="product__hover">
-                            <li><a  onclick="addToWishlist('{{this._id}}')" ><span class="icon_heart_alt"></span></a></li>
-                            <li><a  class="tag" onclick="addToCart('{{this._id}}')"><span class="icon_bag_alt"></span></a></li>
-                            {{!-- --- --------------------------------------}}
-                        </ul>
-                    </div>
-                   
-                </div>
-            </div>
-            
-           
-          
-            {{/each}}
-           
-          
-          
-        </div>
-    </div>
-</section>
 
            <div id="div-container">
                 
 
 </div>
 
-{{!-- <section>
-    <div class="container">
-        <div class="row">
-             <div id="datas">
 
-    </div>
-        </div>
-    </div>
-   
-</section> --}}
 
 
 
@@ -551,10 +479,16 @@
 <div class="search-model">
     <div class="h-100 d-flex align-items-center justify-content-center">
         <div class="search-close-switch">+</div>
-        <form class="search-model-form">
-            <input type="text" id="search-input" placeholder="Search here.....">
+        <form  action="/users/search" method="get" class="search-model-form">
+            <input type="text" id="search-input" name="search" placeholder="Search here.....">
+            <button type="submit">submit</button>
         </form>
+      <div id="searchedResponse">
+
+        </div>
     </div>
+    
+      
 </div>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
  <script src="/javascripts/addToCart.js"></script>

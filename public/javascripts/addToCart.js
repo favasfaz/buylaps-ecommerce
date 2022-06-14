@@ -22,6 +22,8 @@ function getAll(proId){
             prodImg.alt=p.brand;
             proName=p.productName
             parentDiv.append(prodImg);
+            var lineBreak = document.createElement("br");
+            parentDiv.append(lineBreak)
             parentDiv.append(proName);
             parent.append(parentDiv);
             
@@ -270,23 +272,7 @@ $("#priceFilter").submit((e)=>{
             })
         }
 
-        $("body").on("keyup", "#search-box" ,function(event) {
-            var element = event.target;
-            searchFunction(element.value);
-        });
-
-       function searchFunction(search){
-       $.ajax({
-        url:'/users/search',
-        method:'post',
-        data:{
-            search
-        },
-        success:(response)=>{
-               console.log(response);
-        }
-       })
-        }
+    
 
      
 function changeStatus(id,user){
@@ -338,32 +324,27 @@ function paymentFailed(order){
 }
 
 
-async function allData(){
-    console.log('success1');
-    const totalAmount = []
-    $.ajax({
-        url:'/getData',
-        method:'get',
-        success:(response)=>{
-            response.data.map((e)=>{
-                totalAmount.push(e.totalAmount)
-              })
-        }})
+async function allData(response){
+    console.log(response,'new response');
 
-console.log(totalAmount,'toatalAmout');
-  var ctx = document.getElementById('chart').getContext('2d');
+    document.getElementById('Sales').innerHTML = response.Sales
+    document.getElementById('orderCount').innerHTML = response.orderCount
+    document.getElementById('successPayment').innerHTML = response.successPayment
+
+
+  var ctx = document.getElementById('rice').getContext('2d');
 var chart = new Chart(ctx, {
     // The type of chart we want to create
     type: 'bar',
 
     // The data for our dataset
     data: {
-        labels: ["Monday", "Tuesday", "Wednsday", "Thursday", "Friday", "Saturday", "Sunday"],
+        labels:response.dateArray,
         datasets: [{
             label: "My First dataset",
             backgroundColor: 'rgb(255, 99, 132)',
             borderColor: 'rgb(255, 99, 132)',
-            data:totalAmount,
+            data:response.totalArray,
         }]
     },
 
@@ -374,9 +355,12 @@ var chart = new Chart(ctx, {
       }
     }
 });
+
 }
 
-allData()
+
+
+
 
 // function getData(){
 //     console.log('successss2');
@@ -461,39 +445,23 @@ console.log(totalAmount,'toatalAmout');
 
 forHome()
 
-$(".getUpdate").submit(()=>{
-    console.log('success3');
-    $.ajax({
-        url:'/getUpdate',
-        data:$('.getUpdate').serialize(),
-        method:'post',
-        success:(response)=>{
-            console.log(response,'updatereponse');
-            var ctx = document.getElementById('chart').getContext('2d');
-            var chart = new Chart(ctx, {
-                // The type of chart we want to create
-                type: 'bar',
+$(document).ready(function (){
+    $("#getUpdate").submit((e)=>{
+ 
+        console.log('success3');
+        $.ajax({
+            url:'/getData',
+            data:$('#getUpdate').serialize(),
+            method:'post',
+            success:(response)=>{
+                console.log(response,'before passing');
+                allData(response)
+                
+            }
             
-                // The data for our dataset
-                data: {
-                    labels:response.dateArray,
-                    datasets: [{
-                        label: "last week dataset",
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        data:response.totalArray,
-                    }]
-                },
-            
-                // Configuration options go here
-                options: {
-                  tooltips:{
-                    mode:'index'
-                  }
-                }
-            });
-            window.location.href="/totalRevenue"
-        }
+        })
+        e.preventDefault()
+    
     })
 })
 

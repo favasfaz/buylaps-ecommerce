@@ -23,19 +23,23 @@
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="./index.html">Home</a></li>
-                            {{!-- <li><a href="#">Women’s</a></li> --}}
-                            {{!-- <li><a href="#">Men’s</a></li> --}}
-                            <li><a href="/users/shop">Shop</a></li>
+                         
+                            <li><a href="/users">Shop</a></li>
                             <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
-                                    {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
-                                    {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
+                                    
                                     <li><a href="./checkout.html"></a></li>
                                     <li><a href="./blog-details.html"></a></li>
                                 </ul>
                             </li>
                             <li><a href="./blog.html">About us</a></li>
                             <li><a href="./contact.html">Contact</a></li>
+                              <li>
+                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+            <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-unique btn-rounded btn-sm my-0" type="submit">Search</button>
+                               </form>
+                        </li>
                         </ul>
                     </nav>
                 </div>
@@ -49,7 +53,7 @@
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
-                            <li><span class="icon_search search-switch"></span></li>
+                            
                             <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
@@ -109,9 +113,7 @@
                            <button class="btn-theme btn buy-btn" tabindex="0">
                            <i class="fa fa-shopping-cart"></i> Buy Now
                            </button>
-                           {{!-- <button class="btn-theme btn btn-success" onclick="addToCart('{{data._id}}')">
-                           <i class="fa fa-shopping-cart"></i> Add to Cart
-                           </button> --}}
+                        
                            <a class="btn-theme btn btn-success" href="/users/toCart/{{data._id}}">add To Cart</a>
                            <input type="hidden" name="pid" value="18" />
                            <input type="hidden" name="price" value="850" />

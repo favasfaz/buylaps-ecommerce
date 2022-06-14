@@ -420,7 +420,7 @@ router.get('/productOrderForm/:id',sessionverify2,async(req,res)=>{
   let dicounts=await findDiscount(req.session.user)
  findAddress(req.params.id,req.session.user).then((address)=>{
   let grandTotal =(data.total-data.discount)+data.shippingCost
-   if(grandTotal!=null){
+   if(grandTotal!=null && data!=null){
     res.render('user/productOrderForm',{data,address,count,total,subtotal,dicounts,grandTotal,err:req.session.redeemErr})
     req.session.redeemErr=''
    }else{
@@ -481,11 +481,21 @@ router.post('/filter',(req,res)=>{
    res.json({data})
  })
 })
-router.post('/search',(req,res)=>{
-  console.log(req.body,'users');
- search(req.body).then((data)=>{
-res.json({data})
- })
+
+router.post('/searchProduct',async(req,res)=>{
+  if(req.session.user){
+    let count = await getCartCount(req.session.user)
+  let wishlistCount=await getWishlistCount(req.session.user)
+  let user= req.session.user
+  search(req.body).then((data)=>{
+    res.render('user/searchProduct',{data,count,wishlistCount,user})
+    })
+  }
+else{
+  search(req.body).then((data)=>{
+    res.render('user/searchProduct',{data})
+    })
+}
 })
 
 router.post('/addProfile',(req,res)=>{
@@ -541,6 +551,7 @@ router.get('/singleOrderView/:id',sessionverify2,(req,res)=>{
   console.log(req.params.id,'id');
 getSingleProduct(req.params.id,req.session.user).then((data)=>{
 console.log('singleProduct',data,'data');
+
 data.product.forEach((prdt)=>{
   res.render('user/singleOrderView',{Data:prdt})
 })

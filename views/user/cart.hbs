@@ -1,12 +1,4 @@
-{{!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="/public/stylesheets/cart.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head> --}}
+
 <body style="background: #F4F7FD !important;" >
 
   <header class="header">
@@ -21,20 +13,23 @@
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="./index.html">Home</a></li>
-                            {{!-- <li><a href="#">Women’s</a></li> --}}
-                            {{!-- <li><a href="#">Men’s</a></li> --}}
-                            <li><a href="/users/shop">Shop</a></li>
+                            
+                            <li><a href="/users">Shop</a></li>
                             <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
-                                    {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
-                                    {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
+                                   
                                     <li><a href="./checkout.html"></a></li>
                                     <li><a href="./blog-details.html"></a></li>
                                 </ul>
                             </li>
                             <li><a href="./blog.html">About us</a></li>
                             <li><a href="./contact.html">Contact</a></li>
-                        </ul>
+                              <li>
+                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+            <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-unique btn-rounded btn-sm my-0" type="submit">Search</button>
+                               </form>
+                        </li>
                     </nav>
                 </div>
                 <div class="col-lg-3">
@@ -47,7 +42,6 @@
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
-                            <li><span class="icon_search search-switch"></span></li>
                             <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
@@ -78,7 +72,7 @@
                     <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
                     <h6 class="mb-0 text-muted">{{count}} items</h6>
                   </div>
-                  {{!-- <div><a class="btn btn-success" href="/users/couponOffer">Get free Coupon </a></div> --}}
+
                   <hr class="my-4">
 
 
@@ -98,14 +92,13 @@
                       <h6 class="text-muted">{{this.name}}</h6>
                       <h6 class="text-black mb-0">{{this.brand}}</h6>
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                    <div  class="col-md-3 col-lg-3 col-xl-2 ">
                       <button class="btn btn-link px-2" onclick="decProduct('{{this.productId}}','{{this.quantity}}')">
                         -
                       </button>
-
-                      <input id="form1" min="1" name="quantity" placeholder="{{this.quantity}}" type="number"
-                        class="form-control form-control-sm" /> <span>{{this.quantity}}</span>
-                       
+<input id="form1" min="1" name="quantity" value="{{this.quantity}}" type="number"
+                        class="form-control form-control-sm" />
+                         {{!-- <span>{{this.quantity}}</span>                        --}}
                        
 
                       <button class="btn btn-link px-2" onclick="addProductCount('{{this.productId}}','{{this.quantity}}')">
@@ -121,11 +114,11 @@
                     </div>
                      <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                       <button class="btn btn-danger" onclick="delProduct('{{this.productId}}')">del</button>
-                      {{!-- <a href="/users/delete-cart/{{this.productId}}" class="text-muted">del<i class="fas fa-times"></i></a> --}}
+                      
                     </div>
                      <div class="col-md-6 col-lg-6 col-xl-6 text-end">
                                           {{#if this.stockLess}}
-                      <p style="color:red ;">only {{this.stock}} product available</p>
+                      <p style="color:red ;"> {{this.stock}} product available</p>
                          {{/if}}
                     </div>
                  

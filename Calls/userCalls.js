@@ -337,7 +337,6 @@ const addingToCart = (id, data) => {
 };
 
 const getCartItems = (data) => {
-  console.log(data.email);
   return new Promise(async (resolve, reject) => {
     const user = await Cart.findOne({ userId: data.email }).lean();
     resolve(user);
@@ -828,6 +827,8 @@ isCart.product.forEach((pro)=>{
      let product =  await Product.findOneAndUpdate({_id:e.productId},{ $inc: { stock: -e.quantity }})
         if(product.stock<5){
             await Product.findOneAndUpdate({_id:e.productId},{$set:{stockLess:true}})
+        }else{
+          await Product.findOneAndUpdate({_id:e.productId},{$set:{stockLess:false}})
         }
           })
      resolve(userOrder._id)
@@ -925,8 +926,7 @@ const priceFilter=(data)=>{
 const search=(data)=>{
   return new Promise(async(resolve,reject)=>{
     let search=data.search
-    console.log(search,'userCalls');
-    let products= await Product.find({'$or':[{productName:{$regex:search,$options:'i'}}]})
+    let products= await Product.find({'$or':[{productName:{$regex:search,$options:'i'}}]}).lean()
       resolve(products)
   })
 }
