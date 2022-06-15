@@ -42,6 +42,10 @@ shippingCost:{
             type:Number,
             default:0
         },
+        totalAfterDiscounts:{
+            type:Number,
+            default:0
+        }        
      
     
 });

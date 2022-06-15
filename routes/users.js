@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var easyinvoice = require('easyinvoice')
  var Model = require('../Model/user-schema');
-var {paymentFailed,deleteOrder,getSingleProduct,sortOrder,cancelOrder,addProfile,viewOrder,search,priceFilter,verifyPayment,generateRazor,placeOrder,findAddress,addAddress,getAddress,cartIn,findBrand,findDiscount,findCategory,getCategory,deleteWishlist,getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
+var {paymentFailed,deleteOrder,getSingleProduct,checkStock,sortOrder,cancelOrder,addProfile,viewOrder,search,priceFilter,verifyPayment,generateRazor,placeOrder,findAddress,addAddress,getAddress,cartIn,findBrand,findDiscount,findCategory,getCategory,deleteWishlist,getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
 var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
 var {cartverify,verifyToken,sessionverify,sessionverify2} = require('../middlewares/auth');
@@ -244,12 +244,11 @@ console.log(req.session.forgotErr);
       let subtotal=await subTotal(req.session.user)
       let dicounts=await findDiscount(req.session.user)
       let wishlistCount=await getWishlistCount(req.session.user)
-      console.log(data,'data');
+
     
         if(data && count){
           let product=data.product 
           let grandTotal =(data.total-data.discount)+data.shippingCost
-         
        res.render('user/cart',{user,wishlistCount,grandTotal,data,product,count,total,err:req.session.redeemErr})
         }else{
           res.render('user/cart',{wishlistCount})
@@ -446,8 +445,11 @@ router.post('/checkingCoupon/:id',(req,res)=>{
 })
 
 router.post('/placeOrder',(req,res)=>{
-  placeOrder(req.session.user,req.body).then(async(orderId)=>{
-   
+  checkStock(req.session.user).then((response)=>{
+if(response.stockout){
+  res.json({stockout:true})
+}else{
+  placeOrder(req.session.user,req.body).then(async(orderId)=>{ 
     if(req.body.paymentMethod=='COD'){
       let theOrder =  await Order.find({_id:orderId})
      await Cart.findOneAndDelete({userId:req.session.user.email})
@@ -459,9 +461,10 @@ router.post('/placeOrder',(req,res)=>{
         res.json({response})
       })
     }
-  }).catch(()=>{
-
   })
+}
+  })
+  
 
 })
 router.post('/verifyPayment',(req,res)=>{
@@ -506,8 +509,11 @@ router.post('/addProfile',(req,res)=>{
 })
 
 router.get('/viewOrder',sessionverify2,(req,res)=>{
-  viewOrder(req.session.user.email).then((data)=>{
-    res.render('user/viewOrders',{data})
+  viewOrder(req.session.user.email).then(async(data)=>{
+    let count = await getCartCount(req.session.user)
+    let total = await totalAmount(req.session.user)
+    let user = req.session.user
+    res.render('user/viewOrders',{data,user,total,count})
   })
 })
 router.get('/cancelOrder/:id',(req,res)=>{

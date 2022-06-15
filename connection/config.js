@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect("mongodb://localhost:27017/shoppingcart", {
+mongoose.connect("mongodb+srv://favasfaz:19thapril@cluster0.jybve.mongodb.net/shoppingcart?retryWrites=true&w=majority", {
     useNewUrlParser: true,
 })
 
@@ -10,4 +10,4 @@ mongoose.connection.on("error", err => {
 
 mongoose.connection.on("connected", (err, res) => {
     console.log('mongoose is connected');
-})
+})   

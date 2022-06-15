@@ -67,6 +67,10 @@ const orderSchema = new Mongoose.Schema({
   created: {
     type:Date,
     default:Date.now()
+  },
+  totalAfterDiscounts:{
+    type:Number,
+    default:0
   }
  
 });

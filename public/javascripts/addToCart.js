@@ -148,12 +148,17 @@ function getCoupons(){
             method:'post',
             data:$('#checkout-form').serialize(),
             success:(response)=>{
-                console.log('success');
-              if(response.status){
-                window.location.href= "/users/orderSuccessfull"
-              }else{
-                  razorpayPayment(response)
-              }
+                if(response.stockout){
+                    console.log('stockout');
+                    alert('stockout')
+                }else{
+                    if(response.status){
+                        window.location.href= "/users/orderSuccessfull"
+                      }else{
+                          razorpayPayment(response)
+                      }
+                }
+              
             }
         })
     })
@@ -251,11 +256,13 @@ $("#priceFilter").submit((e)=>{
         }
 
         function canceling(id){
+            
             console.log(id,'id ');
             $.ajax({
                 url:'/users/cancelOrder/'+id,
                 method:'get',
                 success:(response)=>{
+                    alert('amount will refunded')
                     location.reload()
                 }
             })
@@ -278,10 +285,7 @@ $("#priceFilter").submit((e)=>{
 function changeStatus(id,user){
 
     let data = document.getElementById('exampleSelectGender1').value
-  
-    console.log(data,'data');
-    console.log(id);
-    console.log(user,'user');
+ 
    
    $.ajax({
        url:'/changeStatus',
@@ -359,30 +363,6 @@ var chart = new Chart(ctx, {
 }
 
 
-
-
-
-// function getData(){
-//     console.log('successss2');
-//     $.ajax({
-//         url:'/getData',
-//         method:'get',
-//         success:(response)=>{
-//             let total = []
-//             response.data.map((e)=>{
-//               total.push(e.totalAmount)
-//             })
-           
-//             console.log(total,'total');
-           
-//             totalAmount = total
-//         }
-//     })
-// }
-
-
- 
-
 async function forHome(){
     console.log('success1');
     const totalAmount = []
@@ -391,7 +371,7 @@ async function forHome(){
         url:'/getData',
         method:'post',
         success:(response)=>{
-            console.log(response,'reponse');
+            console.log(response,'reponse of home');
             var ctx = document.getElementById('rice').getContext('2d');
             var chart = new Chart(ctx, {
                 // The type of chart we want to create
@@ -439,7 +419,6 @@ async function forHome(){
                 }
             });
         }})
-console.log(totalAmount,'toatalAmout');
  
 }
 

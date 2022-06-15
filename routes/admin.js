@@ -17,13 +17,14 @@ const { log } = require('console');
 router.get('/',async  (req, res, next)=> {
   let token = req.cookies.adminToken
   if(token){
+    console.log('success');
     let orderCount = await totalOrders() 
     let Sales = await totalSales()
     let successPayment = await paymentstatus()
     let chart = await getChartData()
     console.log(chart,'chartdata');
     let refund = Sales - successPayment
-
+    console.log(orderCount , 'home');
     res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
     res.render('admin/index',{admin:true,orderCount,Sales,refund,successPayment,})
@@ -76,7 +77,6 @@ res.redirect('/editUser/' + id)
 })
 })
 router.get('/blockUser/:id',(req,res)=>{
-  console.log(req.params.id);
   blockUser(req.params.id).then(()=>{
     res.redirect('/viewUser')
   })
@@ -291,6 +291,8 @@ dateArray.push(`${month}-${s._id} `);
 totalArray.push(s.total);
 });
 
+console.log(dateArray,'dateArray');
+
 let brandReport = await Order.aggregate([{
   $unwind: "$product",
 },{
@@ -333,10 +335,7 @@ brandArray.push(s._id);
 sumArray.push(s.totalAmount);
 });
 
-// let orderCount = await totalOrders() 
-// let Sales = await totalSales()
-// let successPayment = await paymentstatus()
-// let refund = Sales - successPayment
+
 
   res.json({dateArray,totalArray,brandArray,sumArray,orderCount,Sales,successPayment})
  })

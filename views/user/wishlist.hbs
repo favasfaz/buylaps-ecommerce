@@ -5,7 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="/public/stylesheets/cart.css">
     <link rel="stylesheet" href="/stylesheets/emptyWishlist.css">
+    <link rel="stylesheet" href="/stylesheets/wishlist.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <title>Document</title>
 </head>
 <body>
@@ -89,56 +93,61 @@
         </div>
     </header>
 
-    <section class="h-96 h-custom" style="">
-  <div class="container py-2 h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-12">
-        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
-          <div class="card-body p-0">
-            <div class="row g-0">
-              <div class="col-lg-8">
-                <div class="p-5">
-                  <div class="d-flex justify-content-between align-items-center mb-5">
-                    <h1 class="fw-bold mb-0 text-black">Wishlist</h1>
-                    <h6 class="mb-0 text-muted">3 items</h6>
-                  </div>
-                  <hr class="my-4">
+   
 
-                  {{#if wishProduct}}
-{{#each wishProduct}}
-                  <div class="row mb-4 d-flex justify-content-between align-items-center">
-                   <div class="col-md-2 col-lg-2 col-xl-2">
-                    <a href="/productZoom/{{this.productName}}">  <img
+<section>
+	<div class="cart-wrap">
+		<div class="container">
+	        <div class="row">
+                                 
+
+			    <div class="col-md-12">
+			        <div class="main-heading mb-10">My wishlist</div>
+			        <div class="table-wishlist">
+                           {{#if wishProduct}}
+				        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+				        	<thead>
+					        	<tr>
+					        		<th width="45%">Product Name</th>
+					        		<th width="15%">Unit Price</th>
+					        		<th width="15%">Stock Status</th>
+					        		<th width="15%"></th>
+					        		<th width="10%"></th>
+					        	</tr>
+					        </thead>
+					        <tbody>
+                              
+                                  {{#each wishProduct}}
+					        	<tr>
+					        		<td width="45%">
+					        			<div class="display-flex align-center">
+		                                    <div class="img-product">
+		                                         <a href="/productZoom/{{this.productName}}">  <img
                     src="/uploads/{{this.images.[0].img1}}"
                         class="img-fluid rounded-3" alt="Cotton T-shirt">
                         </a>
-                    </div>
-                    <div class="col-md-3 col-lg-3 col-xl-3">
-                      <h6 class="text-muted">{{this.productName}}</h6>
-                      <h6 class="text-black mb-0">{{this.brand}}</h6>
-                    </div>
-                  
-                    <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                      <h6 class="mb-0">€ {{this.price}}</h6>
-                    </div>
-                                     <div class="col-md-2 col-lg-2 col-xl-2 text-center">
-                      {{!-- <a href="#!"  class="text-muted btn btn-success"><i style="color: white;" class="fas fa-times">To Cart</i></a> --}}
-                    <button class="btn btn-success" onclick="addToCart('{{this._id}}')">To Cart</button>
-                    </div>
-                    
-                    <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                      {{!-- <a href="#!"  class="text-muted btn btn-danger"><i style="color: white;" class="fas fa-times">del</i></a> --}}
-                      <button class="btn btn-danger" onclick="delWishlist('{{this._id}}')">del</button>
-                    </div>
-                  </div>
-  
-
-                 {{/each}}
-                   <div class="pt-5" >
+		                                    </div>
+		                                    <div class="name-product">
+		                                        {{this.productName}}
+		                                    </div>
+	                                    </div>
+	                                </td>
+					        		<td width="15%" class="price">{{this.price}}</td>
+					        		<td width="15%"><span class="in-stock-box">In Stock</span></td>
+					        		<td width="15%"> <button class="btn btn-success" onclick="addToCart('{{this._id}}')">To Cart</button></td>
+					        		<td width="10%" class="text-center"><button class="btn btn-danger" onclick="delWishlist('{{this._id}}')">del</button></td>
+					        	</tr>
+					        	  {{/each}}
+               
+				        	</tbody>
+				        </table>
+                        
+                          <div class="pt-5" >
                     <h6 class="mb-0 btn btn-success" ><a href="/users"  style="color:white" class="text-body" ><i
                           class="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>
                   </div>
-{{else}}
+
+                        {{else}}
 
 <div class="container-fluid  mt-100">
 				 <div class="row">
@@ -166,20 +175,19 @@
 				 
 				 </div>
 				
-				</div>     
-                {{/if}}   
+				</div>    
+                         {{/if}}
+				    </div>
+			    </div>
+              
+			</div>
+		</div>
+	</div>
 
-                
-                </div>
-              </div>
-             
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
 </section>
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
 <script type="text/javascript">
   function delWishlist(proId){
@@ -209,5 +217,17 @@ function addToCart(proId){
     })
 }
 </script>
+
+ <script src="javascripts/jquery-3.3.1.min.js"></script>
+<script src="javascripts/bootstrap.min.js"></script>
+<script src="javascripts/jquery.magnific-popup.min.js"></script>
+<script src="javascripts/jquery-ui.min.js"></script>
+<script src="javascripts/mixitup.min.js"></script>
+<script src="javascripts/jquery.countdown.min.js"></script>
+<script src="javascripts/jquery.slicknav.js"></script>
+<script src="javascripts/owl.carousel.min.js"></script>
+<script src="javascripts/jquery.nicescroll.min.js"></script>
+<script src="javascripts/main.js"></script>
+
 </body>
 </html>

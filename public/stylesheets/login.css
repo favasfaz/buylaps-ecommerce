@@ -2,11 +2,11 @@ html, body.auth_class {
     background: #f9f4ff;
   }
   .login-container {
-    margin-top: 10%;
+    margin-top: 5%;
     border: 0px solid #CCD1D1;
     border-radius: 12px;
     box-shadow: 0 0px 28px 0 rgb(0 0 0 / 8%);
-    max-width: 50%;
+    max-width: 100%;
     background: #FFF;
     z-index: 1;
     position: relative;

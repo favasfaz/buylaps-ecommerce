@@ -339,7 +339,18 @@ const addingToCart = (id, data) => {
 const getCartItems = (data) => {
   return new Promise(async (resolve, reject) => {
     const user = await Cart.findOne({ userId: data.email }).lean();
-    resolve(user);
+    if(user){
+      let grandTotal =(user.total-user.discount)+user.shippingCost
+      await Cart.findOneAndUpdate({ userId: data.email },{$set:{totalAfterDiscounts:grandTotal}})                      
+      resolve(user);
+    }
+    else
+    {
+      resolve(user)
+    }
+    resolve(user)
+
+    
   });
 };
 
@@ -790,15 +801,32 @@ const findAddress=(id,user)=>{
   })
 }
 
+const checkStock = (user)=>{
+  return new Promise(async(resolve,reject)=>{
+    let isCart= await Cart.findOne({userId:user.email})
+isCart.product.forEach(async(pro)=>{
+  let isProduct = await Product.findOne({_id:pro.productId})
+  if(isProduct.stock<pro.quantity ||  isProduct.stock<1){
+    resolve({stockout:true})
+  }else{
+    resolve({stockout:false})
+  }
+})
+  })
+}
+
 const placeOrder=(user,data)=>{
   return new Promise(async(resolve,reject)=>{
  let isCart= await Cart.findOne({userId:user.email})
 
-
 const proDetails=[]
 
-isCart.product.forEach((pro)=>{
-     proDetails.push({productId:pro.productId,name:pro.name,price:pro.price,brand:pro.brand,image:pro.image,quantity:pro.quantity,subTotal:pro.total,paymentType:data.paymentMethod})
+
+
+isCart.product.forEach(async(pro)=>{
+ 
+    proDetails.push({productId:pro.productId,name:pro.name,price:pro.price,brand:pro.brand,image:pro.image,quantity:pro.quantity,subTotal:pro.total,paymentType:data.paymentMethod})
+  
 })
    let newOrder = await new Order({
      userId:user.email,
@@ -810,6 +838,7 @@ isCart.product.forEach((pro)=>{
        town:data.town,
        postCode:data.postCode,
      },
+     totalAfterDiscounts:isCart.totalAfterDiscounts,
      totalAmount:isCart.total,
      shippingCost:isCart.shippingCost,
      discount:isCart.discount,
@@ -821,7 +850,7 @@ isCart.product.forEach((pro)=>{
           reject({msg:'something went wrong'})
         }
         else{
-          console.log(done,'orderProduct');
+         
           let userOrder = await Order.findOne({userId:user.email,_id:done._id})
           userOrder.product.forEach(async(e,i)=>{
      let product =  await Product.findOneAndUpdate({_id:e.productId},{ $inc: { stock: -e.quantity }})
@@ -834,44 +863,7 @@ isCart.product.forEach((pro)=>{
      resolve(userOrder._id)
         }
       })
-//  let deliverAddress= address.address1.map((e)=>{
-//    if(e._id==add.address){
-//      return e
-//    }
-//  })
 
-//  let deliveryAddress=deliverAddress.pop()
-//  let orderProducts = [];
-//  isCart.forEach((c,i)=> {
-//   orderProducts.push(c.product);
-//  })
-
-
-//  let anyOrder= await Order.findOne({userId:user.email}) 
-//  if(anyOrder){
-
-//  }else{
-//    let newOrder= await Order({
-//      userId:user.email,
-//      deliveryDetails:
-//        {deliveryAddress},
-     
-//      orders:
-//       orderProducts
-//      ,
-    
-
-//    })
-//    await newOrder.save((err,data)=>{
-//      if(err){
-//        console.log(err);
-//        reject()
-//      }else{
-//       resolve()
-//      }
-     
-//    })
-// }
 
   })
 }
@@ -1007,22 +999,9 @@ const viewOrder=(id)=>{
 }
 const cancelOrder= (id,user)=>{
   return new Promise(async(resolve,reject)=>{
-// let ifOrders = await Order.findOne({userId:user.email}, { product: { $elemMatch: { _id:id } } })
-  //   await Order.update(
-  //     { userId: user.email },
-  //     { $pull: { product: { _id: id } } }
-  //   );
-  // if(!ifOrders.product.length){
-  //   console.log('success');
-  //   await Order.deleteOne({_id : ifOrders._id})
-  //   resolve()
-  // }else{
-  //   console.log('error');
-  //   resolve()
-  // }
   await Order.findOneAndUpdate({userId:user.email,'product._id':id},{$set:{'product.$.status':'order canceled'}})
   await Order.findOneAndUpdate({userId:user.email,'product._id':id},{$set:{'product.$.active':'false'}})
-  resolve()
+  resolve({status:true})
   })
 }
 const sortOrder=(id)=>{
@@ -1048,7 +1027,7 @@ const deleteOrder=(id,user)=>{
     );
   if(!ifOrders.product.length){
     console.log('success');
-    await Order.removeOne({_id : ifOrders._id})
+    await Order.deleteOne({_id : ifOrders._id})
     resolve()
   }else{
     console.log('error');
@@ -1071,6 +1050,7 @@ const paymentFailed = (data)=>{
 
 
 module.exports = {
+  checkStock,
   paymentFailed,
   deleteOrder,
   getSingleProduct,
