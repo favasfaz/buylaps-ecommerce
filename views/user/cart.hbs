@@ -12,18 +12,18 @@
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="./index.html">Home</a></li>
+                            <li class="active"><a href="/users">Home</a></li>
                             
                             <li><a href="/users">Shop</a></li>
                             <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                    
-                                    <li><a href="./checkout.html"></a></li>
-                                    <li><a href="./blog-details.html"></a></li>
+                                    <li><a ></a></li>
+                                    <li><a></a></li>
                                 </ul>
                             </li>
-                            <li><a href="./blog.html">About us</a></li>
-                            <li><a href="./contact.html">Contact</a></li>
+                            <li><a href="/users/account/{{user.email}}">Profile</a></li>
+                           
                               <li>
                                 <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
             <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
@@ -84,7 +84,7 @@
 
                   <div class="row mb-4 d-flex justify-content-between align-items-center">
                     <div class="col-md-2 col-lg-2 col-xl-2">
-                     <a href="/productZoom/{{this.name}}"> <img
+                     <a href="/users/productZoom/{{this.name}}"> <img
                     src="/uploads/{{this.image}}"
                         class="img-fluid rounded-3" alt="Cotton T-shirt"></a>
                     </div>
@@ -94,7 +94,7 @@
                     </div>
                     <div  class="col-md-3 col-lg-3 col-xl-2 ">
                       <button class="btn btn-link px-2" onclick="decProduct('{{this.productId}}','{{this.quantity}}')">
-                        -
+                        <i class="fa-solid fa-minus"></i>
                       </button>
 <input id="form1" min="1" name="quantity" value="{{this.quantity}}" type="number"
                         class="form-control form-control-sm" />
@@ -102,16 +102,16 @@
                        
 
                       <button class="btn btn-link px-2" onclick="addProductCount('{{this.productId}}','{{this.quantity}}')">
-                        +
+                       <i class="fa-solid fa-plus"></i>
                       </button>
                     </div>
                     
                     <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                       <h6 class="mb-0">{{this.total}}</h6>
                     </div>
-                    <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                    {{!-- <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                       <a href="#!" class="text-muted"><i class="fas fa-times"></i></a>
-                    </div>
+                    </div> --}}
                      <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                       <button class="btn btn-danger" onclick="delProduct('{{this.productId}}')">del</button>
                       
@@ -127,8 +127,13 @@
                   <hr class="my-4">
                   {{/each}}
                 <div class="pt-5">
-                    <h6 class="mb-0  btn btn-success"><a style="color:white ;" href="/users" class="text-body"><i
-                          class="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>
+                    <h6   class="mb-0  btn btn-success "><a  href="/users" class="text-body">
+                    <i style="color:white ;"
+                          class="fas fa-long-arrow-alt-left me-2">
+                          </i>
+                          Back to shop
+                          </a>
+                          </h6>
                   </div>
                   {{else}}
                   <div class="container-fluid  mt-100">
@@ -145,7 +150,7 @@
 									<img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3">
 									<h3><strong>Your Cart is Empty</strong></h3>
 									<h4>Add something to make me happy :</h4>
-									<a href="/users" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
+									<a href="/users" style="color:white ;" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
 									
 								
 								</div>
@@ -167,6 +172,8 @@
                   
                 </div>
               </div>
+
+              {{#if product}}
               <div class="col-lg-4 bg-grey">
                 <div class="p-5">
                   <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
@@ -186,7 +193,7 @@
                                <h5 class="text-uppercase mb-3">total shipping Cost :+${{data.shippingCost}}</h5>
                                     <h5 class="text-uppercase mb-3">total discount :      -${{data.discount}}</h5>
                                     <hr style="color:red ;">
-                                     <h5 class="text-uppercase mb-3">Grand Total: {{grandTotal}}</h5>
+                                     <h5 class="text-uppercase mb-3">Grand Total: {{data.totalAfterDiscounts}}</h5>
                   </div>
                     <a class="btn btn-success" href="/users/checkout"> checkout</a>
                   
@@ -207,6 +214,8 @@
 
                 </div>
               </div>
+
+              {{/if}}
             </div>
           </div>
         </div>
@@ -214,7 +223,10 @@
     </div>
   </div>
 </section>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://kit.fontawesome.com/5d2583e59e.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="/javascripts/addToCart.js"></script>
 </body>
 </html>

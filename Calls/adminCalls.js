@@ -15,6 +15,7 @@ const Cart = require('../Model/cart-schema')
 const { log } = require('console')
 const { router } = require('../app')
 const adminLogin = (data) => {
+    console.log(data,'req.body');
     return new Promise(async (resolve, reject) => {
 
         const user = await adminModel.findOne({ email: data.email })

@@ -40,10 +40,10 @@ function addToCart(proId){
         success:(response)=>{
             if(response.status){
                 $('#cart-count').html(response.count)
-              alert('added to cart')
+                swal("Good job!", "Item added to Cart", "success");
                            }
                            else{
-                               alert('please login')
+                            swal( "dangerMode","please login first", "error");
                            }
                             
         }, 
@@ -71,15 +71,37 @@ function decProduct(proId,quantity){
         }
     })
 }
-function delProduct(proId){
-    $.ajax({
-        url:'/users/delete-cart/'+proId,
-          method:'get',
-        success:(response)=>{
-            location.reload();
-            alert('product deleted from cart successfully')
+ function delProduct(proId){
+
+    swal({
+        title: "Are you sure?",
+        text: "YOu want to delete the Product",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+
+            $.ajax({
+                url:'/users/delete-cart/'+proId,
+                  method:'get',
+                success:(response)=>{
+                    if(response.status){
+                        console.log('success');
+                        swal("Poof! Your product from  cart has been deleted!", {
+                            icon: "success",
+                          });
+                    location.reload()
+                    }
+                }
+            })
+          
+        } else {
+          swal("Your imaginary file is safe!");
         }
-    })
+      });
+    
 }
 function addProductCount(proId,quantity){
     $.ajax({
@@ -105,10 +127,10 @@ function addToWishlist(proId){
             if(response.newProduct){
                 location.reload()
                 $('#wishlist-count').html(response.count)
-                alert('item added to wishlist')
+                swal("Good job!", "Item added to Wishlist", "success");
             }
             if(response.oldProduct){
-                alert('item already in wishlist')
+                swal( "dangerMode","Item already in wishlist", "error");
             }
          
            
@@ -123,18 +145,25 @@ function getCoupons(){
         url:'/users/couponOffer',
           method:'get',
         success:(response)=>{
-            let data=response.data;
-          console.log(data)
-            data.forEach((p,i) => {
-              let div = document.createElement('div')
-              let parentDiv =document.createElement('div')
-              let proName = document.createElement('h6')
-               
-              proName=p.couponCode
-              parentDiv.append(proName);
-              coupon.append(parentDiv);
-              
-            });
+            if(response.length!=0){
+                let data=response.data;
+                console.log(data)
+                  data.forEach((p,i) => {
+                    let div = document.createElement('div')
+                    let parentDiv =document.createElement('div')
+                    let proName = document.createElement('h6')
+                     
+                    proName=p.couponCode
+                    parentDiv.append(proName);
+                    coupon.append(parentDiv);
+                    
+                  });
+            }
+            else{
+                console.log('nocoupon');
+                swal( "dangerMode","NO coupon is available", "error");
+            }
+          
                     
         }, 
        
@@ -149,10 +178,11 @@ function getCoupons(){
             data:$('#checkout-form').serialize(),
             success:(response)=>{
                 if(response.stockout){
-                    console.log('stockout');
-                    alert('stockout')
+                    swal( "dangerMode","product is stockout", "error");
+
                 }else{
                     if(response.status){
+                       swal("Good job!", "Item added to Wishlist", "success");
                         window.location.href= "/users/orderSuccessfull"
                       }else{
                           razorpayPayment(response)
@@ -201,7 +231,7 @@ function razorpayPayment(order){
 }
 
 function verifyPayment(payment,order){
-    console.log(payment,'payment');
+   
     $.ajax({
         url:'/users/verifyPayment',
         data:{
@@ -262,8 +292,8 @@ $("#priceFilter").submit((e)=>{
                 url:'/users/cancelOrder/'+id,
                 method:'get',
                 success:(response)=>{
-                    alert('amount will refunded')
                     location.reload()
+                        
                 }
             })
         }
@@ -426,7 +456,6 @@ forHome()
 
 $(document).ready(function (){
     $("#getUpdate").submit((e)=>{
- 
         console.log('success3');
         $.ajax({
             url:'/getData',

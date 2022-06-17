@@ -10,7 +10,21 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <title>Document</title>
+        <style>
+
+            @media screen and (max-width: 586px) {
+  #cart {
+   width: auto !important;
+  }
+   #del {
+    margin-left: 10px !important;
+   width: auto !important;
+  }
+}
+    
+</style>
 </head>
 <body>
 
@@ -18,7 +32,7 @@
     <div class="offcanvas-menu-wrapper">
         <div class="offcanvas__close">+</div>
         <ul class="offcanvas__widget">
-            <li><span class="icon_search search-switch"></span></li>
+           
             <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
                 <div class="tip">{{wishlistCount}}</div>
             </a></li>
@@ -35,13 +49,16 @@
                             <a href="/users/account/{{user.email}}">{{user.email}}</a>
                                 {{else}}
                             <a href="/users/login">Login</a>
-                            {{/if}}        </div>
+                            {{/if}}        
+                            </div>
     </div>
    
+    <!-- Offcanvas Menu End -->
 
-   <header class="header">
-        <div class="container-fluid">
-            <div class="row">
+    <!-- Header Section Begin -->
+    <header class="header " >
+        <div class="container-fluid ">
+            <div class="row " >
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
                         <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
@@ -50,18 +67,31 @@
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="./index.html">Home</a></li>
-                           
-                            <li><a href="/users">Shop</a></li>
+                            <li class="active"><a href="/users">Home</a></li>
+                            
+                            <li><a href="#allProducts">Shop</a></li>
                             <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
-                                    
-                                    <li><a href="./checkout.html"></a></li>
-                                    <li><a href="./blog-details.html"></a></li>
+                                   
+                                    <li><a ></a></li>
+                                    <li><a ></a></li>
                                 </ul>
                             </li>
-                            <li><a href="./blog.html">About us</a></li>
-                            <li><a href="./contact.html">Contact</a></li>
+                            <li>
+                                 {{#if user}}
+                            <a href="/users/account/{{user.email}}">Profile</a>
+                              
+                            {{/if}} 
+                             </li>
+                            
+                            
+                            <li>
+                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+            <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-primary btn-rounded btn-sm my-0" type="submit">Search</button>
+                               </form>
+                        </li>
+                        </ul>
                         </ul>
                     </nav>
                 </div>
@@ -75,7 +105,7 @@
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
-                            <li><span class="icon_search search-switch"></span></li>
+                            {{!-- <li><span class="icon_search search-switch"></span></li> --}}
                             <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
@@ -92,10 +122,9 @@
             </div>
         </div>
     </header>
-
    
 
-<section>
+{{!-- <section>
 	<div class="cart-wrap">
 		<div class="container">
 	        <div class="row">
@@ -108,18 +137,17 @@
 				        <table cellpadding="0" cellspacing="0" border="0" width="100%">
 				        	<thead>
 					        	<tr>
-					        		<th width="45%">Product Name</th>
-					        		<th width="15%">Unit Price</th>
-					        		<th width="15%">Stock Status</th>
-					        		<th width="15%"></th>
-					        		<th width="10%"></th>
+                                 <th >Image</th>
+					        		<th >Product</th>
+					        		<th > Price</th>
+					        	
 					        	</tr>
 					        </thead>
 					        <tbody>
                               
                                   {{#each wishProduct}}
 					        	<tr>
-					        		<td width="45%">
+					        		<td >
 					        			<div class="display-flex align-center">
 		                                    <div class="img-product">
 		                                         <a href="/productZoom/{{this.productName}}">  <img
@@ -132,10 +160,9 @@
 		                                    </div>
 	                                    </div>
 	                                </td>
-					        		<td width="15%" class="price">{{this.price}}</td>
-					        		<td width="15%"><span class="in-stock-box">In Stock</span></td>
-					        		<td width="15%"> <button class="btn btn-success" onclick="addToCart('{{this._id}}')">To Cart</button></td>
-					        		<td width="10%" class="text-center"><button class="btn btn-danger" onclick="delWishlist('{{this._id}}')">del</button></td>
+					        		<td class="price">{{this.price}}</td>
+					        		<td> <button class="btn btn-success  w-100" onclick="addToCart('{{this._id}}')">To Cart</button></td>
+					        		<td  class="text-center"><button class="btn btn-danger w-100" onclick="delWishlist('{{this._id}}')">del</button></td>
 					        	</tr>
 					        	  {{/each}}
                
@@ -185,49 +212,171 @@
 	</div>
 
 
+</section> --}}
+
+ <section class="h-96 h-custom" style="">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12">
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+          <div class="card-body p-0">
+            <div class="row g-0">
+              <div class="col-lg-12">
+                <div class="p-5">
+                  <div class="d-flex justify-content-between align-items-center mb-5">
+                    <h1 class="fw-bold mb-0 text-black">Wishlist</h1>
+                   
+                  </div>
+
+                  <hr class="my-4">
+
+
+
+
+                  
+                    {{#if wishProduct}}
+                  {{#each wishProduct}}
+
+                  <div class="row mb-4 d-flex justify-content-between align-items-center">
+                    <div class="col-md-2 col-lg-2 col-xl-2 col-4">
+                      <a href="/users/productZoom/{{this.productName}}">
+                        <img
+                    src="/uploads/{{this.images.[0].img1}}"
+                        class="img-fluid rounded-3" alt="Cotton T-shirt">
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-xl-3 col-4" >
+                      <h6 class="text-muted"> {{this.productName}}</h6>
+                      <h6 class="text-black mb-0">{{this.brand}}</h6>
+                    </div>
+                    <div  class="col-md-3 col-lg-3 col-xl-2 col-2 ">
+                       <button id="cart" class="btn btn-success  w-100" onclick="addToCart('{{this._id}}')">Cart</button>
+                    </div>
+                     <div  class="col-md-3 col-lg-3 col-xl-2 col-2 ">
+                       <button id="del" class="btn btn-danger w-100" onclick="delWishlist('{{this._id}}')">del</button>
+                    </div>
+                    
+                  
+                 
+                  </div>
+
+                  <hr class="my-4">
+                  {{/each}}
+                <div class="pt-5">
+                    <h6   class="mb-0  btn btn-success "><a  href="/users" class="text-body">
+                    <i style="color:white ;"
+                          class="fas fa-long-arrow-alt-left me-2">
+                          </i>
+                          Back to shop
+                          </a>
+                          </h6>
+                  </div>
+                  {{else}}
+                  <div class="container-fluid  mt-100">
+				 <div class="row">
+				 
+					<div class="col-md-12">
+					
+							<div class="card">
+						<div class="card-header">
+					
+						</div>
+						<div class="card-body cart">
+								<div class="col-sm-12 empty-cart-cls text-center">
+									<img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3">
+									<h3><strong>Your Cart is Empty</strong></h3>
+									<h4>Add something to make me happy :</h4>
+									<a href="/users" style="color:white ;" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
+									
+								
+								</div>
+						</div>
+				</div>
+						
+					
+					</div>
+				 
+				 </div>
+				
+				</div> 
+
+                  {{/if}}
+                 
+
+                  
+
+                  
+                </div>
+              </div>
+             
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script type="text/javascript">
   function delWishlist(proId){
-    $.ajax({
+
+    swal({
+        title: "Are you sure?",
+        text: "YOu want to delete the Product",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+
+      $.ajax({
         url:'/users/delete-wishlist/'+proId,
           method:'get',
         success:(response)=>{
-            location.reload();
-            alert('product deleted from wishhlist successfully')
+            
+            swal("Poof! Your product from  Wishlist has been deleted!", {
+                            icon: "success",
+                          });
+                    location.reload()
         }
     })
+          
+        } else {
+          swal("Your product is safe!");
+        }
+      });
+
+  
 }
 function addToCart(proId){
+
+   
     $.ajax({
         url:'/users/add-to-cart/'+proId,
         method:'get',
         success:(response)=>{
             if(response.status){
                 $('#cart-count').html(response.count)
-                alert('Item added to Cart')
-            }
-            else{
-                alert('please login first')
-            }
+                swal("Good job!", "Item added to Cart", "success");
+                           }
+                           else{
+                            swal( "dangerMode","please login first", "error");
+                           }
+                            
         }, 
-      
+        error: function(err) {
+            alert("Please login first");
+          }
     })
 }
 </script>
 
- <script src="javascripts/jquery-3.3.1.min.js"></script>
-<script src="javascripts/bootstrap.min.js"></script>
-<script src="javascripts/jquery.magnific-popup.min.js"></script>
-<script src="javascripts/jquery-ui.min.js"></script>
-<script src="javascripts/mixitup.min.js"></script>
-<script src="javascripts/jquery.countdown.min.js"></script>
-<script src="javascripts/jquery.slicknav.js"></script>
-<script src="javascripts/owl.carousel.min.js"></script>
-<script src="javascripts/jquery.nicescroll.min.js"></script>
-<script src="javascripts/main.js"></script>
+
+ 
 
 </body>
 </html>

@@ -9,7 +9,7 @@
     <div class="offcanvas-menu-wrapper">
         <div class="offcanvas__close">+</div>
         <ul class="offcanvas__widget">
-            <li><span class="icon_search search-switch"></span></li>
+           
             <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
                 <div class="tip">{{wishlistCount}}</div>
             </a></li>
@@ -26,7 +26,8 @@
                             <a href="/users/account/{{user.email}}">{{user.email}}</a>
                                 {{else}}
                             <a href="/users/login">Login</a>
-                            {{/if}}        </div>
+                            {{/if}}        
+                            </div>
     </div>
    
     <!-- Offcanvas Menu End -->
@@ -43,20 +44,23 @@
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="./index.html">Home</a></li>
-                            {{!-- <li><a href="#">Women’s</a></li> --}}
-                            {{!-- <li><a href="#">Men’s</a></li> --}}
-                            <li><a href="/users">Shop</a></li>
+                            <li class="active"><a href="/users">Home</a></li>
+                            
+                            <li><a href="#allProducts">Shop</a></li>
                             <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
-                                    {{!-- <li><a href="./product-details.html">Product Details</a></li> --}}
-                                    {{!-- <li><a href="./shop-cart.html">Shop Cart</a></li> --}}
-                                    <li><a href="./checkout.html"></a></li>
-                                    <li><a href="./blog-details.html"></a></li>
+                                   
+                                    <li><a ></a></li>
+                                    <li><a ></a></li>
                                 </ul>
                             </li>
-                            <li><a href="./blog.html">About us</a></li>
-                            <li><a href="./contact.html">Contact</a></li>
+                            <li>
+                                 {{#if user}}
+                            <a href="/users/account/{{user.email}}">Profile</a>
+                              
+                            {{/if}} 
+                             </li>
+                            
                             
                             <li>
                                 <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
@@ -78,7 +82,7 @@
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
-                            <li><span class="icon_search search-switch"></span></li>
+                            {{!-- <li><span class="icon_search search-switch"></span></li> --}}
                             <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
@@ -248,7 +252,7 @@
 
 
 
- <section class="product spad">
+ <section class="product spad" id="allProducts">
     <div class="container" >
         <div class="row"  >
            
@@ -346,62 +350,8 @@
 </section>
 <!-- Services Section End -->
 
-<!-- Instagram Begin -->
-<div class="instagram">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="images/instagram/insta-1.jpg">
-                    <div class="instagram__text">
-                        <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="images/instagram/insta-2.jpg">
-                    <div class="instagram__text">
-                        <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="images/instagram/insta-3.jpg">
-                    <div class="instagram__text">
-                        <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="images/instagram/insta-4.jpg">
-                    <div class="instagram__text">
-                        <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="images/instagram/insta-5.jpg">
-                    <div class="instagram__text">
-                        <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
-                <div class="instagram__item set-bg" data-setbg="images/instagram/insta-6.jpg">
-                    <div class="instagram__text">
-                        <i class="fa fa-instagram"></i>
-                        <a href="#">@ ashion_shop</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Instagram End -->
+
+
 
 <!-- Footer Section Begin -->
 <footer class="footer">
@@ -490,6 +440,7 @@
     
       
 </div>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
  <script src="/javascripts/addToCart.js"></script>
  </body>

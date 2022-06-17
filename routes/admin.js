@@ -41,6 +41,7 @@ router.post('/login',(req,res)=>{
    req.session.admin=req.body
    res.render('admin/index')
  }).catch((err)=>{
+console.log(err,'err');
    req.session.adminLoginErr=err.msg
    res.redirect('/')
  })

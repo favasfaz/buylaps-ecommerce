@@ -279,7 +279,6 @@ console.log(req.session.forgotErr);
   router.get('/delete-cart/:id',(req,res)=>{
     deleteCart(req.params.id,req.session.user).then(()=>{
       res.json({status:true})
-    //  res.redirect('/users/cart')
     })
   })
   router.post('/addProductCount',(req,res)=>{
@@ -412,15 +411,17 @@ router.get('/toCart/:id',sessionverify2,(req,res)=>{
 })
 router.get('/productOrderForm/:id',sessionverify2,async(req,res)=>{
   let id=req.params.id
+  let user = req.session.user
   let data=await getCartItems(req.session.user)
   let count = await getCartCount(req.session.user)
   let total = await totalAmount(req.session.user)
   let subtotal=await subTotal(req.session.user)
   let dicounts=await findDiscount(req.session.user)
+  let wishlistCount=await getWishlistCount(req.session.user)
  findAddress(req.params.id,req.session.user).then((address)=>{
   let grandTotal =(data.total-data.discount)+data.shippingCost
    if(grandTotal!=null && data!=null){
-    res.render('user/productOrderForm',{data,address,count,total,subtotal,dicounts,grandTotal,err:req.session.redeemErr})
+    res.render('user/productOrderForm',{wishlistCount,user,data,address,count,total,subtotal,dicounts,grandTotal,err:req.session.redeemErr})
     req.session.redeemErr=''
    }else{
      res.redirect('/users')

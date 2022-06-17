@@ -1,4 +1,99 @@
-<div class="container" style="background: #F4F7FD !important;">
+ <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__close">+</div>
+        <ul class="offcanvas__widget">
+           
+            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                <div class="tip">{{wishlistCount}}</div>
+            </a></li>
+            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                <div class="tip">{{count}}</div>
+            </a></li>
+        </ul>
+        <div class="offcanvas__logo">
+            <a href="./index.html"><images src="images/logo.png" alt=""></a>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <div class="offcanvas__auth">
+                        {{#if user}}
+                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                                {{else}}
+                            <a href="/users/login">Login</a>
+                            {{/if}}        
+                            </div>
+    </div>
+   
+    <!-- Offcanvas Menu End -->
+
+    <!-- Header Section Begin -->
+    <header class="header " >
+        <div class="container-fluid ">
+            <div class="row " >
+                <div class="col-xl-3 col-lg-2">
+                    <div class="header__logo">
+                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-7">
+                    <nav class="header__menu">
+                        <ul>
+                            <li class="active"><a href="/users">Home</a></li>
+                            
+                            <li><a href="#allProducts">Shop</a></li>
+                            <li><a href="/users/viewOrder">Orders</a>
+                                <ul class="dropdown">
+                                   
+                                    <li><a ></a></li>
+                                    <li><a ></a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                 {{#if user}}
+                            <a href="/users/account/{{user.email}}">Profile</a>
+                              
+                            {{/if}} 
+                             </li>
+                            
+                            
+                            <li>
+                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+            <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-primary btn-rounded btn-sm my-0" type="submit">Search</button>
+                               </form>
+                        </li>
+                        </ul>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__right">
+                        <div class="header__right__auth">
+                            {{#if user}}
+                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                                {{else}}
+                            <a href="/users/login">Login</a>
+                            {{/if}}
+                        </div>
+                        <ul class="header__right__widget">
+                            {{!-- <li><span class="icon_search search-switch"></span></li> --}}
+                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                                <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
+                            </a></li>
+                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            {{!-- -- ---------------------------------------------}}
+                                <div id="cart-count" class="tip">{{count}}</div>
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open">
+                <i class="fa fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+<div class="container-fluid" style="background: #F4F7FD !important;">
     <div class="py-5 text-center">
         <h2>Checkout form</h2>
     </div>
@@ -148,6 +243,7 @@
 
 
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+ <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
  <script src="/javascripts/addToCart.js"></script>
 
 
