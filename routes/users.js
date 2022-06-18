@@ -558,7 +558,6 @@ router.get('/singleOrderView/:id',sessionverify2,(req,res)=>{
   console.log(req.params.id,'id');
 getSingleProduct(req.params.id,req.session.user).then((data)=>{
 console.log('singleProduct',data,'data');
-
 data.product.forEach((prdt)=>{
   res.render('user/singleOrderView',{Data:prdt})
 })

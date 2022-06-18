@@ -67,7 +67,7 @@
     </header>
    
 
-
+{{#if data}}
 <div class="container-fluid mt-3 mb-3">
     <div class="row g-2">
         {{#each data}}
@@ -91,6 +91,13 @@
        {{/each}}
     </div>
 </div>
+{{else}}
+
+<div class="container mt-5">
+    <div class="row d-flex justify-content-center text-center"><h1>No Item found</h1> </div>
+</div>
+
+{{/if}}
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
 

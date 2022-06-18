@@ -37,7 +37,7 @@
                 <div class="d-flex justify-content-between p-price"><span>quantity</span><span>{{Data.quantity}}</span></div>
                <div class="d-flex justify-content-between p-price"><span>status</span><span>{{Data.status}}</span></div>
             </div>
-            <div class="d-flex justify-content-between total font-weight-bold mt-4"><span>Total</span><span>{{Data.}}</span></div>
+            <div class="d-flex justify-content-between total font-weight-bold mt-4"><span>Total</span><span>{{Data.subTotal}}</span></div>
             {{#if Data.active}}
         <button id="cancel" class="btn btn-danger" onclick="cancel('{{Data._id}}')" >cancel Order</button>
 		{{else}}
