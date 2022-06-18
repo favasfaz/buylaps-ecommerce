@@ -43,13 +43,13 @@ function addToCart(proId){
                 swal("Good job!", "Item added to Cart", "success");
                            }
                            else{
-                            swal( "dangerMode","please login first", "error");
+                            swal( "!","please login first", "error");
                            }
                             
         }, 
         error: function(err) {
-            alert("Please login first");
-          }
+            swal( "!","please login first", "error");
+        }
     })
 }
 function decProduct(proId,quantity){
@@ -89,7 +89,7 @@ function decProduct(proId,quantity){
                 success:(response)=>{
                     if(response.status){
                         console.log('success');
-                        swal("Poof! Your product from  cart has been deleted!", {
+                        swal("! Your product from  cart has been deleted!", {
                             icon: "success",
                           });
                     location.reload()
@@ -97,9 +97,10 @@ function decProduct(proId,quantity){
                 }
             })
           
-        } else {
-          swal("Your imaginary file is safe!");
-        }
+        } 
+        // else {
+        //   swal("Your imaginary file is safe!");
+        // }
       });
     
 }
@@ -124,15 +125,18 @@ function addToWishlist(proId){
         url:'/users/addToWishlist/'+proId,
           method:'get',
         success:(response)=>{
+            if(response){
             if(response.newProduct){
                 location.reload()
                 $('#wishlist-count').html(response.count)
                 swal("Good job!", "Item added to Wishlist", "success");
             }
             if(response.oldProduct){
-                swal( "dangerMode","Item already in wishlist", "error");
+                swal( "!","Item already in wishlist", "error");
             }
-         
+        }else{
+            swal( "!","You might be login", "error");
+        }
            
         }, 
        
@@ -161,7 +165,7 @@ function getCoupons(){
             }
             else{
                 console.log('nocoupon');
-                swal( "dangerMode","NO coupon is available", "error");
+                swal( "!","NO coupon is available", "error");
             }
           
                     
@@ -178,11 +182,11 @@ function getCoupons(){
             data:$('#checkout-form').serialize(),
             success:(response)=>{
                 if(response.stockout){
-                    swal( "dangerMode","product is stockout", "error");
+                    swal( "!","product is stockout", "error");
 
                 }else{
                     if(response.status){
-                       swal("Good job!", "Item added to Wishlist", "success");
+                       swal("", "Item added to Wishlist", "success");
                         window.location.href= "/users/orderSuccessfull"
                       }else{
                           razorpayPayment(response)

@@ -38,8 +38,8 @@ app.use(session({
 }))
 app.use(flash())
 
-app.use('/', adminRouter);
 app.use('/users', usersRouter);
+app.use('/', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

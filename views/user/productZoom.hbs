@@ -8,37 +8,44 @@
   <title>Document</title>  
 
 </head>
-<body>
+<body style="margin-top: 0">
 
- <header class="header">
-        <div class="container-fluid">
-            <div class="row">
+ <header class="header " >
+        <div class="container-fluid ">
+            <div class="row " >
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                        <a href="/users"><images src="images/logo.png" alt=""><h3 style="color:black ;">FEIZY.com</h3></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="/users">Home</a></li>
-                         
-                            <li><a href="/users">Shop</a></li>
+                            
+                            <li><a href="#allProducts">Shop</a></li>
                             <li><a href="/users/viewOrder">Orders</a>
                                 <ul class="dropdown">
-                                    
-                                    <li><a href="./checkout.html"></a></li>
-                                    <li><a href="./blog-details.html"></a></li>
+                                   
+                                    <li><a ></a></li>
+                                    <li><a ></a></li>
                                 </ul>
                             </li>
-                            <li><a href="/users/account/{{user.email}}">Profile</a></li>
-                           
-                              <li>
+                            <li>
+                                 {{#if user}}
+                            <a href="/users/account/{{user.email}}">Profile</a>
+                              
+                            {{/if}} 
+                             </li>
+                            
+                            
+                            <li>
                                 <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
             <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-primary btn-rounded btn-sm my-0" type="submit">Search</button>
                                </form>
                         </li>
+                        </ul>
                         </ul>
                     </nav>
                 </div>
@@ -52,7 +59,7 @@
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
-                            
+                            {{!-- <li><span class="icon_search search-switch"></span></li> --}}
                             <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
@@ -69,7 +76,7 @@
             </div>
         </div>
     </header>
-
+   
 
 
 
