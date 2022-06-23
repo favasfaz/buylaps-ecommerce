@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var {getChartData,paymentstatus,totalSales,totalOrders,changeStatus,viewOrder,allOrders,totalCoupons,deleteCoupon,getAllCoupons,addCoupon,getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,totalUsers,totalProducts,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails,findCart} = require('../Calls/adminCalls')
+var {getChartData,deleteBrand,deleteCategory,paymentType,paymentstatus,totalSales,totalOrders,changeStatus,viewOrder,allOrders,totalCoupons,deleteCoupon,getAllCoupons,addCoupon,getBrand,addBrand,addCategory,getCategory,adminLogin,addingProduct,totalUsers,totalProducts,allUsers,deleteUser,findingUser,editedProduct,editingUser,blockUser,unBlockUser,uploadFiles,viewProducts,deleteProducts,productDetails,findCart} = require('../Calls/adminCalls')
 var multer = require('multer')
 var storage = require('../uploadMiddleware/multer');
 const async = require('hbs/lib/async');
@@ -17,33 +17,32 @@ const { log } = require('console');
 router.get('/',async  (req, res, next)=> {
   let token = req.cookies.adminToken
   if(token){
-    console.log('success');
     let orderCount = await totalOrders() 
+    console.log(orderCount,'totalOrder');
     let Sales = await totalSales()
     let successPayment = await paymentstatus()
-    let chart = await getChartData()
-    console.log(chart,'chartdata');
-    let refund = Sales - successPayment
-    console.log(orderCount , 'home');
+    let refund = await Sales - successPayment
+    let {COD,paypal} = await paymentType()
     res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
-    res.render('admin/index',{admin:true,orderCount,Sales,refund,successPayment,})
+    res.render('admin/index',{admin:true,orderCount,Sales,refund,successPayment,COD,paypal})
   }else{
     res.render('admin/login', {err:req.session.adminLoginErr });
     req.session.adminLoginErr=''
   }
 });
 router.post('/login',(req,res)=>{
+  console.log('succes');
  adminLogin(req.body).then((data)=>{
    console.log(data.token);
   res.cookie('adminToken',data.token,{httpOnly:true})
    req.session.loggedIn=true
    req.session.admin=req.body
-   res.render('admin/index')
+   res.redirect('/admin')
  }).catch((err)=>{
 console.log(err,'err');
    req.session.adminLoginErr=err.msg
-   res.redirect('/')
+   res.redirect('/admin')
  })
 })
 router.get('/viewUser',(req,res)=>{
@@ -59,10 +58,10 @@ router.get('/viewUser',(req,res)=>{
 router.get('/deleteUser/:id',(req,res)=>{
   console.log(req.params.id);
   deleteUser(req.params.id).then(()=>{
-    res.redirect('/viewUser')
+    res.redirect('/admin/viewUser')
   }).catch(()=>{
     req.session.deleteErr="something went wrong when deleting"
-    res.redirect('/viewUser')
+    res.redirect('/admin/viewUser')
   })
 })
 
@@ -74,17 +73,17 @@ res.redirect('/viewUser')
 }).catch((err)=>{
 req.session.editErr=err.msg
 console.log(req.session.editErr);
-res.redirect('/editUser/' + id)
+res.redirect('/admin/editUser/' + id)
 })
 })
 router.get('/blockUser/:id',(req,res)=>{
   blockUser(req.params.id).then(()=>{
-    res.redirect('/viewUser')
+    res.redirect('/admin/viewUser')
   })
 })
 router.get('/unBlockUser/:id',(req,res)=>{
   unBlockUser(req.params.id).then(()=>{
-    res.redirect('/viewUser')
+    res.redirect('/admin/viewUser')
   })
 })
 router.get('/viewProducts',(req,res)=>{
@@ -119,10 +118,10 @@ router.post('/addProduct',storage.fields([{name:'images',maxCount:1},{name:'imag
   const files=req.files.filename
    uploadFiles(req.body,img1,img2,img3).then((data)=>{
      req.flash('msg','Successfully Product Added')
-res.redirect('/addProducts')
+res.redirect('/admin/addProducts')
   }).catch((err)=>{
     req.session.addProductErr=err.msg
-    res.redirect('/addProducts')
+    res.redirect('/admin/addProducts')
   })
 
  
@@ -130,7 +129,7 @@ res.redirect('/addProducts')
 router.get('/deleteProduct/:id',(req,res)=>{
   let id= req.params.id
   deleteProducts(id).then(()=>{
-    res.redirect('/viewProducts')
+    res.redirect('/admin/viewProducts')
   })
 })
 
@@ -155,7 +154,7 @@ router.get('/deleteProduct/:id',(req,res)=>{
   console.log(img1,img2);
   editedProduct(req.body,img1,img2,img3,id).then(()=>{
     req.flash('msg','Successfully Product Edited')
-    res.redirect('/viewProducts')
+    res.redirect('/admin/viewProducts')
   })
  })
 
@@ -168,6 +167,9 @@ router.get('/productZoom/:id',(req,res)=>{
 router.get('/category',async(req,res)=>{
   getCategory().then((data)=>{
     getBrand().then((allBrands)=>{
+      console.log(data,'cate');
+      console.log(allBrands,'brane');
+
     res.render('admin/category',{data,allBrands,categoryErr:req.session.categoryErr,brandErr:req.session.brandErr})
  })
   })
@@ -178,20 +180,20 @@ router.post('/addCategory',(req,res)=>{
     res.redirect('/category')
   }).catch((err)=>{
     req.session.categoryErr=err.msg
-    res.redirect('/category')
+    res.redirect('/admin/category')
   })
 })
 router.get('/logout',(req,res)=>{
   req.session.destroy()
   res.clearCookie('adminToken')
-res.redirect('/')
+res.redirect('/admin')
 })
 router.post('/addBrand',(req,res)=>{
   addBrand(req.body).then(()=>{
     res.redirect('/category')
   }).catch((err)=>{
     req.session.brandErr=err.msg
-    res.redirect('/category')
+    res.redirect('/admin/category')
   })
 })
 
@@ -207,17 +209,17 @@ router.post('/addCoupon',(req,res)=>{
   addCoupon(req.body).then(()=>{
    
     req.flash('msg','Successfully Coupon Added')
-    res.redirect('/addCoupon')
+    res.redirect('/admin/addCoupon')
   }).catch((err)=>{
     req.session.couponErr=err.msg
     console.log('lllllllllllllllllllllllll');
-    res.redirect('/addCoupon')
+    res.redirect('/admin/addCoupon')
   })
 })
 
 router.get('/deleteCoupon/:id',(req,res)=>{
 deleteCoupon(req.params.id).then(()=>{
-  res.redirect('/addCoupon')
+  res.redirect('/admin/addCoupon')
 })
 })
 router.get('/allOrders',(req,res)=>{
@@ -241,9 +243,6 @@ changeStatus(req.body).then(()=>{
 })
 })
 
-router.get('/totalRevenue',(req,res)=>{
- res.render('admin/totalRevenue')
-})
 
 
 
@@ -283,7 +282,7 @@ let salesReport = await Order.aggregate([
   },
 },
 ]);
-console.log(salesReport,'salesReport');
+
 
 let dateArray = [];
 let totalArray = [];
@@ -292,7 +291,6 @@ dateArray.push(`${month}-${s._id} `);
 totalArray.push(s.total);
 });
 
-console.log(dateArray,'dateArray');
 
 let brandReport = await Order.aggregate([{
   $unwind: "$product",
@@ -312,7 +310,6 @@ let brandReport = await Order.aggregate([{
 ])
 
 let orderCount = await Order.find({created:{$gt : d1, $lt : d2}}).count()
-console.log (orderCount,'orderCount');
 
 let Sales = 0;
 
@@ -320,7 +317,6 @@ salesReport.map((t) => {
   Sales += t.total
 })
 
-console.log (Sales,'Sales');
 
 let success  = await Order.find({'product.paid':'payment completed'})
 let successPayment = 0;
@@ -341,7 +337,16 @@ sumArray.push(s.totalAmount);
   res.json({dateArray,totalArray,brandArray,sumArray,orderCount,Sales,successPayment})
  })
 
-
+router.get('/deleteCategory/:id',(req,res)=>{
+  deleteCategory(req.params.id).then(()=>{
+    res.redirect('/admin/category')
+  })
+})
+router.get('/deleteBrand/:id',(req,res)=>{
+  deleteBrand(req.params.id).then(()=>{
+    res.redirect('/admin/category')
+  })
+})
 
 
 module.exports = router;

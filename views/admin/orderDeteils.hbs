@@ -2,13 +2,15 @@
 
 
 <div class="d-flex justify-content-center container mt-5">
+	
         <div class="card p-3 bg-white"><i class="fa fa-apple"></i>
-  
+         <a href="/admin/allOrders" class="btn btn-success">Back to Orders</a>
         {{#each result.product}}
   
             <div class="about-product text-center mt-2"><img src="/uploads/{{this.image}}" width="300">
                 <div>
                     <h4>{{this.name}}</h4>
+					
                     <h6 class="mt-0 text-black-50">Apple pro display XDR</h6>
                 </div>
             </div>
@@ -16,18 +18,16 @@
                 <div class="d-flex justify-content-between p-price"><span>price</span><span>${{this.price}}</span></div>
                 <div class="d-flex justify-content-between p-price"><span>brand</span><span>{{this.brand}}</span></div>
                 <div class="d-flex justify-content-between p-price"><span>quantity</span><span>{{this.quantity}}</span></div>
-               <div class="d-flex justify-content-between p-price"><span>status</span><span>{{this.status}}</span></div>
+               <div id="status" class="d-flex justify-content-between p-price"><span>status</span><span>{{this.status}}</span></div>
             </div>
             <div class="d-flex justify-content-between total font-weight-bold mt-4"><span>Total</span><span>{{this.subTotal}}</span></div>
-           <div> <select onchange="changeStatus('{{this._id}}','{{../result.userId}}')"  name="brand"class="table-link danger btn btn-primary mt-3" id="exampleSelectGender1">
+           <div> <select onchange="changeStatus('{{this._id}}','{{../result.userId}}')"  name="brand"class="table-link danger btn btn-primary mt-3" id="example">
                         <option >{{this.status}}</option>
                         <option  value="1" >Shipped</option>
                                         <option value="2" >Delivered</option>
 										</div>
         {{/each}}
-     
-       
-        </div>
+             </div>
     </div>
     <style>
         .card {
@@ -117,17 +117,4 @@ body {
 
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
  <script src="/javascripts/addToCart.js"></script>
-    <script>
-        var foo = "{{Data.status}}";
-        var div = document.getElementsByClassName("tracking")
-        if(foo == "rdered"){
-            div[0].classList.add('completed')
-        }else if(foo == "Shipped"){
-            div[0].classList.add('completed')
-            div[1].classList.add('completed')
-        }else if(foo == "Delivered"){
-            div[0].classList.add('completed')
-            div[1].classList.add('completed')
-            div[2].classList.add('completed')
-        }
-    </script>
+    

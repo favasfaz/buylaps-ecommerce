@@ -1,6 +1,6 @@
 
 
-<body style="margin-top:0 ;">
+<body >
     <!-- Page Preloder -->
 
 
@@ -10,10 +10,10 @@
         <div class="offcanvas__close">+</div>
         <ul class="offcanvas__widget">
            
-            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+            <li><a href="/wishlist"><span class="icon_heart_alt"></span>
                 <div class="tip">{{wishlistCount}}</div>
             </a></li>
-            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+            <li><a href="/cart"><span class="icon_bag_alt"></span>
                 <div class="tip">{{count}}</div>
             </a></li>
         </ul>
@@ -23,9 +23,9 @@
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
                         {{#if user}}
-                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                            <a href="/account/{{user.email}}">{{user.email}}</a>
                                 {{else}}
-                            <a href="/users/login">Login</a>
+                            <a href="/login">Login</a>
                             {{/if}}        
                             </div>
     </div>
@@ -33,21 +33,21 @@
     <!-- Offcanvas Menu End -->
 
     <!-- Header Section Begin -->
-    <header class="header " >
+    <header class="header " style="margin-top:0 ;" >
         <div class="container-fluid ">
             <div class="row " >
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                        <a href="/"><images src="images/logo.png" alt=""><h3>BUYLAPS.shop</h3></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="/users">Home</a></li>
+                            <li class="active"><a href="/">Home</a></li>
                             
-                            <li><a href="#allProducts">Shop</a></li>
-                            <li><a href="/users/viewOrder">Orders</a>
+                            <li><a href="/fullProduct">Shop</a></li>
+                            <li><a href="/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                    
                                     <li><a ></a></li>
@@ -56,14 +56,14 @@
                             </li>
                             <li>
                                  {{#if user}}
-                            <a href="/users/account/{{user.email}}">Profile</a>
+                            <a href="/account/{{user.email}}">Profile</a>
                               
                             {{/if}} 
                              </li>
                             
                             
                             <li>
-                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+                                <form action="/searchProduct" method="post" class="form-inline mr-auto">
             <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-primary btn-rounded btn-sm my-0" type="submit">Search</button>
                                </form>
@@ -76,17 +76,17 @@
                     <div class="header__right">
                         <div class="header__right__auth">
                             {{#if user}}
-                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                            <a href="/account/{{user.email}}">{{user.email}}</a>
                                 {{else}}
-                            <a href="/users/login">Login</a>
+                            <a href="/login">Login</a>
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
                             {{!-- <li><span class="icon_search search-switch"></span></li> --}}
-                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                            <li><a href="/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
-                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            <li><a href="/cart"><span class="icon_bag_alt"></span>
                             {{!-- -- ---------------------------------------------}}
                                 <div id="cart-count" class="tip">{{count}}</div>
                             </a></li>
@@ -127,11 +127,11 @@
    </section>
 
    
-    <section class="mt-4 overflow-auto"  style="text-decoration:none ; background: #1c153f; position: relative; width:100%;">
-        <div class="d-flex flex-row bd-highlight mt-5 mb-3 justify-content-center overflow-auto align-items-sm-center" >
+    <section class="mt-4 overflow-auto "  style="text-decoration:none ; background: #1c153f;  width:100%; ">
+        <div class=" d-flex flex-row bd-highlight mt-5 mb-3 justify-content-center overflow-auto align-items-sm-center" >
    {{#each category}}
-     <div class="bd-highlight" style="height:4rem;">
-      <a  style="color:white;  font-family: Arial, Helvetica, sans-serif; font-weight: 900; text-transform: capitalize;" class="fs-6 ps-5" href="/users/categoryProducts/{{this.name}}">{{this.name}}</a>
+     <div class="sticky-lg-top bd-highlight" style="height:4rem;">
+      <a  style="color:white;  font-family: Arial, Helvetica, sans-serif; font-weight: 900; text-transform: capitalize;" class="fs-6 ps-5" href="/categoryProducts/{{this.name}}">{{this.name}}</a>
     </div>
     {{/each}}
    </div>
@@ -154,16 +154,16 @@
       
         {{!-- <div class="row property__gallery"> --}}
               
-             <div class="row property__gallery bg-white" >
+             <div class="row property__gallery bg-white " >
                  {{#each firsttwo}}
-            <div class="col-lg-3 col-md-4 col-sm-6 mt-5 ">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" >
-                      <a href="/users/productZoom/{{this.productName}}">  <img class="img-responsive" src="/uploads/{{this.images.[0].img1}}"></a>
-                        <div class="label new">New</div>
-                           <div class="product__item__text"  style="margin-left: -40px;">
-                        <h6><a href="#">{{this.productName}}</a></h6>
-                         <h6><a href="#">{{this.brand}}</a></h6>
+            <div class="col-lg-3 col-md-4 col-sm-6 mt-3">
+                <div class="product__item"  >
+                    <div class="product__item__pic set-bg  mt-2" >
+                      <a href="/productZoom/{{this.productName}}">  <img class="img-responsive" src="/uploads/{{this.images.[0].img1}}"></a>
+                        <div class="label new ms-auto">New</div>
+                           <div class="product__item__text "  style="margin-left: -40px;margin-top: -10px;">
+                        <h6><a >{{this.productName}}</a></h6>
+                         <h6><a >{{this.brand}}</a></h6>
                         <div class="rating">
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
@@ -171,7 +171,7 @@
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                         </div>
-                        <div class="product__price">${{this.price}} <span>${{this.discount}} Off</span></div>
+                        <div class="product__price" >${{this.discountedPrice}} <span>${{this.price}} </span></div>
                     </div>
                         <ul class="product__hover">
                             <li><a  onclick="addToWishlist('{{this._id}}')"><span class="icon_heart_alt"></span></a></li>
@@ -196,16 +196,16 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3">
-               <a href="/users/brandProduct/'Hp'">  <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/acer-laptop-logo.png" alt=""></a>
+               <a href="/brandProduct/Acer">  <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/acer-laptop-logo.png" alt=""></a>
             </div>
             <div class="col-md-3">
-               <a href="/users/brandProduct/'Hp'"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/apple-laptop-logo.jpg" alt=""></a> 
+               <a href="/brandProduct/Apple"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/apple-laptop-logo.jpg" alt=""></a> 
             </div>
             <div class="col-md-3">
-               <a href="/users/brandProduct/'Hp'"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/asus-laptop-logo.png" alt=""></a>
+               <a href="/brandProduct/Azuz"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/asus-laptop-logo.png" alt=""></a>
             </div>
             <div class="col-md-3">
-                <a href="/users/brandProduct/'Hp'"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/compaq-laptop-logo.png" alt=""></a>
+                <a href="/brandProduct/Compaq"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/compaq-laptop-logo.png" alt=""></a>
             </div>
         </div>
     </div>
@@ -215,16 +215,16 @@
     <div class="container mt-3">
         <div class="row">
             <div class="col-md-3">
-              <a href="/users/brandProduct/'Hp'">  <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/dell-laptop-logo.png" alt=""></a>
+              <a href="/brandProduct/Dell">  <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/dell-laptop-logo.png" alt=""></a>
             </div>
             <div class="col-md-3">
-              <a href="/users/brandProduct/'Apple'"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/fujitsu-laptop-logo.png" alt=""></a> 
+              <a href="/brandProduct/Hp"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/hp-laptop-logo.jpg" alt=""></a> 
             </div>
             <div class="col-md-3">
-              <a href="/users/brandProduct/'Hp'"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/intel-laptop-logo.png" alt=""></a> 
+              <a href="/brandProduct/Intel"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/intel-laptop-logo.png" alt=""></a> 
             </div>
              <div class="col-md-3">
-               <a href="/users/brandProduct/'Hp'"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/lenovo-laptop-logo.png" alt=""></a> 
+               <a href="/brandProduct/Lenovo"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/lenovo-laptop-logo.png" alt=""></a> 
             </div>
         </div>
     </div>
@@ -239,7 +239,7 @@
             </div>
             <div class="col-lg-8 col-md-8" >
                 <ul class="filter__controls" >
-                    <li class="active" data-filter="*"> <a style="color:black ;" href="/users">All</a> </li>
+                    <li class="active" data-filter="*"> <a style="color:black ;" href="/">All</a> </li>
                     {{#each brands}}
                 <button style="background: #1c153f; color: white; border-radius: 13px; width: 55px;border: none;font-weight: 500;" onclick="getAll('{{this.name}}')">{{this.name}}</button>
 
@@ -261,11 +261,11 @@
                                       {{#each product}}
             <div class="col-lg-3 col-md-4 col-sm-6 mix women mt-3" id="loop"  >
                 <div class="product__item" >
-                    <div class="product__item__pic set-bg" >
-                      <a href="/users/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}" class="prodImg"></a>
+                    <div class="product__item__pic set-bg mt-2 " >
+                      <a class="" href="/productZoom/{{this.productName}}">  <img src="/uploads/{{this.images.[0].img1}}" class="prodImg"></a>
                            <div class="product__item__text" style="margin-left: -40px;">
-                        <h6><a href="#">{{this.productName}}</a></h6>
-                         <h6><a href="#">{{this.brand}}</a></h6>
+                        <h6><a >{{this.productName}}</a></h6>
+                         <h6><a >{{this.brand}}</a></h6>
                         <div class="rating">
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
@@ -273,7 +273,7 @@
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                         </div>
-                        <div class="product__price">${{this.price}} <span>${{this.discount}} Off</span></div>
+                        <div class="product__price">${{this.discountedPrice}} <span style="color:#b1b0b0;">${{this.price}}</span></div>
                     </div>
                         <ul class="product__hover">
                             <li><a  onclick="addToWishlist('{{this._id}}')" ><span class="icon_heart_alt"></span></a></li>

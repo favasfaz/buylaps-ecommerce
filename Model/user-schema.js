@@ -37,6 +37,9 @@ phone:{
   type:Number,
   required:true,
 },
+profileImg:{
+type:String
+},
  
 userAddress:{
   type:Object,
@@ -47,8 +50,18 @@ userAddress:{
   country:String,
   town:String,
   status:Boolean
+},
+review:{
+  type:Array,
+  productId:mongoose.Schema.Types.ObjectId,
+  Review:String,
+  createdAt:{
+    type:Date,
+    default:Date.now()
+  }
 }
 });
+
 
 const User = mongoose.model("User", UserSchema);
 

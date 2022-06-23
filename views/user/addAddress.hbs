@@ -16,7 +16,7 @@
         </div>
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
-            <a href="/users/login">Login</a>
+            <a href="/login">Login</a>
         </div>
     </div>
    
@@ -28,23 +28,23 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                        <a href="/"><images src="images/logo.png" alt=""><h3>BUYLAPS.shop</h3></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="/users">Home</a></li>
+                            <li class=""><a href="/">Home</a></li>
                           
-                            <li><a href="/users">Shop</a></li>
-                            <li><a href="/users/viewOrder">Orders</a>
+                            <li><a href="/fullProduct">Shop</a></li>
+                            <li><a href="/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                     
                                     <li><a ></a></li>
                                     <li><a></a></li>
                                 </ul>
                             </li>
-                            <li><a href="/users/account/{{user.email}}">Profile</a></li>
+                            <li><a href="/account/{{user.email}}">Profile</a></li>
                               {{!-- <li>
                                 <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
             <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
@@ -58,16 +58,16 @@
                     <div class="header__right">
                         <div class="header__right__auth">
                             {{#if user}}
-                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                            <a href="/account/{{user.email}}">{{user.email}}</a>
                                 {{else}}
-                            <a href="/users/login">Login</a>
+                            <a href="/login">Login</a>
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
-                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                            <li><a href="/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
-                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            <li><a href="/cart"><span class="icon_bag_alt"></span>
                             {{!-- -- ---------------------------------------------}}
                                 <div id="cart-count" class="tip">{{count}}</div>
                             </a></li>
@@ -115,7 +115,8 @@
                     </ul>
                           
                     <div class="widget-49-meeting-action">
-                        <a href="/users/productOrderForm/{{this._id}}" class="btn btn-sm btn-flash-border-primary">Active</a>
+                   <a href="/deleteAddress/{{this._id}}">  <i class="fa fa-trash" aria-hidden="true"></i> </a>                  
+                        <a href="/productOrderForm/{{this._id}}" class="btn btn-sm btn-flash-border-primary">Select</a>
                     </div>
                 </div>
             </div>
@@ -132,7 +133,7 @@
     <h2>add Address</h2>
 </div>
 <div class="d-flex">
-  <form action="/users/addAddress" method="post">
+  <form id="address" action="/addAddress" method="post">
     <label>
       <span class="fname">First Name <span class="required">*</span></span>
       <input type="text" name="fName">
@@ -418,11 +419,11 @@
     </label>
     <label>
       <span>Postcode / ZIP <span class="required">*</span></span>
-      <input type="text" name="postCode"> 
+      <input onkeyup="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')" type="text" name="postCode"> 
     </label>
     <label>
       <span>Phone <span class="required">*</span></span>
-      <input type="tel" name="phone"> 
+      <input onkeyup="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')" type="tel" name="phone"> 
     </label>
    
     <input class="btn btn-success ml-auto" type="submit" value="submit">
@@ -430,6 +431,9 @@
   </div>
   </div>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://kit.fontawesome.com/f6c14f9db9.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
   <style>
     HTML CSSResult Skip Results Iframe

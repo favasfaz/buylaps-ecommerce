@@ -18,7 +18,7 @@ const  verifyToken =(req,res,next)=>{
 try {
   const token = req.cookies.token;
   if(!token){
-    res.redirect('/users')
+    res.redirect('/')
   }
 
   const decoded =jwt.verify(token,'secret')
@@ -32,7 +32,7 @@ try {
 const sessionverify =(req,res,next)=>{
  
   if(req.session.loggedIn){
-    res.redirect('/users')
+    res.redirect('/')
   }else{
     next()
 
@@ -43,7 +43,7 @@ const sessionverify2 =(req,res,next)=>{
   if(req.session.loggedIn){
     next()
   }else{
-    res.redirect('/users/login')
+    res.redirect('/login')
   }
 }
 
@@ -55,6 +55,15 @@ const cartverify =(req,res,next)=>{
     
     res.status({status:500})
 
+  }
+}
+
+const sessionverify3 =(req,res,next)=>{
+ 
+  if(req.session.loggedIn){
+    next()
+  }else{
+    res.json({status:false})
   }
 }
 module.exports = {cartverify,verifyToken,verifyUser,sessionverify,sessionverify2};

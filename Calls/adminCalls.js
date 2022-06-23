@@ -105,6 +105,7 @@ const unBlockUser = (data) => {
 
 const uploadFiles = (data, img1, img2, img3) => {
     return new Promise(async (resolve, reject) => {
+        let discountedprice = data.price - data.discount
         if (data.discount > data.price) {
             reject({ msg: 'discount price is greater than original price' })
         } else {
@@ -126,14 +127,20 @@ const uploadFiles = (data, img1, img2, img3) => {
                     processor: data.processor,
                     memory: data.memory,
                     hardDrive: data.hardDrive,
-                    color: data.color
+                    color: data.color,
+                    discountedPrice:discountedprice,
                 })
                 await newUpload.save((err, result) => {
                     if (err) {
                         console.log(err);
                         reject({ msg: 'somthing went wrong' })
                     } else {
-
+                        // if(result.stock<5){
+                        //     await Product.findOneAndUpdate({_id:result.productId},{$set:{stockLess:true}})
+                        // }else{
+                        //   await Product.findOneAndUpdate({_id:result.productId},{$set:{stockLess:false}})
+                        // }
+                         
                         resolve({ data: result, msg: 'success' })
                     }
 
@@ -184,6 +191,14 @@ const editedProduct = (data, img1, img2, img3, id) => {
                 color: data.color
             }
         })
+
+       
+            //    if(product.stock<5){
+            //        await Product.findOneAndUpdate({_id:e.productId},{$set:{stockLess:true}})
+            //    }else{
+            //      await Product.findOneAndUpdate({_id:e.productId},{$set:{stockLess:false}})
+            //    }
+                
         resolve()
     })
 }
@@ -307,7 +322,7 @@ const totalCoupons=()=>{
 
 const allOrders=()=>{
     return new Promise(async(resolve,reject)=>{
-        let orders= await Order.find({}).lean()
+        let orders= await Order.find({}).sort({created:-1}).lean()
        if(orders){
            resolve(orders)
        }else{
@@ -316,11 +331,9 @@ const allOrders=()=>{
     })
 }
 const viewOrder=(id,user)=>{
-    console.log(id,'id');
-    console.log(user,'id');
+  
     return new Promise(async(resolve,reject)=>{
         let orderDeteils= await Order.findOne({userId:user,'product._id':id}).lean()
-        console.log(orderDeteils,'orderDeteils');
        resolve(orderDeteils)
     })
 }
@@ -363,6 +376,26 @@ const totalSales = ()=>{
         })
         console.log(totalSales,'totalSales');
         resolve(totalSales)
+    })
+}
+
+const paymentType = ()=>{
+    return new Promise(async(resolve,reject)=>{
+        let orders = await Order.find({})
+        let COD = 0;    
+        let  paypal = 0
+        orders.map((e)=>{
+            e.product.map((p)=>{
+                    if(p.paymentType == 'COD' ){
+                        COD +=e.totalAmount
+                    }
+                    else if(p.paymentType == 'paypal'){
+                        paypal += e.totalAmount
+                    }
+            })
+        })
+        
+        resolve({COD,paypal})
     })
 }
 
@@ -449,12 +482,26 @@ console.log(brandReport,'brandreport');
     })
 }
 
+const deleteCategory = (id)=>{
+    return new Promise(async(resolve,rej)=>{
+        await category.findByIdAndDelete({_id:id})
+        resolve()
+    })
+}
+
+const deleteBrand = (id)=>{
+    return new Promise(async(resolve,rej)=>{
+        await Brand.findByIdAndDelete({_id:id})
+        resolve()
+    })
+}
+
 
 
 module.exports = {
-    totalCoupons,allOrders,viewOrder,findCart,changeStatus,totalOrders,totalSales,paymentstatus,getChartData,
+    totalCoupons,allOrders,viewOrder,findCart,changeStatus,totalOrders,totalSales,paymentstatus,getChartData,paymentType,deleteCategory,
     deleteCoupon, getAllCoupons, addCoupon, getBrand, addBrand, addCategory, getCategory, adminLogin, addingProduct, allUsers, deleteUser, findingUser, editingUser, totalUsers,
-    blockUser, unBlockUser, uploadFiles, viewProducts, deleteProducts, productDetails, editedProduct, totalProducts
+    blockUser, unBlockUser, uploadFiles, viewProducts, deleteProducts, productDetails, editedProduct, totalProducts,deleteBrand
 }
 
 

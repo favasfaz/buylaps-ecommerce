@@ -6,7 +6,7 @@ function getAll(proId){
     console.log(parent, "parent")
     parent.innerHTML="";
     $.ajax({
-        url:'/users/getAll/'+proId,
+        url:'/getAll/'+proId,
         method:'get',
         success:(response)=>{
            let product=response.product;
@@ -16,15 +16,50 @@ function getAll(proId){
             let parentDiv =document.createElement('div')
             parentDiv.setAttribute("class",
             "col-sm-12 col-md-4")
+            let subDivOne = document.createElement("div");
+            subDivOne.setAttribute(
+                "class",
+                " block2-img wrap-pic-w of-hidden pos-relative block2-labelnew d-flex justify-content-center"
+              );
+              subDivOne.classList.add("block2");
+              let subDivTwo = document.createElement("div");
+              subDivTwo.setAttribute(
+                "class",
+                " block2-img wrap-pic-w of-hidden pos-relative block2-labelnew "
+              );
             let proName = document.createElement('h6')
                 let prodImg = document.createElement("img");
             prodImg.src= `/uploads/${p.images[0].img1}`;
             prodImg.alt=p.brand;
+            proPrice = document.createElement('h6')
             proName=p.productName
-            parentDiv.append(prodImg);
+            proPrice = p.price
+            subDivTwo.append(prodImg);
             var lineBreak = document.createElement("br");
-            parentDiv.append(lineBreak)
-            parentDiv.append(proName);
+            // parentDiv.append(lineBreak)
+            let overlay = document.createElement("div");
+              overlay.setAttribute("class", "block2-overlay", "trans-0-4");
+              let link1 = document.createElement("a");
+            //   link1.href = "#";
+              link1.setAttribute(
+                "class",
+                "block2-btn-addwishlist hov-pointer trans-0-4 d-flex justify-content-center align-items-center mt-4 mb-3"
+              );
+            // subDivOne.append(proName);
+            let icon1 = document.createElement("i");
+            icon1.ariaHidden = "true";
+            icon1.setAttribute("class", "icon_heart_alt height-50",onclick="addToCart('{{p._id}}')");
+            let icon2 = document.createElement("i");
+            icon2.setAttribute("class", "icon_bag_alt ml-3  ");
+            icon2.ariaHidden = "true";
+            icon2.onclick = function() {addToCart(p._id)};
+            icon1.onclick = function() {addToWishlist(p._id)};
+            subDivTwo.append(overlay,proName+'  '+'$'+proPrice);
+            subDivTwo.append(lineBreak)
+            link1.append(icon1,icon2);
+            overlay.append(link1);
+            subDivOne.append(subDivTwo);
+              parentDiv.append(subDivOne);
             parent.append(parentDiv);
             
           });
@@ -35,12 +70,14 @@ function addToCart(proId){
 
     console.log(proId);
     $.ajax({
-        url:'/users/add-to-cart/'+proId,
+        url:'/add-to-cart/'+proId,
         method:'get',
         success:(response)=>{
             if(response.status){
                 $('#cart-count').html(response.count)
-                swal("Good job!", "Item added to Cart", "success");
+               
+                swal("", "Item added to Cart", "success");
+                $("#form1").load(location.href + " #load");
                            }
                            else{
                             swal( "!","please login first", "error");
@@ -54,7 +91,7 @@ function addToCart(proId){
 }
 function decProduct(proId,quantity){
     $.ajax({
-        url:'/users/decProduct',
+        url:'/decProduct',
         data:{
             productId:proId,
             quan:quantity
@@ -65,8 +102,11 @@ function decProduct(proId,quantity){
 
             var x = document.getElementById("form1").value;
             if(response){
-                location.reload();
-                document.getElementById('form1').innerHTML=x+1
+                // console.log('decremetn');
+                // location.reload();
+                // document.getElementById('form1').innerHTML=x+1
+                $("#cartDiv").load(location.href + " #cartDiv");
+
             }
         }
     })
@@ -84,11 +124,10 @@ function decProduct(proId,quantity){
         if (willDelete) {
 
             $.ajax({
-                url:'/users/delete-cart/'+proId,
+                url:'/delete-cart/'+proId,
                   method:'get',
                 success:(response)=>{
                     if(response.status){
-                        console.log('success');
                         swal("! Your product from  cart has been deleted!", {
                             icon: "success",
                           });
@@ -106,35 +145,51 @@ function decProduct(proId,quantity){
 }
 function addProductCount(proId,quantity){
     $.ajax({
-        url:'/users/addProductCount',
+        url:'/addProductCount',
         data:{
             productId:proId,
             quan:quantity,
         },
           method:'post',
         success:(response)=>{
-            console.log(response);
-            location.reload();
+            if(response){
+                $("#cartDiv").load(location.href + " #cartDiv");
+            }
+
+            // console.log(response);
+            // location.reload();
             
         }
     })
 }
 function addToWishlist(proId){
+
+    console.log(proId,'success');
+
     $.ajax({
       
-        url:'/users/addToWishlist/'+proId,
+        url:'/addToWishlist/'+proId,
           method:'get',
         success:(response)=>{
             if(response){
             if(response.newProduct){
-                location.reload()
+                // location.reload()
                 $('#wishlist-count').html(response.count)
-                swal("Good job!", "Item added to Wishlist", "success");
+                $("#wishlist-count").load(location.href + " #wishlist-count");
+
+                // swal("", "Item added to Wishlist", "success");
+                swal({
+                    title: "",
+                    text: "Item added to wishlist",
+                    type: "success",
+                    
+                    });
             }
-            if(response.oldProduct){
+            else if(response.oldProduct){
                 swal( "!","Item already in wishlist", "error");
             }
         }else{
+            console.log('success1');
             swal( "!","You might be login", "error");
         }
            
@@ -146,7 +201,7 @@ function addToWishlist(proId){
 function getCoupons(){
     let coupon = document.getElementById("coupon");
     $.ajax({
-        url:'/users/couponOffer',
+        url:'/couponOffer',
           method:'get',
         success:(response)=>{
             if(response.length!=0){
@@ -166,6 +221,7 @@ function getCoupons(){
             else{
                 console.log('nocoupon');
                 swal( "!","NO coupon is available", "error");
+                document.getElementById('coupon').innerHTML='NO coupon available'
             }
           
                     
@@ -177,7 +233,7 @@ function getCoupons(){
     $("#checkout-form").submit((e)=>{
         e.preventDefault()
         $.ajax({
-            url:'/users/placeOrder',
+            url:'/placeOrder',
             method:'post',
             data:$('#checkout-form').serialize(),
             success:(response)=>{
@@ -186,8 +242,8 @@ function getCoupons(){
 
                 }else{
                     if(response.status){
-                       swal("", "Item added to Wishlist", "success");
-                        window.location.href= "/users/orderSuccessfull"
+                    //    swal("", "Item added to Wishlist", "success");
+                        window.location.href= "/orderSuccessfull"
                       }else{
                           razorpayPayment(response)
                       }
@@ -237,14 +293,14 @@ function razorpayPayment(order){
 function verifyPayment(payment,order){
    
     $.ajax({
-        url:'/users/verifyPayment',
+        url:'/verifyPayment',
         data:{
             payment,
             order
         },
         method:'post',
         success:(response)=>{
-            window.location.href= "/users/orderSuccessfull"
+            window.location.href= "/orderSuccessfull"
         },
       
     })
@@ -256,7 +312,7 @@ $("#priceFilter").submit((e)=>{
     datas.innerHTML='';
     e.preventDefault()
     $.ajax({
-        url:'/users/filter',
+        url:'/filter',
         method:'post',
         data:$('#priceFilter').serialize(),
         success:(response)=>{
@@ -293,7 +349,7 @@ $("#priceFilter").submit((e)=>{
             
             console.log(id,'id ');
             $.ajax({
-                url:'/users/cancelOrder/'+id,
+                url:'/cancelOrder/'+id,
                 method:'get',
                 success:(response)=>{
                     location.reload()
@@ -305,7 +361,7 @@ $("#priceFilter").submit((e)=>{
         function downloadInvoice(){
             console.log('success');
             $.ajax({
-                url:'/users/download',
+                url:'/download',
                 method:"get",
                 success:(response)=>{
                    console.log('success');
@@ -318,11 +374,10 @@ $("#priceFilter").submit((e)=>{
      
 function changeStatus(id,user){
 
-    let data = document.getElementById('exampleSelectGender1').value
+    let data = document.getElementById('example').value
  
-   
    $.ajax({
-       url:'/changeStatus',
+       url:'/admin/changeStatus',
        data:{
            id,
            user,
@@ -330,6 +385,15 @@ function changeStatus(id,user){
        },
        method:'post',
        success:(response)=>{
+        // if(data == 1){
+        //     $("#example").load(location.href + " #example");
+        //     $("#status").load(location.href + " #status");
+
+        // }
+        // else{
+        //     document.getElementById('example').style.display = 'none'
+        //     $("#status").load(location.href + " #status");
+        // }
            location.reload()
         console.log('success');
        }
@@ -338,10 +402,10 @@ function changeStatus(id,user){
 
 function deleteOrder(id){
     $.ajax({
-        url:'/users/deleteOrder/'+id,
+        url:'/deleteOrder/'+id,
         method:'get',
         success:(response)=>{
-                window.location.href='/users/viewOrder'
+                window.location.href='/viewOrder'
         }
 
     })
@@ -349,7 +413,7 @@ function deleteOrder(id){
 
 function paymentFailed(order){
     $.ajax({
-        url:'/users/paymentFailed',
+        url:'/paymentFailed',
         method:'post',
         data:{
           
@@ -397,72 +461,72 @@ var chart = new Chart(ctx, {
 }
 
 
-async function forHome(){
-    console.log('success1');
-    const totalAmount = []
-    const totalDate = []
-   await $.ajax({
-        url:'/getData',
-        method:'post',
-        success:(response)=>{
-            console.log(response,'reponse of home');
-            var ctx = document.getElementById('rice').getContext('2d');
-            var chart = new Chart(ctx, {
-                // The type of chart we want to create
-                type: 'bar',
+// async function forHome(){
+//     console.log('success1');
+//     const totalAmount = []
+//     const totalDate = []
+//     $.ajax({
+//         url:'/admin/getData',
+//         method:'post',
+//         success:(response)=>{
+//             console.log(response,'reponse of home');
+//             var ctx = document.getElementById('rice').getContext('2d');
+//             var chart = new Chart(ctx, {
+//                 // The type of chart we want to create
+//                 type: 'bar',
             
-                // The data for our dataset
-                data: {
-                    labels:response.dateArray,
-                    datasets: [{
-                        label: "last week dataset",
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        data:response.totalArray,
-                    }]
-                },
+//                 // The data for our dataset
+//                 data: {
+//                     labels:response.dateArray,
+//                     datasets: [{
+//                         label: "last week dataset",
+//                         backgroundColor: 'rgb(255, 99, 132)',
+//                         borderColor: 'rgb(255, 99, 132)',
+//                         data:response.totalArray,
+//                     }]
+//                 },
             
-                // Configuration options go here
-                options: {
-                  tooltips:{
-                    mode:'index'
-                  }
-                }
-            });
-            var ctx = document.getElementById('brand').getContext('2d');
-            var chart = new Chart(ctx, {
-                // The type of chart we want to create
-                type: 'bar',
+//                 // Configuration options go here
+//                 options: {
+//                   tooltips:{
+//                     mode:'index'
+//                   }
+//                 }
+//             });
+//             var ctx = document.getElementById('brand').getContext('2d');
+//             var chart = new Chart(ctx, {
+//                 // The type of chart we want to create
+//                 type: 'bar',
             
-                // The data for our dataset
-                data: {
-                    labels:response.brandArray,
-                    datasets: [{
-                        label: "brand base dataset",
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        data:response.sumArray,
-                    }]
-                },
+//                 // The data for our dataset
+//                 data: {
+//                     labels:response.brandArray,
+//                     datasets: [{
+//                         label: "brand base dataset",
+//                         backgroundColor: 'rgb(255, 99, 132)',
+//                         borderColor: 'rgb(255, 99, 132)',
+//                         data:response.sumArray,
+//                     }]
+//                 },
             
-                // Configuration options go here
-                options: {
-                  tooltips:{
-                    mode:'index'
-                  }
-                }
-            });
-        }})
+//                 // Configuration options go here
+//                 options: {
+//                   tooltips:{
+//                     mode:'index'
+//                   }
+//                 }
+//             });
+//         }})
  
-}
+// }
 
-forHome()
+// forHome()
 
 $(document).ready(function (){
     $("#getUpdate").submit((e)=>{
         console.log('success3');
         $.ajax({
-            url:'/getData',
+            url:'/admin/getData',
             data:$('#getUpdate').serialize(),
             method:'post',
             success:(response)=>{

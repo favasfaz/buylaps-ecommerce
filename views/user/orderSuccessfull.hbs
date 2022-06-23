@@ -51,7 +51,7 @@ For what reason would it be advisable for me to think about business content? Th
         
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
             <tr>
-                <td align="center" valign="top" style="font-size:0; padding: 35px;" bgcolor="#F44336">
+                <td align="center" valign="top" style="font-size:0; padding: 35px;" bgcolor="#393f81">
                
                 <div style="display:inline-block; max-width:50%; min-width:100px; vertical-align:top; width:100%;">
                     <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
@@ -84,7 +84,7 @@ For what reason would it be advisable for me to think about business content? Th
               
                 </td>
             </tr>
-             {{#each data}}
+          
             <tr>
                   
                 <td align="center" style="padding: 35px 35px 20px 35px; background-color: #ffffff;" bgcolor="#ffffff">
@@ -97,22 +97,53 @@ For what reason would it be advisable for me to think about business content? Th
                             </h2>
                         </td>
                     </tr>
+                     <tr>
+                        <td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;">
+                          <p>We are so happy for choosing us .Your Items are orderd and its on the way..</p>
+                        </td>
+                    </tr>
                     
                     <tr>
                         <td align="left" style="padding-top: 20px;">
                             <table cellspacing="0" cellpadding="0" border="0" width="100%">
                              
                          
-                              {{#each this.product}}
+                              {{#each data.product}}
                                 <tr>
                                     <td><img style="width: 75px; " src="/uploads/{{this.image}}" alt="image"></td>
                                      <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
-                                     <h4>{{this.name}}</h4> 
+                                     <h5>purchase Item: <strong>{{this.name}}</strong> </h5> 
                                     </td>
                                     <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
-                                   <h4> {{this.quantity}} x {{this.price}}</h4> 
+                                   <h4> {{this.quantity}} x{{this.price}}</h4> 
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td><img style="width: 75px; " src="/uploads/{{this.image}}" alt="image"></td>
+                                     <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                     <h5>subTotal </h5> 
+                                    </td>
+                                    <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                   <h5> Rs-{{this.subTotal}}</h5> 
+                                    </td>
+                                </tr>
+                                 <tr>
+                                    <td><img style="width: 75px; " src="/uploads/{{this.image}}" alt="image"></td>
+                                     <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                     <h5>#{{this.brand}} </h5> 
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td><img style="width: 75px; " src="/uploads/{{this.image}}" alt="image"></td>
+                                     <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                     <h5>Payment </h5> 
+                                    </td>
+                                    <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;">
+                                   <h5> {{this.paymentType}}</h5> 
+                                    </td>
+                                </tr>
+                              
                                 {{/each}}
                                 
                             </table>
@@ -122,12 +153,20 @@ For what reason would it be advisable for me to think about business content? Th
                     <tr>
                         <td align="left" style="padding-top: 20px;">
                             <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                 <tr>
+                                    <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
+                                        Discount
+                                    </td>
+                                    <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
+                                       {{data.discount}}
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
                                         TOTAL
                                     </td>
                                     <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
-                                       {{this.totalAfterDiscounts}}
+                                       {{data.totalAfterDiscounts}}
                                     </td>
                                 </tr>
                             </table>
@@ -136,9 +175,9 @@ For what reason would it be advisable for me to think about business content? Th
                 </table>
                 
                 </td>
-                 {{/each}}
+               
             </tr>
-             {{#each data}}
+            
              <tr>
                 <td align="center" height="100%" valign="top" width="100%" style="padding: 0 35px 35px 35px; background-color: #ffffff;" bgcolor="#ffffff">
                 <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:660px;">
@@ -150,7 +189,7 @@ For what reason would it be advisable for me to think about business content? Th
                                     <tr>
                                         <td align="left" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px;">
                                             <h3 style="font-weight: 800;">Delivery Address</h3>
-                                            <h5>{{this.address.fName}}<br>{{this.address.state}}<br>{{this.address.town}} <br>{{this.address.postCode}} <br>{{prodOrders.address.paymentMethod}} </h5>
+                                            <h5>{{data.address.fName}}<br>{{data.address.state}}<br>{{data.address.town}} <br>{{data.address.postCode}} <br>{{prodOrders.address.paymentMethod}} </h5>
 
                                         </td>
                                     </tr>
@@ -163,9 +202,9 @@ For what reason would it be advisable for me to think about business content? Th
                 </table>
                 </td>
             </tr>
-             {{/each}}
+         
             <tr>
-                <td align="center" style=" padding: 35px; background-color: #ff7361;" bgcolor="#1b9ba3">
+                <td align="center" style=" padding: 35px; background-color: #393f81;" bgcolor="#393f81">
                 <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
                     <tr>
                         <td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;">
@@ -179,8 +218,8 @@ For what reason would it be advisable for me to think about business content? Th
                             <table border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td align="center" style="border-radius: 5px;" bgcolor="#66b3b7">
-                                      <a href="/users" target="_blank" style="font-size: 18px; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #F44336; text-decoration: none; border-radius: 5px; background-color:white; padding: 15px 30px; border: 1px solid #F44336; display: block;">Shop Again</a>
-                                       <a href="/users/viewOrder" target="_blank" style=" margin-top:10px; font-size: 18px; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #F44336; text-decoration: none; border-radius: 5px; background-color: white; padding: 15px 30px; border: 1px solid #F44336; display: block;">View Orders</a>
+                                      <a href="/"  style="font-size: 18px; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #F44336; text-decoration: none; border-radius: 5px; background-color:white; padding: 15px 30px; border: 1px solid #F44336; display: block;">Shop Again</a>
+                                       <a href="/viewOrder"  style=" margin-top:10px; font-size: 18px; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #F44336; text-decoration: none; border-radius: 5px; background-color: white; padding: 15px 30px; border: 1px solid #F44336; display: block;">View Orders</a>
                                                                   {{!-- <button class="btn btn-danger" onclick="downloadInvoice()" >download</button> --}}
                                                             
                                     </td>

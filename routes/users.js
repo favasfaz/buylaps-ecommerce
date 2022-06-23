@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var easyinvoice = require('easyinvoice')
  var Model = require('../Model/user-schema');
-var {paymentFailed,deleteOrder,getSingleProduct,checkStock,sortOrder,cancelOrder,addProfile,viewOrder,search,priceFilter,verifyPayment,generateRazor,placeOrder,findAddress,addAddress,getAddress,cartIn,findBrand,findDiscount,findCategory,getCategory,deleteWishlist,getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
+var {deleteAddress,productReview,paymentFailed,searchFilter,addProfileImg,deleteOrder,getSingleProduct,checkStock,sortOrder,cancelOrder,addProfile,viewOrder,search,priceFilter,verifyPayment,generateRazor,placeOrder,findAddress,addAddress,getAddress,cartIn,findBrand,findDiscount,findCategory,getCategory,deleteWishlist,getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
 var auth = require('../middlewares/auth')
 var jwt = require('jsonwebtoken');
 var {cartverify,verifyToken,sessionverify,sessionverify2} = require('../middlewares/auth');
@@ -14,9 +14,10 @@ const Cart = require("../Model/cart-schema");
 const PDFDocument = require('pdfkit');
 var fs = require('fs');
 const Order = require('../Model/order-schema')
-const { log } = require('console');
 const Product = require('../Model/product-schema');
-const { route } = require('./admin');
+var storage = require('../uploadMiddleware/multer');
+const { log } = require('console');
+const { response } = require('../app');
 
 /* GET users listing. */
 
@@ -42,9 +43,10 @@ function authenticateToken(req, res, next) {
 }
 
 // middlewareEnds-------------------------------------------------------------
-
+let filterResult
 
 router.get('/', function(req, res) {
+  console.log('success');
    user = req.session.user
    let count = null
    productDetail().then(async(product)=>{
@@ -93,10 +95,10 @@ doSignup(req.body).then((data)=>{
  req.session.user=req.body
  req.session.otp=data.otpCode
   // req.session.user=data
-res.redirect('/users/otp')
+res.redirect('/otp')
 }).catch((err)=>{
 req.session.loggErr=err.msg
-res.redirect('/users/register')
+res.redirect('/register')
 })
 })
 router.post('/otp',sessionverify,(req,res)=>{
@@ -105,23 +107,24 @@ router.post('/otp',sessionverify,(req,res)=>{
  registeringUser(req.session.user,req.body,req.session.otp).then((data)=>{
    req.session.loggedIn=true
   res.cookie('token',data.token,{httpOnly:true})
-  res.redirect('/users')
+  res.redirect('/')
  }).catch((err)=>{
    req.session.otpErr=err.msg
-   res.redirect('/users/otp')
+   res.redirect('/otp')
  })
 })
 router.post('/login',sessionverify,(req,res)=>{
+  console.log('login');
   res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   res.header("Cache-control","no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0");
 userLogin(req.body).then(()=>{
   
   req.session.loggedIn=true
   req.session.user=req.body
-  res.redirect('/users')
+  res.redirect('/')
 }).catch((err)=>{
   req.session.loggErr=err.msg
-  res.redirect('/users/login')
+  res.redirect('/login')
 })
 })
 router.get('/shop',(req,res)=>{
@@ -139,14 +142,14 @@ router.get('/account/:id',sessionverify2, async(req,res)=>{
 
 }).catch((err)=>{
   console.log(err,'err');
-  res.redirect('/users/account')
+  res.redirect('/account')
 })
 })
 
 router.get('/logout',(req,res)=>{
   req.session.destroy()
   res.clearCookie('token')
-  res.redirect('/users')
+  res.redirect('/')
 })
 router.get('/forgot',(req,res)=>{
 res.render('user/forgot',{user:req.session.email,err:req.session.forgotErr,Err1:req.session.otpErr})
@@ -159,11 +162,11 @@ router.post('/forgot',(req,res)=>{
 forgotpass(req.body).then((data)=>{
   console.log(data.user.email);
   req.session.email=data.user.email
-  res.redirect('/users/forgot')
+  res.redirect('/forgot')
 }).catch((err)=>{
 req.session.forgotErr=err.msg
 console.log(req.session.forgotErr);
-  res.redirect('/users/forgot')
+  res.redirect('/forgot')
 })
   })
 
@@ -177,11 +180,11 @@ console.log(req.session.forgotErr);
     let id = req.params.id
       otpVerify(req.body,id).then((ans)=>{
           console.log(ans.msge);
-          res.redirect('/users/reset-password')
+          res.redirect('/reset-password')
         }).catch((err)=>{
           req.session.otpErr=err.msg
           console.log(req.session.otpErr);
-        res.redirect('/users/forgot')
+        res.redirect('/forgot')
       })
   })
   
@@ -191,11 +194,11 @@ console.log(req.session.forgotErr);
     newPass(req.body,email).then((data)=>{
       req.session.loggedIn=true
       req.session.user=data
-            res.redirect('/users')
+            res.redirect('/')
     }).catch((err)=>{
       req.session.passErr=err.msg
       console.log(req.session.passErr);
-     res.redirect('/users/reset-password')
+     res.redirect('/reset-password')
     })
   })
   router.get('/passwordReset',(req,res)=>{
@@ -206,11 +209,11 @@ console.log(req.session.forgotErr);
     let id = req.params.id
     settingPassword(req.body,id).then(()=>{
       console.log('success');
-        res.redirect('/users')
+        res.redirect('/')
     }).catch((err)=>{
       console.log('err');
       req.session.resetErr=err.msg
-      res.redirect('/users/passwordReset')
+      res.redirect('/passwordReset')
     })
   })
 
@@ -220,7 +223,7 @@ console.log(req.session.forgotErr);
     let id =req.params.id
     reSend(id).then((data)=>{
       req.session.otp=data.otpCode
-      res.redirect('/users/otp')
+      res.redirect('/otp')
     })
   })
   // -.------------------------------------------------ewr-------------------------------
@@ -238,18 +241,18 @@ console.log(req.session.forgotErr);
   })
   router.get('/cart',sessionverify2,async(req,res)=>{
     let user = req.session.user
+    let total = await totalAmount(req.session.user)
+    let dicounts=await findDiscount(req.session.user)
+    let subtotal=await subTotal(req.session.user)
      let data=await getCartItems(req.session.user)
       let count = await getCartCount(req.session.user)
-      let total = await totalAmount(req.session.user)
-      let subtotal=await subTotal(req.session.user)
-      let dicounts=await findDiscount(req.session.user)
       let wishlistCount=await getWishlistCount(req.session.user)
 
     
         if(data && count){
           let product=data.product 
-          let grandTotal =(data.total-data.discount)+data.shippingCost
-       res.render('user/cart',{user,wishlistCount,grandTotal,data,product,count,total,err:req.session.redeemErr})
+          // let grandTotal =(data.total-data.discount)+data.shippingCost
+       res.render('user/cart',{user,wishlistCount,data,product,count,total,err:req.session.redeemErr})
         }else{
           res.render('user/cart',{wishlistCount})
         }
@@ -261,30 +264,31 @@ console.log(req.session.forgotErr);
     let user= req.session.user
     let id =req.params.id
     productDetails(id).then((data)=>{
+      console.log(data,'datas');
       res.render('user/productZoom',{data,user,count,wishlistCount})
    })
   }else{
     let id =req.params.id
     productDetails(id).then((data)=>{
+      console.log(data,'datas');
       res.render('user/productZoom',{data})
    })
   }
   })
-  router.post('/decProduct',(req,res)=>{
+  router.post('/decProduct',sessionverify2,(req,res)=>{
    
     decProduct(req.body,req.session.user).then(()=>{
       res.json({status:true})
     })
   })
-  router.get('/delete-cart/:id',(req,res)=>{
+  router.get('/delete-cart/:id',sessionverify2,(req,res)=>{
     deleteCart(req.params.id,req.session.user).then(()=>{
       res.json({status:true})
     })
   })
-  router.post('/addProductCount',(req,res)=>{
+  router.post('/addProductCount',sessionverify2,(req,res)=>{
     
     addProductCount(req.body,req.session.user).then(()=>{
-    
       res.json({status:true})
     }).catch(()=>{
       res.json({status:false})
@@ -293,7 +297,7 @@ console.log(req.session.forgotErr);
 router.get('/getbrand/:id',(req,res)=>{
   let id=req.params.id
   getfunction(id).then(()=>{
-    res.redirect('/users')
+    res.redirect('/')
   })
 })  
 router.get('/getAll/:id',(req,res)=>{
@@ -324,7 +328,7 @@ if(address){
   })    
  .catch((err)=>{
     console.log(err);
-    res.redirect('/users')
+    res.redirect('/')
   })
   
 })
@@ -369,15 +373,18 @@ router.get('/categoryProducts/:id',async(req,res)=>{
   if(req.session.user){
   let count = await getCartCount(req.session.user)
   let wishlistCount=await getWishlistCount(req.session.user)
+let category = await getCategory()
+console.log(category,'categorys');
   let user= req.session.user
   findCategory(req.params.id).then((data)=>{
-   res.render('user/productViewPage',{data,user,wishlistCount,count})
+   res.render('user/productViewPage',{data,user,wishlistCount,count,category})
   })
 }
 else{
-  findCategory(req.params.id).then((data)=>{
-    console.log(data);
-    res.render('user/productViewPage',{data})
+  findCategory(req.params.id).then(async(data)=>{
+    let category = await getCategory()
+console.log(category,'categorys');
+    res.render('user/productViewPage',{data,category})
    })
 }
   
@@ -396,15 +403,14 @@ router.get('/addAddress',sessionverify2,async(req,res)=>{
 })
 
 router.post('/addAddress',(req,res)=>{
-  console.log(req.body,'req');
   addAddress(req.body,req.session.user).then(()=>{
-    res.redirect('/users/addAddress')
+    res.redirect('/addAddress')
   })
 })
 
 router.get('/toCart/:id',sessionverify2,(req,res)=>{
   addingToCart(req.params.id,req.session.user).then(()=>{
-   res.redirect('/users')
+   res.redirect('/')
   }).catch((err)=>{
     console.log(err);
   })
@@ -424,7 +430,7 @@ router.get('/productOrderForm/:id',sessionverify2,async(req,res)=>{
     res.render('user/productOrderForm',{wishlistCount,user,data,address,count,total,subtotal,dicounts,grandTotal,err:req.session.redeemErr})
     req.session.redeemErr=''
    }else{
-     res.redirect('/users')
+     res.redirect('/')
    }
 
  })
@@ -436,11 +442,11 @@ router.get('/productOrderForm/:id',sessionverify2,async(req,res)=>{
 router.post('/checkingCoupon/:id',(req,res)=>{
   console.log(req.body);
   checkCoupon(req.body,req.session.user).then(()=>{
-    res.redirect('/users/productOrderForm/'+req.params.id)
+    res.redirect('/productOrderForm/'+req.params.id)
   }).catch((err)=>{
     console.log('err');
     req.session.redeemErr=err.msg
-    res.redirect('/users/productOrderForm/'+req.params.id)
+    res.redirect('/productOrderForm/'+req.params.id)
 
   })
 })
@@ -505,7 +511,7 @@ else{
 router.post('/addProfile',(req,res)=>{
   console.log(req.body);
   addProfile(req.body,req.session.user).then(()=>{
-    res.redirect('/users/account/'+req.session.user.email)
+    res.redirect('/account/'+req.session.user.email)
   })
 })
 
@@ -528,7 +534,6 @@ router.get('/orderSuccessfull',(req,res)=>{
   sortOrder(req.session.user.email).then((data)=>{ 
     res.render('user/orderSuccessfull',{data})
   })
- 
 })
 
 router.get('/download',(req,res)=>{
@@ -537,22 +542,7 @@ router.get('/download',(req,res)=>{
   })
 })
 
-router.get('/sendInvoice',(req,res)=>{
-  sortOrder(req.session.user.email).then((data)=>{
-    const doc = new PDFDocument();
 
-    doc.pipe(fs.createWriteStream('output.pdf'));
-
-    // Embed a font, set the font size, and render some text
-    doc
-      .fontSize(25)
-      .text('kkkkkkkkkkk', 100, 100);
-    
-    // Add an image, constrain it to a given size, and center it vertically and horizontally
-   
-    doc.end();
-  })
-})
 
 router.get('/singleOrderView/:id',sessionverify2,(req,res)=>{
   console.log(req.params.id,'id');
@@ -561,7 +551,6 @@ console.log('singleProduct',data,'data');
 data.product.forEach((prdt)=>{
   res.render('user/singleOrderView',{Data:prdt})
 })
-
 })
 })
 
@@ -576,6 +565,52 @@ router.post('/paymentFailed',(req,res)=>{
 paymentFailed(req.body).then(()=>{
   res.json({status:true})
 })
+})
+
+router.post('/profileImage',storage.fields([{name:'profileImg',maxCount:1}]),(req,res)=>{
+  let img1=req.files.profileImg[0].filename
+  addProfileImg(img1,req.session.user).then(()=>{
+    console.log('successimg');
+    res.redirect('/account/'+req.session.user.email)
+  })
+})
+
+router.get('/Products',async(req,res)=>{
+  let allBrands = await getBrand()
+  let allCategory  = await getCategory()
+  if(req.session.user){
+    var user = req.session.user
+    let count = await getCartCount(req.session.user)
+    let wishlistCount=await getWishlistCount(req.session.user)
+    res.render('user/fullProduct',{allBrands,allCategory,filterResult,user,count,wishlistCount})
+
+  }else{
+    res.render('user/fullProduct',{allBrands,allCategory,filterResult})
+  }
+
+  })
+// router.get('/allProducts')
+router.post('/search-filter',(req,res)=>{
+  searchFilter(req.body).then((result)=>{
+    filterResult = result
+    res.json({status:true})
+  })
+})
+router.get('/fullProduct',async(req,res)=>{
+  filterResult = await productDetail()
+res.redirect('/Products')
+})
+
+router.post('/productReview',(req,res)=>{
+  productReview(req.body,req.session.user).then(()=>{
+    res.redirect('/viewOrder')
+  })
+})
+
+router.get('/deleteAddress/:id',(req,res)=>{
+  deleteAddress(req.params.id,req.session.user).then(()=>{
+    res.redirect('/addAddress')
+  })
 })
 module.exports = router;
 

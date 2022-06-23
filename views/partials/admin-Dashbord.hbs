@@ -146,7 +146,7 @@
                       <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="/logout">
+                      <a class="dropdown-item" href="/admin/logout">
                         <i class="bx bx-power-off me-2"></i>
                         <span class="align-middle">Log Out</span>
                       </a>
@@ -161,7 +161,7 @@
   
     <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme ">
 <div class="app-brand demo">
-  <a href="/" class="app-brand-link">
+  <a href="/admin" class="app-brand-link">
     <span class="app-brand-logo demo">
       <svg
         width="25"
@@ -230,14 +230,14 @@
 <ul class="menu-inner py-1">
   <!-- Dashboard -->
   <li class="menu-item active">
-    <a href="/" class="menu-link">
+    <a href="/admin" class="menu-link">
       <i class="menu-icon tf-icons bx bx-home-circle"></i>
       <div data-i18n="Analytics">Dashboard</div>
     </a>
   </li>
 
   <!-- Layouts -->
-  <li class="menu-item">
+  {{!-- <li class="menu-item">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
       <i class="menu-icon tf-icons bx bx-layout"></i>
       <div data-i18n="Layouts">Layouts</div>
@@ -270,9 +270,9 @@
         </a>
       </li>
     </ul>
-  </li>
+  </li> --}}
 
-  <li class="menu-header small text-uppercase">
+  {{!-- <li class="menu-header small text-uppercase">
     <span class="menu-header-text">Pages</span>
   </li>
   <li class="menu-item">
@@ -338,7 +338,7 @@
         </a>
       </li>
     </ul>
-  </li>
+  </li> --}}
  
 
   <!-- Forms & Tables -->
@@ -351,7 +351,7 @@
     </a>
     <ul class="menu-sub">
       <li class="menu-item">
-        <a href="/viewUser" class="menu-link">
+        <a href="/admin/viewUser" class="menu-link">
           <div data-i18n="Basic Inputs">View User</div>
         </a>
       </li>
@@ -365,12 +365,12 @@
     </a>
     <ul class="menu-sub">
       <li class="menu-item">
-        <a href="/viewProducts" class="menu-link">
+        <a href="/admin/viewProducts" class="menu-link">
           <div data-i18n="Vertical Form">View Product</div>
         </a>
       </li>
       <li class="menu-item">
-        <a href="/addProducts" class="menu-link">
+        <a href="/admin/addProducts" class="menu-link">
           <div data-i18n="Horizontal Form">Add Product</div>
         </a>
       </li>
@@ -378,19 +378,19 @@
   </li>
   <!-- Tables -->
   <li class="menu-item">
-    <a href="/category" class="menu-link">
+    <a href="/admin/category" class="menu-link">
       <i class="menu-icon tf-icons bx bx-table"></i>
       <div data-i18n="Tables">Categories</div>
     </a>
   </li>
    <li class="menu-item">
-    <a href="/addCoupon" class="menu-link">
+    <a href="/admin/addCoupon" class="menu-link">
       <i class="menu-icon tf-icons bx bx-table"></i>
       <div data-i18n="Tables">Add Coupon</div>
     </a>
   </li>
    <li class="menu-item">
-    <a href="/allOrders" class="menu-link">
+    <a href="/admin/allOrders" class="menu-link">
       <i class="menu-icon tf-icons bx bx-table"></i>
       <div data-i18n="Tables">All Orders</div>
     </a>

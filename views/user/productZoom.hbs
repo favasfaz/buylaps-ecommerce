@@ -15,16 +15,16 @@
             <div class="row " >
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="/users"><images src="images/logo.png" alt=""><h3 style="color:black ;">FEIZY.com</h3></a>
+                        <a href="/"><images src="images/logo.png" alt=""><h3 style="color:black ;">BUYLAPS.shop</h3></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="/users">Home</a></li>
+                            <li class="active"><a href="/">Home</a></li>
                             
-                            <li><a href="#allProducts">Shop</a></li>
-                            <li><a href="/users/viewOrder">Orders</a>
+                            <li><a href="/fullProduct">Shop</a></li>
+                            <li><a href="/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                    
                                     <li><a ></a></li>
@@ -33,14 +33,14 @@
                             </li>
                             <li>
                                  {{#if user}}
-                            <a href="/users/account/{{user.email}}">Profile</a>
+                            <a href="/account/{{user.email}}">Profile</a>
                               
                             {{/if}} 
                              </li>
                             
                             
                             <li>
-                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+                                <form action="/searchProduct" method="post" class="form-inline mr-auto">
             <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-primary btn-rounded btn-sm my-0" type="submit">Search</button>
                                </form>
@@ -53,17 +53,17 @@
                     <div class="header__right">
                         <div class="header__right__auth">
                             {{#if user}}
-                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                            <a href="/account/{{user.email}}">{{user.email}}</a>
                                 {{else}}
-                            <a href="/users/login">Login</a>
+                            <a href="/login">Login</a>
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
                             {{!-- <li><span class="icon_search search-switch"></span></li> --}}
-                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                            <li><a href="/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
-                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            <li><a href="/cart"><span class="icon_bag_alt"></span>
                             {{!-- -- ---------------------------------------------}}
                                 <div id="cart-count" class="tip">{{count}}</div>
                             </a></li>
@@ -137,7 +137,7 @@
       </div>
    </div>
 </section> --}}
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-2">
     <div class="row d-flex justify-content-center">
         <div class="col-md-10">
             <div class="card">
@@ -152,22 +152,46 @@
                         <div class="product p-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center"> <i class="fa fa-long-arrow-left"></i> <span class="ml-1">
-                                 <a href="/users" style="color:black ;">Back</a> </span> </div> <i class="fa fa-shopping-cart text-muted"></i>
+                                 <a href="/" style="color:black ;">Back</a> </span> </div><button class="btn btn-danger text-uppercase mr-2 px-4" onclick="addToCart('{{data._id}}')">Add to cart</button>
                             </div>
                             <div class="mt-4 mb-3"> <span class="text-uppercase text-muted brand">{{data.brand}}</span>
                                 <h5 class="text-uppercase"> {{data.productName}}</h5>
-                                <div class="price d-flex flex-row align-items-center"> <span class="act-price">$20</span>
-                                    <div class="ml-2"> <small class="dis-price">{{data.discount}}</small> <span>{{data.price}} OFF</span> </div>
+                                <div class="price d-flex flex-row align-items-center">
+                                    <div class="ml-2"> <small class="dis-price">{{data.price}}</small> <span>$ {{data.discountedPrice}} </span> </div>
                                 </div>
                             </div>
                             <p class="about">{{data.description}}</p>
                         
-                            <div class="cart mt-4 align-items-center"> <button class="btn btn-danger text-uppercase mr-2 px-4" onclick="addToCart('{{data._id}}')">Add to cart</button> </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+     
+    </div>
+</div>
+
+<div class="container mt-2 mb-2">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-12">
+                        {{#if data.review}}
+                        <div class=" ">
+                            Reviews :
+                            {{#each data.review}}
+                            <div class="ml-2 "><span>{{this.rating}}  </span> <strong> {{this.fName}} </strong> </div>
+                            <div class="thumbnail  mt-2 ">{{this.Review}}  </div>
+                            <hr>
+                            {{/each}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+     
     </div>
 </div>
 

@@ -8,20 +8,17 @@ const bcrypt = require("bcrypt");
 const { reject, use } = require("bcrypt/promises");
 const Product = require("../Model/product-schema");
 const Cart = require("../Model/cart-schema");
-var objectId = require("objectid");
-const { adminLogin } = require("./adminCalls");
 const Brand = require("../Model/brand-schema");
 const Coupon = require("../Model/coupon-schema");
 const Wishlist = require("../Model/wishlist-schema");
 const category = require("../Model/category-schema");
 const Address = require("../Model/address-schema");
-const router = require("../routes/users");
 const Order = require('../Model/order-schema')
 const Razorpay = require('razorpay');
-var easyinvoice = require('easyinvoice');
 const { log } = require("console");
-const moment =  require('moment');
 const { resolve } = require("path");
+const { router } = require("../app");
+
 var instance = new Razorpay({
   key_id: 'rzp_test_BGehHwSUiY0EOA',
   key_secret: 'Zl8W6dg3CLH5AAW5D44rHrvs',
@@ -379,6 +376,7 @@ const decProduct = (data, user) => {
   return new Promise(async (resolve, reject) => {
     let userCart = await Cart.findOne({ userId: user.email });
     if (data.quan <= 1) {
+      await Cart.findOneAndDelete({userId:user.email},{$pull:{'product.productId':data.productId}})
       resolve();
     } else {
       if (userCart) {
@@ -428,10 +426,7 @@ const addProductCount = (data, user) => {
       } else {
         reject({ status: false });
       }
-      // let exist=userCart.product.findIndex(product=>product.productId==data.productId)
-      //         if(exist!=-1){
-
-      // }
+    
     }
   });
 };
@@ -446,6 +441,8 @@ const firstTwo = () => {
 };
 const totalAmount = (user) => {
   return new Promise(async (resolve, reject) => {
+    let Discount = await Cart.findOne({userId:user.email})
+    let AfterDiscounts = (Discount.total-Discount.discount)-Discount.shippingCost
     let total = await Cart.aggregate([
       {
         $match: { userId: user.email },
@@ -481,6 +478,10 @@ const totalAmount = (user) => {
         { userId: user.email },
         { $set: { total: grandTotal.total } }
       );
+      await Cart.findOneAndUpdate(
+        { userId: user.email },
+        { $set: { totalAfterDiscounts: AfterDiscounts } }
+      );
       resolve(grandTotal);
     }
   });
@@ -514,7 +515,10 @@ const subTotal = (user) => {
         );
       });
     }
-
+    console.log(cart,'cart');
+    let grandTotal =(cart.total-cart.discount)+cart.shippingCost
+    await Cart.findOneAndUpdate({ userId: user.email },{$set:{totalAfterDiscounts:grandTotal}})  
+console.log(cart.totalAfterDiscounts,'grandTotal');
     resolve({ status: true });
   });
 };
@@ -709,8 +713,9 @@ const findDiscount = (user) => {
   });
 };
 const findBrand = (data) => {
+  console.log(data,'data');
   return new Promise(async (resolve, reject) => {
-    const brands = await Product.find({ brand: data }).lean()
+    const brands = await Product.find({ brand:data}).lean()
     console.log( brands);
     resolve(brands);
   });
@@ -992,21 +997,33 @@ if (isUser){
 const viewOrder=(id)=>{
   return new Promise(async(resolve,reject)=>{
       // let orderDeteils= await Order.find({userId:id}).lean()
-      let products = await Order.find({userId:id}).lean()
+      let products = await Order.find({userId:id}).sort({created:-1}).lean()
       console.log(products);
      resolve(products)
   })
 }
 const cancelOrder= (id,user)=>{
   return new Promise(async(resolve,reject)=>{
+    console.log(id,'id');
+    let userOrder = await Order.findOne({userId:user.email})
+    console.log(userOrder);
+    userOrder.product.forEach(async(e,i)=>{
+    await Product.findOneAndUpdate({_id:e.productId},{ $inc: { stock: +e.quantity }})
+    })
   await Order.findOneAndUpdate({userId:user.email,'product._id':id},{$set:{'product.$.status':'order canceled'}})
   await Order.findOneAndUpdate({userId:user.email,'product._id':id},{$set:{'product.$.active':'false'}})
+
+
+
+
+
   resolve({status:true})
   })
 }
 const sortOrder=(id)=>{
   return new Promise(async(resolve,reject)=>{
-      let orderDeteils= await Order.find({userId:id}).sort({created:-1}).limit(1).lean()
+      let orderDeteils= await Order.findOne({userId:id}).sort({_id:-1}).lean()
+      console.log(orderDeteils,'deteils');
      resolve(orderDeteils)
   })
 }
@@ -1047,9 +1064,62 @@ const paymentFailed = (data)=>{
 
 }
 
+const addProfileImg=(img1,user)=>{
+  return new Promise(async(resolve,reject)=>{
+      let isUser = await Model.findOneAndUpdate({userId:user.email},{$set:{profileImg:img1}})
+      console.log(isUser,'userimg');
+      resolve()
+  })
+}
 
+const searchFilter=(data)=>{
+  return new Promise(async (resolve, reject) => {
+    let {brand,category,Prize} = data
+    console.log(brand,'brand');
+    console.log(category,'category');
+    console.log(Prize,'p');
+    let result=[]
+
+    if(brand.length>0 && category.length>0  ){
+         result = await Product.find({$or:[{brand:brand},{category:category},{price:{$lt:Prize}}]}).lean()
+    } 
+
+    else if(brand.length>0 && category.length==0  ){
+result = await Product.find({$or:[{brand:brand},{price:{$lt:Prize}}]}).lean()
+    }
+    else if(brand.length==0 && category.length>0 )
+    result = await Product.find({$or:[{category:category},{price:{$lt:Prize}}]}).lean()
+    else{
+       result = await Product.find({price:{$lt:Prize}}).lean()
+    }
+    resolve(result)
+})
+}
+
+const productReview = (data,user) => {
+  console.log(data,'datas');
+  return new Promise(async(resolve,reject)=>{
+    let isUser = await Model.findOne({userId:user.email})
+    console.log(isUser,'user');
+   let products =  await Product.findOneAndUpdate({_id:data.id},{$push:{review:{userId:user.email,Review:data.review,fName:isUser.fName,rating:data.rating}}})
+   console.log(products,'producy');
+     await Model.findOneAndUpdate({userId:user.email},{$push:{review:{productId:data.id,Review:data.review}}})
+     resolve()
+  })
+}
+const deleteAddress=(id,user)=>{
+  console.log(id,'id');
+return new Promise(async(resolve,reject)=>{
+  await Address.findOneAndDelete({userId:user.email},{$pull:{'address1.$._id':id}})
+  resolve()
+})
+}
 
 module.exports = {
+  deleteAddress,
+  productReview,
+  searchFilter,
+  addProfileImg,
   checkStock,
   paymentFailed,
   deleteOrder,

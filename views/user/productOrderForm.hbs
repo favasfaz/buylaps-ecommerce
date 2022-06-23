@@ -3,10 +3,10 @@
         <div class="offcanvas__close">+</div>
         <ul class="offcanvas__widget">
            
-            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+            <li><a href="/wishlist"><span class="icon_heart_alt"></span>
                 <div class="tip">{{wishlistCount}}</div>
             </a></li>
-            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+            <li><a href="/cart"><span class="icon_bag_alt"></span>
                 <div class="tip">{{count}}</div>
             </a></li>
         </ul>
@@ -16,9 +16,9 @@
         <div id="mobile-menu-wrap"></div>
         <div class="offcanvas__auth">
                         {{#if user}}
-                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                            <a href="/account/{{user.email}}">{{user.email}}</a>
                                 {{else}}
-                            <a href="/users/login">Login</a>
+                            <a href="/login">Login</a>
                             {{/if}}        
                             </div>
     </div>
@@ -31,16 +31,16 @@
             <div class="row " >
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                        <a href="/"><images src="images/logo.png" alt=""><h3>BUYLAPS.shop</h3></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="/users">Home</a></li>
+                            <li class=""><a href="/">Home</a></li>
                             
-                            <li><a href="#allProducts">Shop</a></li>
-                            <li><a href="/users/viewOrder">Orders</a>
+                            <li><a href="/fullProduct">Shop</a></li>
+                            <li><a href="/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                    
                                     <li><a ></a></li>
@@ -49,14 +49,14 @@
                             </li>
                             <li>
                                  {{#if user}}
-                            <a href="/users/account/{{user.email}}">Profile</a>
+                            <a href="/account/{{user.email}}">Profile</a>
                               
                             {{/if}} 
                              </li>
                             
                             
                             <li>
-                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+                                <form action="/searchProduct" method="post" class="form-inline mr-auto">
             <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-primary btn-rounded btn-sm my-0" type="submit">Search</button>
                                </form>
@@ -69,17 +69,17 @@
                     <div class="header__right">
                         <div class="header__right__auth">
                             {{#if user}}
-                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                            <a href="/account/{{user.email}}">{{user.email}}</a>
                                 {{else}}
-                            <a href="/users/login">Login</a>
+                            <a href="/login">Login</a>
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
                             {{!-- <li><span class="icon_search search-switch"></span></li> --}}
-                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                            <li><a href="/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
-                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            <li><a href="/cart"><span class="icon_bag_alt"></span>
                             {{!-- -- ---------------------------------------------}}
                                 <div id="cart-count" class="tip">{{count}}</div>
                             </a></li>
@@ -116,24 +116,24 @@
 
                 <li class="list-group-item d-flex justify-content-between bg-light">
                     <div class="text-danger">
-                        <h6 class="my-0">shipping Cost</h6>
-                        <small>EXAMPLECODE</small>
+                        <h6 class="my-0 text-danger" >shipping Cost</h6>
+                      
                     </div>
                     <span class="text-success">-${{data.shippingCost}}</span>
                 </li>
 
                 <li class="list-group-item d-flex justify-content-between bg-light">
                     <div class="text-success">
-                        <h6 class="my-0">discount Offer</h6>
-                        <small>EXAMPLECODE</small>
+                        <h6 class="my-0 text-success">discount Offer</h6>
+                      
                     </div>
                     <span class="text-success">-${{data.discount}}</span>
                 </li>
                
                 <li class="list-group-item d-flex justify-content-between bg-light">
                     <div class="text-success">
-                        <h6 class="my-0">Redeem</h6>
-                        <small>EXAMPLECODE</small>
+                        <h6 class="my-0 text-success">Redeem</h6>
+               
                     </div>
                     <span class="text-success">-${{data.couponDiscount}}</span>
                 </li>
@@ -147,7 +147,7 @@
             <div id="coupon">
 
             </div>
-            <form class="card p-2" method="post" action="/users/checkingCoupon/{{address._id}}">
+            <form class="card p-2" method="post" action="/checkingCoupon/{{address._id}}">
             <p>{{err}}</p>
                 <div class="input-group">
                     <input type="text" name="coupon" class="form-control" placeholder="Promo code">
@@ -206,7 +206,7 @@
                         <div class="invalid-feedback"> Zip code required. </div>
                     </div>
                      <div class="col-md-3 mb-3">
-                      <a href="/users/addAddress" class="btn btn-success">add Another Address</a>
+                      <a href="/addAddress" class="btn btn-success">add Another Address</a>
                     </div>
                 </div>
                

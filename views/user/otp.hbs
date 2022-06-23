@@ -24,7 +24,7 @@
           <div class="row">
             <div class="col-md-6 welcome_auth">
                 <div class="auth_welcome">
-                    Find more happiness with FEIZY.com
+                    Find more happiness with BUYLAPS.shop
                 </div>
             </div>         
             <div class="col-md-6 login-form">
@@ -41,7 +41,7 @@
 
 
 
-                  <form action="/users/otp" method="post">
+                  <form action="/otp" method="post">
                      <div class="form-group">
                          <h1></h1>
                       <input type="text" class="form-control" name="otp" placeholder="Enter otp" required>
@@ -49,12 +49,12 @@
                      <div class="form-group">
                       <button type="submit" class="btn btn-primary btn-lg btn-block">submit</button>  
                     </div>
-                    <div>    <a href="/users/reSend/{{user.email}}">Resend OTP</a>  </div>
+                    <div>    <a href="/reSend/{{user.email}}">Resend OTP</a>  </div>
                                       <div><p style="color: red;">{{Err}}</p></div>
 
                     <div class="form-group other_auth_links">
-                        <a class="" href="/users/login">Login</a>
-                        <a class="" href="/users/register">Register</a>
+                        <a class="" href="/login">Login</a>
+                        <a class="" href="/register">Register</a>
                     </div>
                   </form>
 

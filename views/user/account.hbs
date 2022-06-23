@@ -5,16 +5,74 @@
       <div class="container-fluid" style="display: flex; justify-content: space-between;">          
                           
 </div>
-        <div class="col-md-3 border-right">
-            <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span class="font-weight-bold">{{data.fName}}</span><span class="text-black-50">{{data.phone}}</span><span> </span></div>
-        <a href="/users/logout"class="btn btn-danger d-flex align-items-center text-center justify-content-center" id="hh">Logout</a>
+{{#if data.profileImg}}
+ <div class="col-md-3 border-right">
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+   
+      <div class="modal-footer">
+        <form action="/profileImage" enctype="multipart/form-data"  method="post">
+                        <input   id="profileImg" type="file" name="profileImg">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+            
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="200px" src="/uploads/{{data.profileImg}}">
+            {{!-- <form class="mt-2" action="/profileImage" method="post"  enctype="multipart/form-data">
+                <input   id="profileImg" type="file" name="profileImg" title=" ">
+                <input class="ms-auto" type="submit" value="Upload">
+            </form> --}}
+             <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  change Image
+</button>
+            <span class="font-weight-bold mt-3">{{data.fName}}</span><span class="text-black-50">{{data.phone}}</span><span> </span></div>
+        <a href="/logout"class="btn btn-danger d-flex align-items-center text-center justify-content-center" id="hh">Logout</a>
         </div>
+
+{{else}}
+        <div class="col-md-3 border-right">
+            
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+   
+      <div class="modal-footer">
+        <form action="/profileImage" enctype="multipart/form-data"  method="post">
+                        <input   id="profileImg" type="file" name="profileImg">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+           
+               <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  change Image
+</button>
+            <span class="font-weight-bold mt-3">{{data.fName}}</span><span class="text-black-50">{{data.phone}}</span><span> </span></div>
+        <a href="/logout"class="btn btn-danger d-flex align-items-center text-center justify-content-center" id="hh">Logout</a>
+        </div>
+        {{/if}}
         <div class="col-md-5 border-right">
             <div class="p-3 py-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="text-right">Profile Settings</h4>
                 </div>
-                <form action="/users/addProfile" method="post">
+                <form action="/addProfile" method="post">
                 <div class="row mt-2">
                 </div>
                 <div class="row mt-3">
@@ -39,7 +97,7 @@
             <div class="p-3 py-5">
                 <div class="col-md-12"><label class="labels">Experience in Designing</label><input type="text" class="form-control" placeholder="experience" value=""></div> <br>
                 <div class="col-md-12"><label class="labels">Additional Details</label><input type="text" class="form-control" placeholder="additional details" value=""></div>
-                                      <a href="/users/passwordReset"class="btn btn-danger ml-auto mt-4">reset password</a>
+                                      <a href="/passwordReset"class="btn btn-danger ml-auto mt-4">reset password</a>
 
             </div>
         </div>

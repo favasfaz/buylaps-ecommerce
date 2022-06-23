@@ -19,12 +19,28 @@
 					</div>
 </div>
 
-
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+   
+      <div class="modal-body">
+        <form action="/productReview"  method="post">
+                       <input type="text" name="review" placeholder="type here" required>
+				       <input type="number" onkeyup="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')" name="rating" placeholder="Rating" required>
+					   <input class="d-none" type="text" name="id" value="{{Data.productId}}">
+        <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="container-fluid d-flex justify-content-center  mt-5">
         <div class="card p-3 bg-white"><i class="fa fa-apple"></i>
-        
-  
+                 <a href="/viewOrder" class="btn btn-success">Back to Orders</a>
             <div class="about-product text-center mt-2"><img src="/uploads/{{Data.image}}" width="300">
                 <div>
                     <h4>{{Data.name}}</h4>
@@ -43,7 +59,11 @@
 		{{else}}
 		        <button class="btn btn-primary" onclick="deleteOrder('{{Data._id}}')" > Delete Permenently</button>
         {{/if}}
-        
+         
+               <button type="button"  id="review" class="btn btn-primary mt-3 d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  add Review
+</button>
+
        
         </div>
     </div>
@@ -150,5 +170,9 @@ body {
             div[0].classList.add('completed')
             div[1].classList.add('completed')
             div[2].classList.add('completed')
+$("#review").removeClass('d-none');
         }
+		else if(foo == 'payment failed'){
+						document.getElementById("cancel").style.display = "none";
+		}
     </script>

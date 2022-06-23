@@ -55,6 +55,9 @@ const productSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    discountedPrice:{
+        type:Number,
+    },
     images:
     {type: Array},
 
@@ -65,6 +68,17 @@ const productSchema=new mongoose.Schema({
 stockLess:{
     type:Boolean,
     default:false
+},
+review:{
+    type:Array,
+    userId:String,
+    Review:String,
+    createdAt:{
+        type:Date,
+        default:Date.now()
+    },
+    fName:String,
+    rating:Number
 }
     
 })

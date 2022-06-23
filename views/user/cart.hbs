@@ -6,26 +6,26 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-2">
                     <div class="header__logo">
-                        <a href="/users"><images src="images/logo.png" alt=""><h3>FEIZY.com</h3></a>
+                        <a href="/"><images src="images/logo.png" alt=""><h3>BUYLAPS.shop</h3></a>
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="/users">Home</a></li>
+                            <li class=""><a href="/">Home</a></li>
                             
-                            <li><a href="/users">Shop</a></li>
-                            <li><a href="/users/viewOrder">Orders</a>
+                            <li><a href="/fullProduct">Shop</a></li>
+                            <li><a href="/viewOrder">Orders</a>
                                 <ul class="dropdown">
                                    
                                     <li><a ></a></li>
                                     <li><a></a></li>
                                 </ul>
                             </li>
-                            <li><a href="/users/account/{{user.email}}">Profile</a></li>
+                            <li><a href="/account/{{user.email}}">Profile</a></li>
                            
                               <li>
-                                <form action="/users/searchProduct" method="post" class="form-inline mr-auto">
+                                <form action="/searchProduct" method="post" class="form-inline mr-auto">
             <input class="form-control mr-sm-2" name="search" type="text" placeholder="Search" aria-label="Search">
             <button class="btn btn-unique btn-rounded btn-sm my-0" type="submit">Search</button>
                                </form>
@@ -36,16 +36,16 @@
                     <div class="header__right">
                         <div class="header__right__auth">
                             {{#if user}}
-                            <a href="/users/account/{{user.email}}">{{user.email}}</a>
+                            <a href="/account/{{user.email}}">{{user.email}}</a>
                                 {{else}}
-                            <a href="/users/login">Login</a>
+                            <a href="/login">Login</a>
                             {{/if}}
                         </div>
                         <ul class="header__right__widget">
-                            <li><a href="/users/wishlist"><span class="icon_heart_alt"></span>
+                            <li><a href="/wishlist"><span class="icon_heart_alt"></span>
                                 <div id="wishlist-count" class="tip">{{wishlistCount}}</div>
                             </a></li>
-                            <li><a href="/users/cart"><span class="icon_bag_alt"></span>
+                            <li><a href="/cart"><span class="icon_bag_alt"></span>
                             {{!-- -- ---------------------------------------------}}
                                 <div id="cart-count" class="tip">{{count}}</div>
                             </a></li>
@@ -59,8 +59,8 @@
         </div>
     </header>
   
-    <section class="h-96 h-custom" style="">
-  <div class="container py-5 h-100">
+    <section class="h-96 h-custom mt-3" style="">
+  <div class="container-fluid  h-100" id="cartDiv">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-12">
         <div class="card card-registration card-registration-2" style="border-radius: 15px;">
@@ -84,19 +84,20 @@
 
                   <div class="row mb-4 d-flex justify-content-between align-items-center">
                     <div class="col-md-2 col-lg-2 col-xl-2">
-                     <a href="/users/productZoom/{{this.name}}"> <img
+                     <a href="/productZoom/{{this.name}}"> <img
                     src="/uploads/{{this.image}}"
                         class="img-fluid rounded-3" alt="Cotton T-shirt"></a>
                     </div>
-                    <div class="col-md-3 col-lg-3 col-xl-3">
-                      <h6 class="text-muted">{{this.name}}</h6>
-                      <h6 class="text-black mb-0">{{this.brand}}</h6>
+                    <div class="col-md-2 col-lg-2 col-xl-3">
+                     
+                      <h6 class="text-black mb-0">{{this.name}}</h6>
+                       <h6 class="text-muted">{{this.price}}</h6>
                     </div>
-                    <div  class="col-md-3 col-lg-3 col-xl-2 ">
+                    <div  class="col-md-2 col-lg-2 col-xl-2 ">
                       <button class="btn btn-link px-2 " onclick="decProduct('{{this.productId}}','{{this.quantity}}')">
                         <i class="fa-solid fa-minus"></i>
                       </button>
-<input id="form1" min="1" name="quantity" value="{{this.quantity}}" type="number"
+<input id="form1"  min="1" name="quantity" value="{{this.quantity}}" type="number"
                         class="form-control form-control-sm" />
                          {{!-- <span>{{this.quantity}}</span>                        --}}
                        
@@ -106,28 +107,29 @@
                       </button>
                     </div>
                     
-                    <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                    
+                    <div class="col-md-2 col-lg-2 col-xl-2 offset-lg-1">
                       <h6 class="mb-0">{{this.total}}</h6>
                     </div>
                     {{!-- <div class="col-md-1 col-lg-1 col-xl-1 text-end">
                       <a href="#!" class="text-muted"><i class="fas fa-times"></i></a>
                     </div> --}}
-                     <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                     <div class="col-md-2 col-lg-2 col-xl-1 text-end">
                       <button class="btn btn-danger" onclick="delProduct('{{this.productId}}')">remove</button>
                       
                     </div>
-                     <div class="col-md-6 col-lg-6 col-xl-6 text-end">
+                    
+                 
+                  </div>
+ <div class="col-md-6 col-lg-6 col-xl-6 text-end">
                                           {{#if this.stockLess}}
                       <p style="color:red ;"> {{this.stock}} product available</p>
                          {{/if}}
                     </div>
-                 
-                  </div>
-
                   <hr class="my-4">
                   {{/each}}
                 <div class="pt-5">
-                    <h6   class="mb-0  btn btn-success "><a  href="/users" class="text-body">
+                    <h6   class="mb-0  btn btn-success "><a  href="/" class="text-body">
                     <i style="color:white ;"
                           class="fas fa-long-arrow-alt-left me-2">
                           </i>
@@ -150,7 +152,7 @@
 									<img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3">
 									<h3><strong>Your Cart is Empty</strong></h3>
 									<h4>Add something to make me happy :</h4>
-									<a href="/users" style="color:white ;" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
+									<a href="/" style="color:white ;" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
 									
 								
 								</div>
@@ -193,9 +195,9 @@
                                <h5 class="text-uppercase mb-3">total shipping Cost :+${{data.shippingCost}}</h5>
                                     <h5 class="text-uppercase mb-3">total discount :      -${{data.discount}}</h5>
                                     <hr style="color:red ;">
-                                     <h5 class="text-uppercase mb-3">Grand Total: {{data.totalAfterDiscounts}}</h5>
+                                     <h5 class="text-uppercase mb-3">Grand Total: {{data.totalAfterDiscounts}} </h5>
                   </div>
-                    <a class="btn btn-success" href="/users/checkout"> checkout</a>
+                    <a class="btn btn-success" href="/checkout"> checkout</a>
                   
                   {{!-- <form action="/users/checkout" method="post">
                       <h5 class="text-uppercase mb-3">Give code</h5>
@@ -228,5 +230,10 @@
 <script src="https://kit.fontawesome.com/5d2583e59e.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="/javascripts/addToCart.js"></script>
+<script>
+  $('input').keypress(function(e) {
+    e.preventDefault();
+});
+</script>
 </body>
 </html>
