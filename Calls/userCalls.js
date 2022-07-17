@@ -442,6 +442,7 @@ const firstTwo = () => {
 const totalAmount = (user) => {
   return new Promise(async (resolve, reject) => {
     let Discount = await Cart.findOne({userId:user.email})
+   if(Discount!=null){
     let AfterDiscounts = (Discount.total-Discount.discount)-Discount.shippingCost
     let total = await Cart.aggregate([
       {
@@ -484,6 +485,10 @@ const totalAmount = (user) => {
       );
       resolve(grandTotal);
     }
+    
+   }
+   resolve()
+   
   });
 };
 const subTotal = (user) => {
@@ -506,7 +511,6 @@ const subTotal = (user) => {
 
     
     const cart = await Cart.findOne({ userId: user.email });
-    
     if (cart) {
       amount.forEach(async (amt) => {
         await Cart.updateMany(
@@ -514,12 +518,12 @@ const subTotal = (user) => {
           { $set: { "product.$.total": amt.total } }
         );
       });
+      let grandTotal =(cart.total-cart.discount)+cart.shippingCost
+      await Cart.findOneAndUpdate({ userId: user.email },{$set:{totalAfterDiscounts:grandTotal}})  
+  console.log(cart.totalAfterDiscounts,'grandTotal');
+      resolve({ status: true });
     }
-    console.log(cart,'cart');
-    let grandTotal =(cart.total-cart.discount)+cart.shippingCost
-    await Cart.findOneAndUpdate({ userId: user.email },{$set:{totalAfterDiscounts:grandTotal}})  
-console.log(cart.totalAfterDiscounts,'grandTotal');
-    resolve({ status: true });
+    resolve()
   });
 };
 

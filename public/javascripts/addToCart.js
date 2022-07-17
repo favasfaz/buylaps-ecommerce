@@ -3,66 +3,77 @@
 
 function getAll(proId){
     let parent = document.getElementById("parent");
-    console.log(parent, "parent")
     parent.innerHTML="";
     $.ajax({
         url:'/getAll/'+proId,
         method:'get',
         success:(response)=>{
-           let product=response.product;
-          console.log(product, "product");
-          product.forEach((p,i) => {
+         if(response.product.length == 0){
+            console.log('if');
             let div = document.createElement('div')
             let parentDiv =document.createElement('div')
             parentDiv.setAttribute("class",
-            "col-sm-12 col-md-4")
-            let subDivOne = document.createElement("div");
-            subDivOne.setAttribute(
-                "class",
-                " block2-img wrap-pic-w of-hidden pos-relative block2-labelnew d-flex justify-content-center"
-              );
-              subDivOne.classList.add("block2");
-              let subDivTwo = document.createElement("div");
-              subDivTwo.setAttribute(
-                "class",
-                " block2-img wrap-pic-w of-hidden pos-relative block2-labelnew "
-              );
-            let proName = document.createElement('h6')
-                let prodImg = document.createElement("img");
-            prodImg.src= `/uploads/${p.images[0].img1}`;
-            prodImg.alt=p.brand;
-            proPrice = document.createElement('h6')
-            proName=p.productName
-            proPrice = p.price
-            subDivTwo.append(prodImg);
-            var lineBreak = document.createElement("br");
-            // parentDiv.append(lineBreak)
-            let overlay = document.createElement("div");
-              overlay.setAttribute("class", "block2-overlay", "trans-0-4");
-              let link1 = document.createElement("a");
-            //   link1.href = "#";
-              link1.setAttribute(
-                "class",
-                "block2-btn-addwishlist hov-pointer trans-0-4 d-flex justify-content-center align-items-center mt-4 mb-3"
-              );
-            // subDivOne.append(proName);
-            let icon1 = document.createElement("i");
-            icon1.ariaHidden = "true";
-            icon1.setAttribute("class", "icon_heart_alt height-50",onclick="addToCart('{{p._id}}')");
-            let icon2 = document.createElement("i");
-            icon2.setAttribute("class", "icon_bag_alt ml-3  ");
-            icon2.ariaHidden = "true";
-            icon2.onclick = function() {addToCart(p._id)};
-            icon1.onclick = function() {addToWishlist(p._id)};
-            subDivTwo.append(overlay,proName+'  '+'$'+proPrice);
-            subDivTwo.append(lineBreak)
-            link1.append(icon1,icon2);
-            overlay.append(link1);
-            subDivOne.append(subDivTwo);
-              parentDiv.append(subDivOne);
-            parent.append(parentDiv);
-            
-          });
+            "col-sm-12 col-md-12 d-flex justify-content-center")
+            let h1 = document.createElement('h1')
+            h1 = 'NO ITEM AVAILABLE'
+            parentDiv.append(h1)
+            div.append(parentDiv)
+            parent.append(div)
+            }else{
+            let product=response.product;
+            product.forEach((p,i) => {
+              let div = document.createElement('div')
+              let parentDiv =document.createElement('div')
+              parentDiv.setAttribute("class",
+              "col-sm-12 col-md-4")
+              let subDivOne = document.createElement("div");
+              subDivOne.setAttribute(
+                  "class",
+                  " block2-img wrap-pic-w of-hidden pos-relative block2-labelnew d-flex justify-content-center"
+                );
+                subDivOne.classList.add("block2");
+                let subDivTwo = document.createElement("div");
+                subDivTwo.setAttribute(
+                  "class",
+                  " block2-img wrap-pic-w of-hidden pos-relative block2-labelnew "
+                );
+              let proName = document.createElement('h6')
+                  let prodImg = document.createElement("img");
+              prodImg.src= `/uploads/${p.images[0].img1}`;
+              prodImg.alt=p.brand;
+              proPrice = document.createElement('h6')
+              proName=p.productName
+              proPrice = p.price
+              subDivTwo.append(prodImg);
+              var lineBreak = document.createElement("br");
+              // parentDiv.append(lineBreak)
+              let overlay = document.createElement("div");
+                overlay.setAttribute("class", "block2-overlay", "trans-0-4");
+                let link1 = document.createElement("a");
+              //   link1.href = "#";
+                link1.setAttribute(
+                  "class",
+                  "block2-btn-addwishlist hov-pointer trans-0-4 d-flex justify-content-center align-items-center mt-4 mb-3"
+                );
+              // subDivOne.append(proName);
+              let icon1 = document.createElement("i");
+              icon1.ariaHidden = "true";
+              icon1.setAttribute("class", "icon_heart_alt height-50",onclick="addToCart('{{p._id}}')");
+              let icon2 = document.createElement("i");
+              icon2.setAttribute("class", "icon_bag_alt ml-3  ");
+              icon2.ariaHidden = "true";
+              icon2.onclick = function() {addToCart(p._id)};
+              icon1.onclick = function() {addToWishlist(p._id)};
+              subDivTwo.append(overlay,proName+'  '+'$'+proPrice);
+              subDivTwo.append(lineBreak)
+              link1.append(icon1,icon2);
+              overlay.append(link1);
+              subDivOne.append(subDivTwo);
+                parentDiv.append(subDivOne);
+              parent.append(parentDiv);
+              
+            });
+         }
         }
     })
 }

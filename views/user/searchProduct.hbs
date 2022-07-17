@@ -10,15 +10,11 @@
                 <div class="col-xl-6 col-lg-7">
                     <nav class="header__menu">
                         <ul>
-                            <li class="active"><a href="/">Home</a></li>
+                            <li ><a href="/">Home</a></li>
                             
                             <li><a href="/fullProduct">Shop</a></li>
                             <li><a href="/viewOrder">Orders</a>
-                                <ul class="dropdown">
-                                   
-                                    <li><a ></a></li>
-                                    <li><a ></a></li>
-                                </ul>
+                               
                             </li>
                             <li>
                                  {{#if user}}
@@ -88,7 +84,7 @@
                     {{!-- <div class="d-flex justify-content-between align-items-center mt-2">
                         <div class="ratings"> <i class="fa fa-star"></i> <span>4.5</span> </div>
                     </div> --}}
-                    <div class="mt-3 d-flex justify-content-between"> <button class="btn btn-danger btn-block" style="margin-left: 5px" onclick="addToCart('{{this._id}}')">add To Cart</button> </div>
+                    <div class="mt-3 d-flex justify-content-between"> <button class="btn btn-primary btn-block" style="margin-left: 5px" onclick="addToCart('{{this._id}}')">add To Cart</button> </div>
                 </div>
             </div>
         </div>
@@ -103,7 +99,7 @@
 
 {{/if}}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+{{!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>  --}}
 
 <script>
     function addToCart(proId){
@@ -126,5 +122,11 @@
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap");body{background-color: #d6d2d2;font-family: "Poppins", sans-serif;font-weight: 300}.card{border:none;border-radius: 10px}.percent{padding: 5px;background-color: red;border-radius: 5px;color: #fff;font-size: 14px;height: 35px;width: 70px;display: flex;justify-content: center;align-items: center;cursor: pointer}.wishlist{height: 40px;width: 40px;display: flex;justify-content: center;align-items: center;border-radius: 50%;background-color: #eee;padding: 10px;cursor: pointer}.img-container{position: relative}.img-container .first{position: absolute;width: 100%}.img-container img{border-top-left-radius: 5px;border-top-right-radius: 5px}.product-detail-container{padding: 10px}.ratings i{color: #a9a6a6}.ratings span{color: #a9a6a6}label.radio{cursor: pointer}label.radio input{position: absolute;top: 0;left: 0;visibility: hidden;pointer-events: none}label.radio span{height: 25px;width: 25px;display: flex;justify-content: center;align-items: center;border: 2px solid #dc3545;color: #dc3545;font-size: 10px;border-radius: 50%;text-transform: uppercase}label.radio input:checked+span{border-color: #dc3545;background-color: #dc3545;color: #fff}
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap");body{    
+ background-color: #d6d2d2;font-family: "Poppins", sans-serif;font-weight: 500}.card{border:none;border-radius: 10px}.percent{padding: 5px;background-color: darkblue;border-radius: 5px;color: #fff;font-size: 14px;height: 35px;width: 70px;display: flex;justify-content: center;align-items: center;cursor: pointer}.wishlist{height: 40px;width: 40px;display: flex;justify-content: center;align-items: center;border-radius: 50%;background-color: #eee;padding: 10px;cursor: pointer}.img-container{position: relative}.img-container .first{position: absolute;width: 100%}.img-container img{border-top-left-radius: 5px;border-top-right-radius: 5px}.product-detail-container{padding: 10px}.ratings i{color: #a9a6a6}.ratings span{color: #a9a6a6}label.radio{cursor: pointer}label.radio input{position: absolute;top: 0;left: 0;visibility: hidden;pointer-events: none}label.radio span{height: 25px;width: 25px;display: flex;justify-content: center;align-items: center;border: 2px solid #dc3545;color: #dc3545;font-size: 10px;border-radius: 50%;text-transform: uppercase}label.radio input:checked+span{border-color: #dc3545;background-color: #dc3545;color: #fff}
+.btn{
+    background-color: darkblue;
+    color: white;
+}
+
 </style>

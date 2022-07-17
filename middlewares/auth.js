@@ -58,12 +58,4 @@ const cartverify =(req,res,next)=>{
   }
 }
 
-const sessionverify3 =(req,res,next)=>{
- 
-  if(req.session.loggedIn){
-    next()
-  }else{
-    res.json({status:false})
-  }
-}
 module.exports = {cartverify,verifyToken,verifyUser,sessionverify,sessionverify2};

@@ -21,7 +21,7 @@
             cpassword:
              {
                 minlength: 4,
-                equalTo: "#form3Example4cd"
+                equalTo: "#password"
             },
             email: {
                 required: true,

@@ -25,11 +25,7 @@
                             
                             <li><a href="/fullProduct">Shop</a></li>
                             <li><a href="/viewOrder">Orders</a>
-                                <ul class="dropdown">
-                                   
-                                    <li><a ></a></li>
-                                    <li><a ></a></li>
-                                </ul>
+                                
                             </li>
                             <li>
                                  {{#if user}}
@@ -77,66 +73,6 @@
         </div>
     </header>
    
-
-
-
-
-
-
-
-  {{!-- <section id="services" class="services section-bg">
-   <div class="container">
-    
-      <div class="row row-sm">
-         <div class="col-md-6 _boxzoom">
-            <div class="zoom-thumb">
-               <ul class="piclist">
-                  <li><img src="/uploads/{{data.images.[0].img1}}" alt=""></li>
-                  <li><img src="/uploads/{{data.images.[0].img2}}" alt=""></li>
-                  <li><img src="/uploads/{{data.images.[0].img3}}" alt=""></li>
-                  <li><img src="/uploads/{{data.images.[0].img1}}" alt=""></li>
-               </ul>
-            </div>
-            <div class="_product-images">
-               <div class="picZoomer">
-                  <img class="my_img" src="/uploads/{{data.images.[0].img1}}" alt="">
-               </div>
-            </div>
-         </div>
-         <div class="col-md-6">
-            <div class="_product-detail-content">
-               <p class="_p-name"> {{data.productName}} </p>
-               <div class="_p-price-box">
-                  <div class="p-list">
-                     <span> M.R.P. : <i class="fa fa-inr"></i>  {{data.price}}     </span>
-                     <span class="price">  </span>
-                  </div>
-                
-                  <div class="_p-features">
-                     <span> Description About this product:- </span>
-                    {{data.description}}                     
-                  </div>
-                  <form action="" method="post" accept-charset="utf-8">
-                     <ul class="spe_ul"></ul>
-                     <div class="_p-qty-and-cart">
-                        <div class="_p-add-cart">
-                           <button class="btn-theme btn buy-btn" tabindex="0">
-                           <i class="fa fa-shopping-cart"></i> Buy Now
-                           </button>
-                        
-                           <a class="btn-theme btn btn-success" href="/users/toCart/{{data._id}}">add To Cart</a>
-                           <input type="hidden" name="pid" value="18" />
-                           <input type="hidden" name="price" value="850" />
-                           <input type="hidden" name="url" value="" />    
-                        </div>
-                     </div>
-                  </form>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
-</section> --}}
 <div class="container mt-5 mb-2">
     <div class="row d-flex justify-content-center">
         <div class="col-md-10">
@@ -196,7 +132,7 @@
 </div>
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+ {{!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>  --}}
  <script src="/javascripts/addToCart.js"></script>
 <script>
    function change_image(image){

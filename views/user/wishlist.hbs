@@ -72,11 +72,7 @@
                             
                             <li><a href="/fullProduct">Shop</a></li>
                             <li><a href="/viewOrder">Orders</a>
-                                <ul class="dropdown">
-                                   
-                                    <li><a ></a></li>
-                                    <li><a ></a></li>
-                                </ul>
+                              
                             </li>
                             <li>
                                  {{#if user}}
@@ -124,96 +120,6 @@
         </div>
     </header>
    
-
-{{!-- <section>
-	<div class="cart-wrap">
-		<div class="container">
-	        <div class="row">
-                                 
-
-			    <div class="col-md-12">
-			        <div class="main-heading mb-10">My wishlist</div>
-			        <div class="table-wishlist">
-                           {{#if wishProduct}}
-				        <table cellpadding="0" cellspacing="0" border="0" width="100%">
-				        	<thead>
-					        	<tr>
-                                 <th >Image</th>
-					        		<th >Product</th>
-					        		<th > Price</th>
-					        	
-					        	</tr>
-					        </thead>
-					        <tbody>
-                              
-                                  {{#each wishProduct}}
-					        	<tr>
-					        		<td >
-					        			<div class="display-flex align-center">
-		                                    <div class="img-product">
-		                                         <a href="/productZoom/{{this.productName}}">  <img
-                    src="/uploads/{{this.images.[0].img1}}"
-                        class="img-fluid rounded-3" alt="Cotton T-shirt">
-                        </a>
-		                                    </div>
-		                                    <div class="name-product">
-		                                        {{this.productName}}
-		                                    </div>
-	                                    </div>
-	                                </td>
-					        		<td class="price">{{this.price}}</td>
-					        		<td> <button class="btn btn-success  w-100" onclick="addToCart('{{this._id}}')">To Cart</button></td>
-					        		<td  class="text-center"><button class="btn btn-danger w-100" onclick="delWishlist('{{this._id}}')">del</button></td>
-					        	</tr>
-					        	  {{/each}}
-               
-				        	</tbody>
-				        </table>
-                        
-                          <div class="pt-5" >
-                    <h6 class="mb-0 btn btn-success" ><a href="/users"  style="color:white" class="text-body" ><i
-                          class="fas fa-long-arrow-alt-left me-2"></i>Back to shop</a></h6>
-                  </div>
-
-                        {{else}}
-
-<div class="container-fluid  mt-100">
-				 <div class="row">
-				 
-					<div class="col-md-12">
-					
-							<div class="card">
-						<div class="card-header">
-					
-						</div>
-						<div class="card-body cart">
-								<div class="col-sm-12 empty-cart-cls text-center">
-									<img src="https://i.imgur.com/dCdflKN.png" width="130" height="130" class="img-fluid mb-4 mr-3">
-									<h3><strong>Your Wishlist is Empty</strong></h3>
-									<h4>Add something to make me happy :</h4>
-									<a href="/users" class="btn btn-primary cart-btn-transform m-3" data-abc="true">continue shopping</a>
-									
-								
-								</div>
-						</div>
-				</div>
-						
-					
-					</div>
-				 
-				 </div>
-				
-				</div>    
-                         {{/if}}
-				    </div>
-			    </div>
-              
-			</div>
-		</div>
-	</div>
-
-
-</section> --}}
 
  <section class="h-96 h-custom" style="">
   <div class="container py-5 h-100">
@@ -319,7 +225,7 @@
 </section>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+{{!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>  --}}
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script type="text/javascript">
   function delWishlist(proId){

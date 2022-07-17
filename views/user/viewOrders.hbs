@@ -41,11 +41,7 @@
                             
                             <li><a href="/fullProduct">Shop</a></li>
                             <li class="active"><a href="/viewOrder">Orders</a>
-                                <ul class="dropdown">
-                                   
-                                    <li><a ></a></li>
-                                    <li><a ></a></li>
-                                </ul>
+                               
                             </li>
                             <li>
                                  {{#if user}}
@@ -94,7 +90,7 @@
     </header>
    
    <div class="container mt-5">
-    <div class="row d-flex justify-content-center text-center"><h3>All ORDERS</h3> </div>
+    <div class="row d-flex justify-content-center text-center"><h3>{{#if data}}All ORDERS</h3> {{else}} <h3>NO ORDERS FOUND</h3>{{/if}}</div>
 </div>
 
     <div class="container-fluid mt-2">
@@ -122,6 +118,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="customtable">
+                                            {{#if data}}
                                             {{#each data}}
                                             {{#each this.product}}
                                             <tr>
@@ -138,6 +135,7 @@
                                             </tr>
                                            {{/each}}
                                            {{/each}}
+                                           {{/if}}
                                         </tbody>
                                     </table>
                                 </div>

@@ -518,9 +518,9 @@ router.post('/addProfile',(req,res)=>{
 router.get('/viewOrder',sessionverify2,(req,res)=>{
   viewOrder(req.session.user.email).then(async(data)=>{
     let count = await getCartCount(req.session.user)
-    let total = await totalAmount(req.session.user)
+    // let total = await totalAmount(req.session.user)
     let user = req.session.user
-    res.render('user/viewOrders',{data,user,total,count})
+    res.render('user/viewOrders',{data,user,count})
   })
 })
 router.get('/cancelOrder/:id',(req,res)=>{
