@@ -232,7 +232,6 @@ const addCategory = (data) => {
             })
             await newcategory.save((err, data) => {
                 if (err) {
-                    console.log(err);
                     reject({ msg: 'something went wrong' })
                 }
             })
@@ -240,7 +239,7 @@ const addCategory = (data) => {
         }
     })
 }
-const addBrand = (data) => {
+const addBrand = (data,img1) => {
     return new Promise(async (resolve, reject) => {
         const brand = await Brand.findOne({ name: data.brand })
         if (brand) {
@@ -248,14 +247,18 @@ const addBrand = (data) => {
         }
         else {
             const newBrand = await Brand({
-                name: data.brand
+                name: data.brand,
+                image:img1
             })
             await newBrand.save((err, data) => {
                 if (err) {
                     reject({ msg: 'something went wrong' })
                 }
+                else{
+                    resolve()
+                }
             })
-            resolve()
+            
         }
     })
 }

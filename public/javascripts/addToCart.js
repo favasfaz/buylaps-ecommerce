@@ -9,7 +9,6 @@ function getAll(proId){
         method:'get',
         success:(response)=>{
          if(response.product.length == 0){
-            console.log('if');
             let div = document.createElement('div')
             let parentDiv =document.createElement('div')
             parentDiv.setAttribute("class",
@@ -123,6 +122,7 @@ function decProduct(proId,quantity){
     })
 }
  function delProduct(proId){
+    console.log(proId,'proId');
 
     swal({
         title: "Are you sure?",
@@ -199,9 +199,9 @@ function addToWishlist(proId){
             else if(response.oldProduct){
                 swal( "!","Item already in wishlist", "error");
             }
-        }else{
-            console.log('success1');
-            swal( "!","You might be login", "error");
+            else{
+                console.log('success1');
+                swal( "!","You might be login", "error");            }
         }
            
         }, 
@@ -211,28 +211,40 @@ function addToWishlist(proId){
 }
 function getCoupons(){
     let coupon = document.getElementById("coupon");
+    $('#getCoupons').prop('disabled', true);
     $.ajax({
         url:'/couponOffer',
           method:'get',
         success:(response)=>{
-            if(response.length!=0){
+            if(response.data.length!=0){
                 let data=response.data;
-                console.log(data)
+                console.log(data,'data');
                   data.forEach((p,i) => {
                     let div = document.createElement('div')
                     let parentDiv =document.createElement('div')
-                    let proName = document.createElement('h6')
-                     
-                    proName=p.couponCode
-                    parentDiv.append(proName);
+                    parentDiv.setAttribute("class",
+                    "col-sm-12 col-md-12 d-flex justify-content-around mt-3 mb-3")
+                    let couponCode = document.createElement('h6')
+                    let couponName = document.createElement('h6')
+                    couponName = p.couponCodeName
+                    couponCode=p.couponCode
+                    parentDiv.append(couponName,':');
+                    parentDiv.append(couponCode);
                     coupon.append(parentDiv);
                     
                   });
             }
-            else{
-                console.log('nocoupon');
-                swal( "!","NO coupon is available", "error");
-                document.getElementById('coupon').innerHTML='NO coupon available'
+            else {
+                let div = document.createElement('div')
+            let parentDiv =document.createElement('div')
+            parentDiv.setAttribute("class",
+            "col-sm-12 col-md-12 d-flex justify-content-center mt-1 mb-1")
+            let h1 = document.createElement('h1')
+            h1 = 'NO COUPON AVAILABLE'
+            parentDiv.append(h1)
+            div.append(parentDiv)
+            coupon.append(div)
+                
             }
           
                     
@@ -396,15 +408,7 @@ function changeStatus(id,user){
        },
        method:'post',
        success:(response)=>{
-        // if(data == 1){
-        //     $("#example").load(location.href + " #example");
-        //     $("#status").load(location.href + " #status");
-
-        // }
-        // else{
-        //     document.getElementById('example').style.display = 'none'
-        //     $("#status").load(location.href + " #status");
-        // }
+        
            location.reload()
         console.log('success');
        }
@@ -472,66 +476,7 @@ var chart = new Chart(ctx, {
 }
 
 
-// async function forHome(){
-//     console.log('success1');
-//     const totalAmount = []
-//     const totalDate = []
-//     $.ajax({
-//         url:'/admin/getData',
-//         method:'post',
-//         success:(response)=>{
-//             console.log(response,'reponse of home');
-//             var ctx = document.getElementById('rice').getContext('2d');
-//             var chart = new Chart(ctx, {
-//                 // The type of chart we want to create
-//                 type: 'bar',
-            
-//                 // The data for our dataset
-//                 data: {
-//                     labels:response.dateArray,
-//                     datasets: [{
-//                         label: "last week dataset",
-//                         backgroundColor: 'rgb(255, 99, 132)',
-//                         borderColor: 'rgb(255, 99, 132)',
-//                         data:response.totalArray,
-//                     }]
-//                 },
-            
-//                 // Configuration options go here
-//                 options: {
-//                   tooltips:{
-//                     mode:'index'
-//                   }
-//                 }
-//             });
-//             var ctx = document.getElementById('brand').getContext('2d');
-//             var chart = new Chart(ctx, {
-//                 // The type of chart we want to create
-//                 type: 'bar',
-            
-//                 // The data for our dataset
-//                 data: {
-//                     labels:response.brandArray,
-//                     datasets: [{
-//                         label: "brand base dataset",
-//                         backgroundColor: 'rgb(255, 99, 132)',
-//                         borderColor: 'rgb(255, 99, 132)',
-//                         data:response.sumArray,
-//                     }]
-//                 },
-            
-//                 // Configuration options go here
-//                 options: {
-//                   tooltips:{
-//                     mode:'index'
-//                   }
-//                 }
-//             });
-//         }})
- 
-// }
 
-// forHome()
 
 $(document).ready(function (){
     $("#getUpdate").submit((e)=>{

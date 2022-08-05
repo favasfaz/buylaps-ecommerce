@@ -373,10 +373,11 @@ const getCartCount = (data) => {
   });
 };
 const decProduct = (data, user) => {
+  console.log(data.productId,'productId');
   return new Promise(async (resolve, reject) => {
     let userCart = await Cart.findOne({ userId: user.email });
     if (data.quan <= 1) {
-      await Cart.findOneAndDelete({userId:user.email},{$pull:{'product.productId':data.productId}})
+      await Cart.findOneAndUpdate({userId:user.email,'product.productId':data.productId},{$pull:{'product':{'productId':data.productId}}})
       resolve();
     } else {
       if (userCart) {
@@ -537,7 +538,7 @@ const getfunction = (data) => {
 
 const getBrand = () => {
   return new Promise(async (resolve, reject) => {
-    allBrands = await Brand.find({}).lean();
+    allBrands = await Brand.find({}).limit(7).lean();
     resolve(allBrands);
   });
 };
@@ -878,12 +879,11 @@ isCart.product.forEach(async(pro)=>{
 }
 
 const generateRazor=(orderid,user)=>{
-  console.log(orderid,'generaterazor');
   return new Promise(async(resolve,reject)=>{
     let isCart = await Cart.findOne({userId:user.email})
     console.log(isCart,'cart');
        var options = {
-      amount: isCart.total*100,  // amount in the smallest currency unit
+      amount: isCart.totalAfterDiscounts*100,  // amount in the smallest currency unit
       currency: "INR",
       receipt: ""+orderid
     };

@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var easyinvoice = require('easyinvoice')
  var Model = require('../Model/user-schema');
 var {deleteAddress,productReview,paymentFailed,searchFilter,addProfileImg,deleteOrder,getSingleProduct,checkStock,sortOrder,cancelOrder,addProfile,viewOrder,search,priceFilter,verifyPayment,generateRazor,placeOrder,findAddress,addAddress,getAddress,cartIn,findBrand,findDiscount,findCategory,getCategory,deleteWishlist,getWishlistCount,getAllWishlist,addToWishList,getCoupon,checkCoupon,getBrand,getfunction,subTotal,firstTwo,totalAmount,addProductCount,deleteCart,decProduct,getCartCount,productDetail,getCartItems,  addingToCart, doSignup,userLogin,getAccount,forgotpass,otpVerify,newPass,settingPassword,registeringUser,reSend} = require('../Calls/userCalls')
 var auth = require('../middlewares/auth')
@@ -16,8 +15,6 @@ var fs = require('fs');
 const Order = require('../Model/order-schema')
 const Product = require('../Model/product-schema');
 var storage = require('../uploadMiddleware/multer');
-const { log } = require('console');
-const { response } = require('../app');
 
 /* GET users listing. */
 
@@ -452,6 +449,7 @@ router.post('/checkingCoupon/:id',(req,res)=>{
 })
 
 router.post('/placeOrder',(req,res)=>{
+  console.log('su');
   checkStock(req.session.user).then((response)=>{
 if(response.stockout){
   res.json({stockout:true})

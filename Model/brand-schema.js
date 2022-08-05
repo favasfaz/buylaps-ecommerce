@@ -6,7 +6,7 @@ const brandSchema = new mongoose.Schema({
      type:String,
      required:true
  },
- 
+ image:String,
 
  create :{
 type:Date,

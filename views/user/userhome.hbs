@@ -151,7 +151,7 @@
               
              <div class="row property__gallery bg-white " >
                  {{#each firsttwo}}
-            <div class="col-lg-3 col-md-4 col-sm-6 mt-3">
+            <div class="col-lg-3 col-md-6 col-sm-6 mt-3">
                 <div class="product__item"  >
                     <div class="product__item__pic set-bg  mt-2" >
                       <a href="/productZoom/{{this.productName}}">  <img class="img-responsive" src="/uploads/{{this.images.[0].img1}}"></a>
@@ -186,9 +186,9 @@
    </div>
 </section>
 
-<section >
+{{!-- <section >
 
-    <div class="container">
+    <div class="container ">
         <div class="row">
             <div class="col-md-3">
                <a href="/brandProduct/Acer">  <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/acer-laptop-logo.png" alt=""></a>
@@ -205,39 +205,32 @@
         </div>
     </div>
 </section>
-<section>
+<section> --}}
 
     <div class="container mt-3">
-        <div class="row">
-            <div class="col-md-3">
-              <a href="/brandProduct/Dell">  <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/dell-laptop-logo.png" alt=""></a>
+        <div class="row d-flex justify-content-evenly">
+           
+             {{#each brands}}
+            <div class="col-md-3 mb-3">
+              <a href="/brandProduct/{{this.name}}">  <img src="/uploads/{{this.image}}" alt=""></a>
             </div>
-            <div class="col-md-3">
-              <a href="/brandProduct/Hp"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/hp-laptop-logo.jpg" alt=""></a> 
-            </div>
-            <div class="col-md-3">
-              <a href="/brandProduct/Intel"> <img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/intel-laptop-logo.png" alt=""></a> 
-            </div>
-             <div class="col-md-3">
-               <a href="/brandProduct/Lenovo"><img src="https://cdn.shortpixel.ai/spai/q_lossless+w_740+to_webp+ret_img/https://brandyuva.in/wp-content/uploads/2017/09/lenovo-laptop-logo.png" alt=""></a> 
-            </div>
+            {{/each}}
         </div>
     </div>
 </section>
 
 <section id="all"> <div class="container mt-5">
         <div class="row" >
-            <div class="col-lg-4 col-md-4 col-12">
+            <div class="col-lg-3 col-md-3 col-12">
                 <div class="section-title">
                     <h4>All  product</h4>
                 </div>
             </div>
-            <div class="col-lg-8 col-md-8" >
+            <div class="col-lg-9 col-md-9" >
                 <ul class="filter__controls" >
                     <li class="active" data-filter="*"> <a style="color:black ;" href="/">All</a> </li>
                     {{#each brands}}
-                <button style="background: #1c153f; color: white; border-radius: 13px; width: 55px;border: none;font-weight: 500;" onclick="getAll('{{this.name}}')">{{this.name}}</button>
-
+                <button style="background: #1c153f; color: white; border-radius: 13px; width: 76px;border: none;font-weight: 500;" onclick="getAll('{{this.name}}')">{{this.name}}</button>
                    {{/each}}
                  
                 </ul>

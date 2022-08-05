@@ -188,9 +188,10 @@ router.get('/logout',(req,res)=>{
   res.clearCookie('adminToken')
 res.redirect('/admin')
 })
-router.post('/addBrand',(req,res)=>{
-  addBrand(req.body).then(()=>{
-    res.redirect('/category')
+router.post('/addBrand',storage.fields([{name:'brandLogo',maxCount:1}]),async(req,res)=>{
+  let img1=req.files.brandLogo[0].filename
+  addBrand(req.body,img1).then(()=>{
+    res.redirect('/admin/category')
   }).catch((err)=>{
     req.session.brandErr=err.msg
     res.redirect('/admin/category')
@@ -198,6 +199,7 @@ router.post('/addBrand',(req,res)=>{
 })
 
 router.get('/addCoupon',async(req,res)=>{
+  
   let count=await totalCoupons()
   alert=req.flash('msg')
   let allCoupons= await getAllCoupons()
@@ -206,6 +208,7 @@ router.get('/addCoupon',async(req,res)=>{
   req.session.couponErr=''
 })
 router.post('/addCoupon',(req,res)=>{
+  console.log('su');
   addCoupon(req.body).then(()=>{
    
     req.flash('msg','Successfully Coupon Added')

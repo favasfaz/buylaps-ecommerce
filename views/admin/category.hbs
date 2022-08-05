@@ -198,8 +198,9 @@
 	</div>
     <div class="col-lg-2">
       <p>{{brandErr}}</p>
-        <form action="/admin/addBrand" method="post">
-            <input type="text" name="brand" placeholder="add new brands">
+        <form action="/admin/addBrand" method="post" enctype="multipart/form-data">
+            <input type="text" name="brand" placeholder="add new brands" required>
+                        <input type="file" name="brandLogo" placeholder="add new brands" required>
             <input type="submit" class="btn btn-success mt-4" value="add Category">
         </form>
     </div>
