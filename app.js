@@ -1,21 +1,21 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const mongoose = require('mongoose');
-var mongodb = require('./connection/config')
-var session = require('express-session')
-var hbs = require ('express-handlebars')
-var bodyParser = require('body-parser')
-var flash =require('connect-flash')
+const mongodb = require('./connection/config')
+const session = require('express-session')
+const hbs = require ('express-handlebars')
+const bodyParser = require('body-parser')
+const flash =require('connect-flash')
+require('dotenv').config()
 
 
+const adminRouter = require('./routes/admin');
+const usersRouter = require('./routes/users');
 
-var adminRouter = require('./routes/admin');
-var usersRouter = require('./routes/users');
-
-var app = express();
+const app = express();
 app.use(express.json())
 
 // view engine setup

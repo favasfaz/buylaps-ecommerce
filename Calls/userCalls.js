@@ -71,7 +71,7 @@ const doSignup = (data) => {
             service: "gmail",
             auth: {
               user: "mohamedsabithmp@gmail.com",
-              pass: "ceuggzhsmkznyfdz",
+              pass:process.env.NODEMAILER_PASS,
             },
           });
           let mailDetails = {
@@ -1016,10 +1016,6 @@ const cancelOrder= (id,user)=>{
     })
   await Order.findOneAndUpdate({userId:user.email,'product._id':id},{$set:{'product.$.status':'order canceled'}})
   await Order.findOneAndUpdate({userId:user.email,'product._id':id},{$set:{'product.$.active':'false'}})
-
-
-
-
 
   resolve({status:true})
   })
